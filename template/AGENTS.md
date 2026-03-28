@@ -72,12 +72,15 @@ Also fill in the companion docs in `docs/` with content moved from the original.
 For anything you extracted that doesn't fit the template structure, ask the user:
 _"Your original AGENTS.md contained [X]. Should I: (a) add it to [section], (b) move it to [companion doc], or (c) drop it?"_
 
-#### Step M4: Preserve unique rules
-If the original AGENTS.md has project-specific rules NOT covered by this template
+#### Step M4: Preserve unique rules and extract decisions
+If the original files have project-specific rules NOT covered by this template
 (e.g., domain-specific constraints, API conventions, deployment rules), add them to:
 - `{{Add project-specific forbidden actions}}` in the NEVER section
 - `{{Name your specific patterns}}` in the Code Style section
 - Or create a new section if they don't fit anywhere
+
+If the original files document technical decisions (e.g., "we chose X over Y"),
+extract them as Architecture Decision Records (ADRs) in `DECISIONS.md`.
 
 #### Step M5: Update code style example
 Replace the generic code example with a REAL example from this project's codebase
