@@ -40,6 +40,12 @@ If your agent can't fetch from GitHub, do it yourself:
    ```
 2. Then give the agent the appropriate prompt above (without the "Fetch..." part)
 
+### ⚠️ After Setup: Start a New Session
+
+Once the agent finishes configuring AGENTS.md, **start a new agent session** before doing any real work. This ensures the agent loads the fully configured AGENTS.md from scratch — not the template version with setup instructions it saw during configuration.
+
+Most tools (Cursor, Windsurf, Claude Code) cache instructions at session start. A new session guarantees the agent operates under the configured rules.
+
 ## Which Sentinel Method?
 
 | Your Setup | Method | Notes |
