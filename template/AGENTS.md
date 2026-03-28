@@ -12,15 +12,35 @@
 
 ### Migration from Existing AGENTS.md
 
-**Use this path when the project already has an AGENTS.md that needs to be upgraded to this template.**
+**Use this path when the project already has agent instruction files.**
 
-#### Step M1: Back up the original
-```bash
-cp AGENTS.md AGENTS.md.backup
+#### Step M1: Discover and back up ALL existing agent configuration files
+Search the project for ALL agent-related files. Common locations:
+```
+AGENTS.md                              # Standard agent instructions
+CLAUDE.md                              # Claude Code configuration
+.cursorrules                           # Cursor rules
+.github/copilot-instructions.md        # GitHub Copilot instructions
+.github/agents/*.md                    # GitHub Copilot agent personas
+.windsurfrules                         # Windsurf rules
+.aider.conf.yml                        # Aider configuration
+.gemini/settings.json                  # Gemini CLI settings
+CONVENTIONS.md / CONTRIBUTING.md       # Project conventions (may contain agent-relevant rules)
+docs/*.md                              # Any docs with agent instructions
 ```
 
-#### Step M2: Read and extract from the existing AGENTS.md
-Read the backup file thoroughly. Extract ALL project-specific information into these categories:
+Back up everything found:
+```bash
+mkdir -p .agent-backup
+cp AGENTS.md .agent-backup/ 2>/dev/null
+cp CLAUDE.md .agent-backup/ 2>/dev/null
+cp .cursorrules .agent-backup/ 2>/dev/null
+cp .github/copilot-instructions.md .agent-backup/ 2>/dev/null
+# ... copy any other files found
+```
+
+#### Step M2: Read and extract from ALL discovered files
+Read EVERY backed-up file. Extract ALL project-specific information into these categories:
 
 **Auto-extract (use directly):**
 - Project name and description
@@ -67,18 +87,28 @@ that demonstrates the project's actual good/bad patterns.
 Present a summary to the user:
 ```
 Migration Summary:
-- Extracted from original: [list what was extracted]
+- Files discovered: [list all agent config files found]
+- Extracted from originals: [list what was extracted]
 - Moved to companion docs: [list what moved where]
 - New sections added: [list what's new vs original]
 - Questions: [any unresolved items]
 
-The original AGENTS.md is backed up at AGENTS.md.backup.
+Originals backed up at .agent-backup/
 Approve this migration?
 ```
 
 Wait for user approval before proceeding.
 
-#### Step M7: Self-destruct and verify
+#### Step M7: Create compatibility symlinks
+To maintain backward compatibility with tool-specific files, create symlinks:
+```bash
+ln -s AGENTS.md CLAUDE.md                              # Claude Code
+ln -s AGENTS.md .github/copilot-instructions.md        # GitHub Copilot
+# Note: .cursorrules may need a copy instead of symlink depending on Cursor version
+```
+Ask the user which tools they use and create the appropriate symlinks.
+
+#### Step M8: Self-destruct and verify
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain

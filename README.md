@@ -44,7 +44,7 @@ The `template/` directory contains everything you copy into your project:
 2. Open your AI coding agent in the project
 3. Give it this prompt:
 
-   > **Read AGENTS.md and follow the Migration setup path. My project already has an AGENTS.md at AGENTS.md.backup — read it, extract all project-specific information, and use it to configure this template. Move verbose content to the companion docs. Ask me to confirm before finalizing.**
+   > **Read AGENTS.md and follow the Migration setup path. My project already has agent configuration files — search for AGENTS.md, CLAUDE.md, .cursorrules, .github/copilot-instructions.md, and any other agent instruction files. Back them all up, extract all project-specific information, and use it to configure this template. Create symlinks for backward compatibility. Ask me to confirm before finalizing.**
 
 4. The agent will read your old AGENTS.md, merge the info into the template, and ask you to confirm
 
