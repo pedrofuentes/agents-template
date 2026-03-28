@@ -364,6 +364,9 @@ Key conventions:
 - Before merging, invoke Sentinel and obtain approval
 - Use git worktrees for every increment
 - Include Sentinel report ID and reviewed commit SHA in PR description
+- Write discovered knowledge to `LEARNINGS.md`, NOT to this file
+- Record technical decisions in `DECISIONS.md`, NOT to this file
+- Update `CHANGELOG.md` with every user-facing change
 
 ### ⚠️ ASK FIRST (requires explicit user approval — silence ≠ approval)
 Present the decision to the user with justification and options. If no response, **pause and wait** — do not proceed.
@@ -402,6 +405,7 @@ Present the decision to the user with justification and options. If no response,
 - Modify `node_modules/`, `dist/`, or generated files
 - Force-push, rebase, or rewrite history on `main` or protected branches
 - Modify Sentinel reports, audit logs, or review artifacts after creation
+- **Write to AGENTS.md** — this file is immutable; write knowledge to `LEARNINGS.md`, decisions to `DECISIONS.md`
 - {{Add project-specific forbidden actions}}
 
 ## When Stuck — Recovery Rules
@@ -423,3 +427,6 @@ Before touching tests, architecture, workflow, or merge/release steps, read the 
 | [`docs/TESTING-STRATEGY.md`](./docs/TESTING-STRATEGY.md) | Test types, coverage targets, framework details | Writing or modifying tests |
 | [`docs/DEVELOPMENT-WORKFLOW.md`](./docs/DEVELOPMENT-WORKFLOW.md) | Git worktrees, branching details, PR process | Setting up workspace or parallel work |
 | [`ROADMAP.md`](./ROADMAP.md) | Project phases, implementation plan | Understanding project direction |
+| [`LEARNINGS.md`](./LEARNINGS.md) | Discovered knowledge, gotchas, patterns | **Write here** when you discover something new |
+| [`DECISIONS.md`](./DECISIONS.md) | Architecture Decision Records (ADRs) | **Write here** when making technical decisions |
+| [`CHANGELOG.md`](./CHANGELOG.md) | Release history | **Update** with every user-facing change |
