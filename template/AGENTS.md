@@ -103,7 +103,7 @@ Wait for user approval before proceeding.
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
-4. Commit: `chore: migrate AGENTS.md to agents-template v4`
+   - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
 5. The `.backup` file can be deleted after the user confirms everything works
 
 ---
@@ -165,6 +165,7 @@ Replace the TypeScript example in the Code Style section with a real example fro
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
+   - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
 4. If any remain, fill them in or ask the user
 5. Commit: `chore: configure AGENTS.md for this project`
 <!-- SETUP:END -->
