@@ -18,35 +18,27 @@ The `template/` directory contains everything you copy into your project:
 
 ## Quick Start
 
-### Option A: New Project (no existing AGENTS.md)
+Just give your AI coding agent one of these prompts — it handles everything:
 
-1. Copy the `template/` contents into your project root:
+### New Project (no existing agent config)
+
+> **Fetch the agents-template from https://github.com/pedrofuentes/agents-template — download all files from the `template/` directory into this project's root. Then read AGENTS.md and follow the First Run setup instructions. Scan my project files to auto-fill what you can, then ask me for anything you can't infer.**
+
+### Existing Project (already has AGENTS.md or other agent config)
+
+> **Fetch the agents-template from https://github.com/pedrofuentes/agents-template — first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to `.agent-backup/`, then download all files from the `template/` directory into this project's root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Create symlinks for backward compatibility. Ask me to confirm before finalizing.**
+
+### Manual Setup (fallback)
+
+If your agent can't fetch from GitHub, do it yourself:
+
+1. Clone this repo and copy `template/*` into your project root:
    ```bash
-   cp -r template/* /path/to/your/project/
-   # or on Windows:
-   # Copy-Item -Recurse template\* C:\path\to\your\project\
+   git clone https://github.com/pedrofuentes/agents-template.git /tmp/agents-template
+   cp -r /tmp/agents-template/template/* /path/to/your/project/
+   rm -rf /tmp/agents-template
    ```
-2. Open your AI coding agent (Copilot CLI, Claude Code, Cursor, etc.) in the project
-3. Give it this prompt:
-
-   > **Read AGENTS.md and follow the First Run setup instructions. Scan my project files to auto-fill what you can, then ask me for anything you can't infer.**
-
-4. The agent will auto-configure everything, then delete the setup block when done
-
-### Option B: Existing Project (already has AGENTS.md)
-
-1. Copy the `template/` contents into your project root (your existing AGENTS.md will be backed up):
-   ```bash
-   # Back up first, then copy template
-   cp AGENTS.md AGENTS.md.backup
-   cp -r template/* /path/to/your/project/
-   ```
-2. Open your AI coding agent in the project
-3. Give it this prompt:
-
-   > **Read AGENTS.md and follow the Migration setup path. My project already has agent configuration files — search for AGENTS.md, CLAUDE.md, .cursorrules, .github/copilot-instructions.md, and any other agent instruction files. Back them all up, extract all project-specific information, and use it to configure this template. Create symlinks for backward compatibility. Ask me to confirm before finalizing.**
-
-4. The agent will read your old AGENTS.md, merge the info into the template, and ask you to confirm
+2. Then give the agent the appropriate prompt above (without the "Fetch..." part)
 
 ## Which Sentinel Method?
 
