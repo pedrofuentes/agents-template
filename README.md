@@ -18,10 +18,35 @@ The `template/` directory contains everything you copy into your project:
 
 ## Quick Start
 
-1. Copy the `template/` contents into your project root
-2. Follow `SETUP.md` to replace all `{{placeholders}}`
-3. Choose your Sentinel invocation method (see below)
-4. Run the verification command in SETUP.md to confirm no placeholders remain
+### Option A: New Project (no existing AGENTS.md)
+
+1. Copy the `template/` contents into your project root:
+   ```bash
+   cp -r template/* /path/to/your/project/
+   # or on Windows:
+   # Copy-Item -Recurse template\* C:\path\to\your\project\
+   ```
+2. Open your AI coding agent (Copilot CLI, Claude Code, Cursor, etc.) in the project
+3. Give it this prompt:
+
+   > **Read AGENTS.md and follow the First Run setup instructions. Scan my project files to auto-fill what you can, then ask me for anything you can't infer.**
+
+4. The agent will auto-configure everything, then delete the setup block when done
+
+### Option B: Existing Project (already has AGENTS.md)
+
+1. Copy the `template/` contents into your project root (your existing AGENTS.md will be backed up):
+   ```bash
+   # Back up first, then copy template
+   cp AGENTS.md AGENTS.md.backup
+   cp -r template/* /path/to/your/project/
+   ```
+2. Open your AI coding agent in the project
+3. Give it this prompt:
+
+   > **Read AGENTS.md and follow the Migration setup path. My project already has an AGENTS.md at AGENTS.md.backup — read it, extract all project-specific information, and use it to configure this template. Move verbose content to the companion docs. Ask me to confirm before finalizing.**
+
+4. The agent will read your old AGENTS.md, merge the info into the template, and ask you to confirm
 
 ## Which Sentinel Method?
 
