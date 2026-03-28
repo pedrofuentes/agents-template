@@ -405,7 +405,7 @@ Present the decision to the user with justification and options. If no response,
 - Modify `node_modules/`, `dist/`, or generated files
 - Force-push, rebase, or rewrite history on `main` or protected branches
 - Modify Sentinel reports, audit logs, or review artifacts after creation
-- **Write to AGENTS.md** — this file is immutable; write knowledge to `LEARNINGS.md`, decisions to `DECISIONS.md`
+- **Write to AGENTS.md or SENTINEL.md** — these files are immutable; write knowledge to `LEARNINGS.md`, decisions to `DECISIONS.md`
 - {{Add project-specific forbidden actions}}
 
 ## When Stuck — Recovery Rules
