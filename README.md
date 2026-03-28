@@ -26,7 +26,7 @@ Just give your AI coding agent one of these prompts — it handles everything:
 
 ### Existing Project (already has AGENTS.md or other agent config)
 
-> **Fetch the agents-template from https://github.com/pedrofuentes/agents-template — first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to `.agent-backup/`, then download all files from the `template/` directory into this project's root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Create symlinks for backward compatibility. Ask me to confirm before finalizing.**
+> **Fetch the agents-template from https://github.com/pedrofuentes/agents-template — first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to `.agent-backup/`, then download all files from the `template/` directory into this project's root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Ask me to confirm before finalizing.**
 
 ### Manual Setup (fallback)
 
