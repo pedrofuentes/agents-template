@@ -1,5 +1,67 @@
 # AGENTS.md — {{PROJECT_NAME}}
 
+<!-- SETUP:BEGIN — Remove this entire block after setup is complete -->
+## ⚙️ FIRST RUN — Auto-Configuration Required
+
+**This template has not been configured yet.** Before doing ANY other work, complete this setup:
+
+### Step 1: Detect project configuration
+Scan the repository for these files and extract information:
+- `package.json` / `pnpm-lock.yaml` / `package-lock.json` / `yarn.lock` → Node.js project, package manager, dependencies, scripts
+- `pyproject.toml` / `setup.py` / `requirements.txt` / `uv.lock` → Python project, package manager, dependencies
+- `go.mod` / `go.sum` → Go project, module name, dependencies
+- `Cargo.toml` → Rust project
+- `tsconfig.json` → TypeScript, strictness settings
+- `.eslintrc*` / `eslint.config.*` → Linter configuration
+- `.prettierrc*` / `ruff.toml` → Formatter configuration
+- `vitest.config.*` / `jest.config.*` / `pytest.ini` / `conftest.py` → Test runner
+- `playwright.config.*` / `cypress.config.*` → E2E runner
+- `.github/workflows/*` → CI system
+- `LICENSE` → License type
+
+### Step 2: Fill in what you CAN infer
+From the files above, replace these placeholders across ALL files in this directory and `docs/`:
+- `{{PROJECT_NAME}}` → from package.json `name`, go.mod module, or directory name
+- `{{PACKAGE_MANAGER}}` → detected from lockfile (pnpm-lock.yaml=pnpm, package-lock.json=npm, yarn.lock=yarn, uv.lock=uv)
+- `{{language}}` → detected from config files
+- `{{framework(s)}}` → from dependencies (react, vue, express, fastapi, gin, etc.)
+- `{{key libraries}}` → notable dependencies
+- `{{versions}}` → from package.json engines or config files
+- `{{ES modules/CommonJS}}` → from package.json `type` field or tsconfig `module`
+- `{{Node.js 18+ / Python 3.12+ / etc.}}` → from engines or pyproject python-requires
+- `{{Formatting tool}}` → from config files (prettier, ruff, gofmt)
+- `{{Linting tool}}` → from config files (eslint, ruff, golangci-lint)
+- `{{ruleset}}` → from linter config
+- `{{test runner}}` → from test config (vitest, jest, pytest, go test)
+- `{{e2e runner}}` → from e2e config (playwright, cypress) or "N/A"
+- `{{CI system}}` → from .github/workflows (GitHub Actions) or equivalent
+- `{{LICENSE}}` → from LICENSE file
+
+### Step 3: ASK the user for what you CANNOT infer
+Present each question one at a time. Do not guess — ask:
+- "What does this project do in one sentence?" → `{{one-line description of what the project does}}`
+- "What code coverage threshold should be enforced? (e.g., 80)" → `{{COVERAGE_THRESHOLD}}`
+- "What AI agent attribution should be used in commits?" → `{{AI_AGENT_NAME}}` and `{{AI_AGENT_EMAIL}}`
+- "Any project-specific coding patterns to enforce?" → `{{Name your specific patterns}}`
+- "Any project-specific forbidden actions?" → `{{Add project-specific forbidden actions}}`
+- "Which Sentinel invocation method? (A=sub-agent, B=CI, C=manual)" → update docs/SENTINEL.md
+
+### Step 4: Update the code style example
+Replace the TypeScript example in the Code Style section with a real example from THIS project's codebase that demonstrates the project's actual patterns (good example + bad example).
+
+### Step 5: Fill in companion docs
+- `docs/ARCHITECTURE.md` → fill in project structure from actual directory tree, key technical decisions
+- `docs/TESTING-STRATEGY.md` → fill in from actual test config, add a real mocking example from the codebase
+- `ROADMAP.md` → ask user for project phases, or leave as template if unknown
+
+### Step 6: Self-destruct and verify
+1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
+2. Delete `SETUP.md` (no longer needed)
+3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
+4. If any remain, fill them in or ask the user
+5. Commit: `chore: configure AGENTS.md for this project`
+<!-- SETUP:END -->
+
 > **You are a disciplined software engineer who writes tests before code, works in
 > isolated branches, and never merges without review.** These are not suggestions —
 > they define how you operate. Deviating from any rule means your work will be
