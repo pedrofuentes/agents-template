@@ -3,9 +3,95 @@
 <!-- SETUP:BEGIN — Remove this entire block after setup is complete -->
 ## ⚙️ FIRST RUN — Auto-Configuration Required
 
-**This template has not been configured yet.** Before doing ANY other work, complete this setup:
+**This template has not been configured yet.** Before doing ANY other work, determine which setup path applies:
 
-### Step 1: Detect project configuration
+- **Path A (New project)**: No existing AGENTS.md in the project → go to [New Project Setup](#new-project-setup)
+- **Path B (Migration)**: Project already has an AGENTS.md → go to [Migration from Existing AGENTS.md](#migration-from-existing-agentsmd)
+
+---
+
+### Migration from Existing AGENTS.md
+
+**Use this path when the project already has an AGENTS.md that needs to be upgraded to this template.**
+
+#### Step M1: Back up the original
+```bash
+cp AGENTS.md AGENTS.md.backup
+```
+
+#### Step M2: Read and extract from the existing AGENTS.md
+Read the backup file thoroughly. Extract ALL project-specific information into these categories:
+
+**Auto-extract (use directly):**
+- Project name and description
+- Tech stack, language, frameworks, versions
+- Package manager and commands (install, build, test, lint)
+- Commit message format and conventions
+- Branch naming conventions
+- Code style rules and examples
+- Any project-specific boundaries or forbidden actions
+
+**Identify content to move to companion docs:**
+- Review/CI processes (lengthy review panels, CI pipelines) → `docs/SENTINEL.md`
+- Project structure trees → `docs/ARCHITECTURE.md`
+- Detailed testing strategy → `docs/TESTING-STRATEGY.md`
+- Git workflow tutorials, worktree guides → `docs/DEVELOPMENT-WORKFLOW.md`
+- Architecture decisions, technical rationale → `docs/ARCHITECTURE.md`
+- Roadmap/phases → `ROADMAP.md`
+
+**Identify what's missing (will need to ask user):**
+- Coverage thresholds (if not specified)
+- AI agent attribution for commits
+- Sentinel invocation method preference
+- Any conventions implied but not documented
+
+#### Step M3: Fill this template
+Replace all `{{placeholders}}` in this AGENTS.md using the extracted information.
+Also fill in the companion docs in `docs/` with content moved from the original.
+
+For anything you extracted that doesn't fit the template structure, ask the user:
+_"Your original AGENTS.md contained [X]. Should I: (a) add it to [section], (b) move it to [companion doc], or (c) drop it?"_
+
+#### Step M4: Preserve unique rules
+If the original AGENTS.md has project-specific rules NOT covered by this template
+(e.g., domain-specific constraints, API conventions, deployment rules), add them to:
+- `{{Add project-specific forbidden actions}}` in the NEVER section
+- `{{Name your specific patterns}}` in the Code Style section
+- Or create a new section if they don't fit anywhere
+
+#### Step M5: Update code style example
+Replace the generic code example with a REAL example from this project's codebase
+that demonstrates the project's actual good/bad patterns.
+
+#### Step M6: Ask user to confirm
+Present a summary to the user:
+```
+Migration Summary:
+- Extracted from original: [list what was extracted]
+- Moved to companion docs: [list what moved where]
+- New sections added: [list what's new vs original]
+- Questions: [any unresolved items]
+
+The original AGENTS.md is backed up at AGENTS.md.backup.
+Approve this migration?
+```
+
+Wait for user approval before proceeding.
+
+#### Step M7: Self-destruct and verify
+1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
+2. Delete `SETUP.md` (no longer needed)
+3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
+4. Commit: `chore: migrate AGENTS.md to agents-template v4`
+5. The `.backup` file can be deleted after the user confirms everything works
+
+---
+
+### New Project Setup
+
+**Use this path when there is no existing AGENTS.md in the project.**
+
+#### Step 1: Detect project configuration
 Scan the repository for these files and extract information:
 - `package.json` / `pnpm-lock.yaml` / `package-lock.json` / `yarn.lock` → Node.js project, package manager, dependencies, scripts
 - `pyproject.toml` / `setup.py` / `requirements.txt` / `uv.lock` → Python project, package manager, dependencies
@@ -19,7 +105,7 @@ Scan the repository for these files and extract information:
 - `.github/workflows/*` → CI system
 - `LICENSE` → License type
 
-### Step 2: Fill in what you CAN infer
+#### Step 2: Fill in what you CAN infer
 From the files above, replace these placeholders across ALL files in this directory and `docs/`:
 - `{{PROJECT_NAME}}` → from package.json `name`, go.mod module, or directory name
 - `{{PACKAGE_MANAGER}}` → detected from lockfile (pnpm-lock.yaml=pnpm, package-lock.json=npm, yarn.lock=yarn, uv.lock=uv)
@@ -37,7 +123,7 @@ From the files above, replace these placeholders across ALL files in this direct
 - `{{CI system}}` → from .github/workflows (GitHub Actions) or equivalent
 - `{{LICENSE}}` → from LICENSE file
 
-### Step 3: ASK the user for what you CANNOT infer
+#### Step 3: ASK the user for what you CANNOT infer
 Present each question one at a time. Do not guess — ask:
 - "What does this project do in one sentence?" → `{{one-line description of what the project does}}`
 - "What code coverage threshold should be enforced? (e.g., 80)" → `{{COVERAGE_THRESHOLD}}`
@@ -46,15 +132,15 @@ Present each question one at a time. Do not guess — ask:
 - "Any project-specific forbidden actions?" → `{{Add project-specific forbidden actions}}`
 - "Which Sentinel invocation method? (A=sub-agent, B=CI, C=manual)" → update docs/SENTINEL.md
 
-### Step 4: Update the code style example
+#### Step 4: Update the code style example
 Replace the TypeScript example in the Code Style section with a real example from THIS project's codebase that demonstrates the project's actual patterns (good example + bad example).
 
-### Step 5: Fill in companion docs
+#### Step 5: Fill in companion docs
 - `docs/ARCHITECTURE.md` → fill in project structure from actual directory tree, key technical decisions
 - `docs/TESTING-STRATEGY.md` → fill in from actual test config, add a real mocking example from the codebase
 - `ROADMAP.md` → ask user for project phases, or leave as template if unknown
 
-### Step 6: Self-destruct and verify
+#### Step 6: Self-destruct and verify
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
