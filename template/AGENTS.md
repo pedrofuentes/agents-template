@@ -99,16 +99,7 @@ Approve this migration?
 
 Wait for user approval before proceeding.
 
-#### Step M7: Create compatibility symlinks
-To maintain backward compatibility with tool-specific files, create symlinks:
-```bash
-ln -s AGENTS.md CLAUDE.md                              # Claude Code
-ln -s AGENTS.md .github/copilot-instructions.md        # GitHub Copilot
-# Note: .cursorrules may need a copy instead of symlink depending on Cursor version
-```
-Ask the user which tools they use and create the appropriate symlinks.
-
-#### Step M8: Self-destruct and verify
+#### Step M7: Self-destruct and verify
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
