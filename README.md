@@ -111,6 +111,20 @@ Each cycle ratchets quality up. The Sentinel never lowers its standards. The loo
 
 This template was refined through **24 expert AI reviews across 8 different models** (Claude Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See `MIGRATION-GUIDE.md` for the full evolution history.
 
+## Battle-Tested
+
+Live-tested on [gitnotate](https://github.com/pedrofuentes/gitnotate) (96 commits, 128 files, ~18K lines). Results:
+
+- **Sentinel caught a real XSS vulnerability** (innerHTML injection) the agent would have shipped
+- **Coverage jumped** from 45% to 98% on undertested packages
+- **TDD choreography violations detected** and documented as process debt
+- **Quality ratchet loop worked autonomously** — agent invoked Sentinel, got REJECTED, fixed findings, re-invoked without being told
+- **3 memory leaks** (MutationObserver, event listeners) caught and fixed
+- **Unicode crash** (btoa on emoji/CJK) caught and fixed
+- **5 CVEs** in transitive dependencies flagged and resolved
+
+Every gap found during testing was fed back into the template to make it stronger.
+
 ## License
 
 MIT
