@@ -83,16 +83,18 @@ Coding Agent writes code (TDD, worktrees, small increments)
          ↓
 Sentinel (separate sub-agent) reviews
          ↓
-    ❌ REJECTED → Coding Agent fixes → Sentinel reviews again
+    ❌ REJECTED → Coding Agent fixes → Sentinel reviews again (max 3 cycles)
          ↓                                    ↑
          └────────── loop until ──────────────┘
          ↓
-    ✅ APPROVED → merge to main
+    ✅ APPROVED → record baseline SHA → merge to main
          ↓
-    Next increment → same loop
+    Track 🟡 findings as follow-up PRs → same loop
+         ↓
+    3× REJECTED on same issue? → 🚨 escalate to human
 ```
 
-Each cycle ratchets quality up. The Sentinel never lowers its standards. The loop only exits when the quality threshold is met.
+Each cycle ratchets quality up. The Sentinel never lowers its standards. The loop only exits when the quality threshold is met or a human takes over.
 
 ## Key Features
 
