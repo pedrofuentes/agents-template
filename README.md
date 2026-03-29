@@ -74,10 +74,32 @@ Most tools (Cursor, Windsurf, Claude Code) cache instructions at session start. 
 | Python | uv / pip | pytest | ruff | ruff |
 | Go | (native) | go test | gofmt | golangci-lint |
 
+## How It Works — The Quality Ratchet
+
+The system enforces a continuous improvement loop. The coding agent and the Sentinel are **always separate** — the agent that wrote the code never reviews its own work.
+
+```
+Coding Agent writes code (TDD, worktrees, small increments)
+         ↓
+Sentinel (separate sub-agent) reviews
+         ↓
+    ❌ REJECTED → Coding Agent fixes → Sentinel reviews again
+         ↓                                    ↑
+         └────────── loop until ──────────────┘
+         ↓
+    ✅ APPROVED → merge to main
+         ↓
+    Next increment → same loop
+```
+
+Each cycle ratchets quality up. The Sentinel never lowers its standards. The loop only exits when the quality threshold is met.
+
 ## Key Features
 
 - **TDD defense in depth** — Layer 1 (STOP checkpoint verbs) + Layer 2 (Sentinel verification)
-- **Sentinel quality gate** — 4 consolidated review agents with anti-prompt-injection
+- **Sentinel quality gate** — 4 independent review agents with anti-prompt-injection
+- **Quality ratchet** — continuous improvement loop until Sentinel approves
+- **Separation of concerns** — the coder ≠ the reviewer, always
 - **Autonomous workflow** — Plan → Approve → Execute → Sentinel → Merge
 - **4-tier boundaries** — ALWAYS / ASK FIRST / HUMAN REQUIRED / NEVER
 - **Commit choreography** — `test(red)` → `feat(green)` → `refactor` with exemptions
