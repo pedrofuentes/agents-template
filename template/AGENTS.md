@@ -259,7 +259,9 @@ For each logical unit in the plan:
 3. **Implement minimal code** to pass tests
 4. **Refactor** while keeping tests green
 5. **Delegate to sub-agents** for specialized work when needed
-6. Open PR → **STOP and invoke Sentinel** → address feedback → merge when approved
+6. Open PR — **then STOP. Do NOT merge yet.**
+7. **Invoke Sentinel** (see §Sentinel below). Wait for the Sentinel Report.
+8. If REJECTED → fix → re-invoke. If APPROVED → merge. **No merge without Sentinel approval.**
 
 ## Test-Driven Development — REQUIRED (Layer 1: Self-Enforced)
 
