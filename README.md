@@ -49,10 +49,13 @@ Most tools (Cursor, Windsurf, Claude Code) cache instructions at session start. 
 ## Invoking Sentinel
 
 ### Before a merge (standard)
-> **STOP. Before merging, invoke the Sentinel. Read `docs/SENTINEL.md` and run the full verification process on this PR: TDD compliance check, then run all 4 review agents against the diff. Produce the Sentinel Report and tell me the decision.**
+> **STOP. Before merging, invoke the Sentinel. Create a sub-agent with `docs/SENTINEL.md` as its system prompt — it IS the Sentinel. Provide it the PR diff (`git diff main...HEAD`), the branch name, and list of changed files. The Sentinel will spawn its own review sub-agents, run the full verification process, and return the Sentinel Report. Do NOT review your own code — the Sentinel is a separate agent. Tell me the decision.**
 
 ### Post-merge audit (if Sentinel was skipped)
-> **Run a post-merge Sentinel audit. Read `docs/SENTINEL.md` and run the full verification process against the last merge commit (`git diff HEAD~1`). Produce the Sentinel Report. If any 🔴 CRITICAL findings exist, create follow-up issues or fix commits.**
+> **Run a post-merge Sentinel audit. Create a sub-agent with `docs/SENTINEL.md` as its system prompt. Provide it the last merge diff (`git diff HEAD~1`). The Sentinel will run the full verification process and produce the Sentinel Report. If any 🔴 CRITICAL findings exist, create follow-up fix commits.**
+
+### Fallback (no sub-agent support)
+> **Read `docs/SENTINEL.md` and act as the Sentinel — run every check in the verification process against the current PR diff. Note: self-review is lower trust than a separate sub-agent.**
 
 ## Which Sentinel Method?
 

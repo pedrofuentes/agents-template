@@ -302,13 +302,14 @@ All exempted commits still require the full test suite to pass.
 you MUST invoke Sentinel first. User approval of the work does NOT replace Sentinel review.
 Passing tests and linting is NOT a substitute for Sentinel. Run this procedure:
 
-1. Create a sub-agent with the contents of `docs/SENTINEL.md` as its system prompt
+1. Create a **separate sub-agent** with the contents of `docs/SENTINEL.md` as its system prompt — this sub-agent IS the Sentinel
 2. Provide it: the PR diff (`git diff main...HEAD`), branch name, and list of changed files
-3. The sub-agent runs verification and returns a Sentinel Report
-4. If **REJECTED**: fix the issues, re-commit, re-invoke. Loop until approved.
-5. If **APPROVED**: include Report ID and reviewed SHA in the PR description, then merge.
+3. **Do NOT review your own code** — the Sentinel is an independent agent. Do not influence its decision.
+4. The Sentinel will spawn its own review sub-agents and return a Sentinel Report
+5. If **REJECTED**: fix the issues, re-commit, re-invoke. Loop until approved.
+6. If **APPROVED**: include Report ID and reviewed SHA in the PR description, then merge.
 
-> If sub-agents are not available: open `docs/SENTINEL.md` and manually run each check.
+> If sub-agents are not available: read `docs/SENTINEL.md` and run each check yourself (lower trust — self-review).
 > If you cannot run Sentinel at all, **do NOT merge** — escalate to the user.
 
 **For production projects**: Use CI-based Sentinel (GitHub Actions) as a required status check.
