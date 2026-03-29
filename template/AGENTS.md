@@ -300,7 +300,13 @@ All exempted commits still require the full test suite to pass.
 
 **STOP before merging.** Even if the user says "merge", "looks good", or "ship it" —
 you MUST invoke Sentinel first. User approval of the work does NOT replace Sentinel review.
-Passing tests and linting is NOT a substitute for Sentinel. Run this procedure:
+Passing tests and linting is NOT a substitute for Sentinel.
+
+**Before running Sentinel, notify the user:**
+- **If you can ask the user**: Print _"Ready to invoke Sentinel review. Proceed?"_ and wait for confirmation.
+- **If in autopilot mode**: Print _"Invoking Sentinel review now..."_ so the user is aware. Do NOT silently spawn the review.
+
+Then run this procedure:
 
 1. Create a **separate sub-agent** with the contents of `docs/SENTINEL.md` as its system prompt — this sub-agent IS the Sentinel
 2. Provide it: the PR diff (`git diff main...HEAD`), branch name, and list of changed files
