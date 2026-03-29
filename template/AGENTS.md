@@ -329,6 +329,11 @@ This is more reliable than agent-invoked Sentinel. See `docs/SENTINEL.md` §Infr
 3. **Prioritizes findings** — 🔴 CRITICAL (blocks) / 🟡 IMPORTANT (fix or track) / 🟢 MINOR (informational)
 4. **Decides** — APPROVE, CONDITIONAL APPROVE (🟡 items tracked as follow-up), or REJECT
 
+### After Sentinel Approves or After Remediation
+- **If APPROVED**: Record the Report ID and reviewed SHA in the merge commit. This becomes a **Sentinel-approved baseline**.
+- **If REJECTED → you fix → re-run Sentinel**: The fix commits themselves MUST also be audited by Sentinel. Remediation commits on main without re-audit defeat the purpose. **Always re-invoke Sentinel after fixing CRITICAL findings until you get an APPROVED verdict.**
+- **After approval**: Track any 🟡 IMPORTANT findings as follow-up tasks — each one becomes a future PR through the full quality ratchet cycle.
+
 → See [`docs/SENTINEL.md`](./docs/SENTINEL.md) for the full verification checklist, review agent definitions, and workflow.
 
 ### Compounding Quality — Learn from Every Rejection
