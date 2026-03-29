@@ -46,6 +46,14 @@ Once the agent finishes configuring AGENTS.md, **start a new agent session** bef
 
 Most tools (Cursor, Windsurf, Claude Code) cache instructions at session start. A new session guarantees the agent operates under the configured rules.
 
+## Invoking Sentinel
+
+### Before a merge (standard)
+> **STOP. Before merging, invoke the Sentinel. Read `docs/SENTINEL.md` and run the full verification process on this PR: TDD compliance check, then run all 4 review agents against the diff. Produce the Sentinel Report and tell me the decision.**
+
+### Post-merge audit (if Sentinel was skipped)
+> **Run a post-merge Sentinel audit. Read `docs/SENTINEL.md` and run the full verification process against the last merge commit (`git diff HEAD~1`). Produce the Sentinel Report. If any 🔴 CRITICAL findings exist, create follow-up issues or fix commits.**
+
 ## Which Sentinel Method?
 
 | Your Setup | Method | Notes |

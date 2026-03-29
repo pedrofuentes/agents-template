@@ -102,12 +102,21 @@ Approve this migration?
 
 Wait for user approval before proceeding.
 
-#### Step M7: Self-destruct and verify
+#### Step M7: Configure branch protection (Layer 2 enforcement)
+Ask the user: _"Should I enable branch protection on `main` to enforce Sentinel reviews? (recommended)"_
+
+If yes, configure via GitHub CLI or instruct user to set up manually:
+- ✅ Require a pull request before merging
+- ✅ Require status checks to pass (add `sentinel` when CI is configured)
+- ✅ Do not allow force pushes or deletions on `main`
+
+#### Step M8: Self-destruct and verify
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
-5. The `.backup` file can be deleted after the user confirms everything works
+4. Commit: `chore: migrate AGENTS.md to agents-template v4`
+5. The `.agent-backup/` can be deleted after the user confirms everything works
 
 ---
 
@@ -164,7 +173,24 @@ Replace the TypeScript example in the Code Style section with a real example fro
 - `docs/TESTING-STRATEGY.md` → fill in from actual test config, add a real mocking example from the codebase
 - `ROADMAP.md` → ask user for project phases, or leave as template if unknown
 
-#### Step 6: Self-destruct and verify
+#### Step 6: Configure branch protection (Layer 2 enforcement)
+Ask the user: _"Should I enable branch protection on `main` to enforce Sentinel reviews? (recommended)"_
+
+If yes, use the GitHub API to configure:
+```bash
+gh api repos/{owner}/{repo}/branches/main/protection -X PUT -f "required_status_checks[strict]=true" \
+  -f "enforce_admins=true" -f "required_pull_request_reviews[required_approving_review_count]=1" \
+  -f "restrictions=null"
+```
+
+Or instruct the user to configure manually in GitHub → Settings → Branches → Branch protection rules:
+- ✅ Require a pull request before merging
+- ✅ Require status checks to pass (add `sentinel` when CI is configured)
+- ✅ Require branches to be up to date
+- ✅ Do not allow force pushes
+- ✅ Do not allow deletions
+
+#### Step 7: Self-destruct and verify
 1. Delete this entire block (from `<!-- SETUP:BEGIN -->` to `<!-- SETUP:END -->`)
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
