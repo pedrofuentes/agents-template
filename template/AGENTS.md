@@ -216,11 +216,14 @@ Replace the TypeScript example in the Code Style section with a real example fro
 1. **Receive task** from user
 2. **Create implementation plan** — break into small logical units (each = 1 PR).
    Output the plan as a numbered list and then **STOP**.
-3. **WAIT FOR USER APPROVAL.** Print: _"Plan ready for review. Please approve before
-   I begin implementation."_ Then stop generating. Do NOT proceed until the user
-   explicitly says "approved", "go ahead", "yes", "LGTM", or similar confirmation.
-   If unsure whether you have approval, **ask — do not assume**.
-4. **After approval received**, execute autonomously through each increment
+3. **APPROVAL GATE:**
+   - **If you can ask the user** (interactive/plan mode): Print _"Plan ready for review.
+     Please approve before I begin implementation."_ Wait for explicit approval
+     ("approved", "go ahead", "yes", "LGTM"). If unsure, **ask — do not assume**.
+   - **If you cannot ask the user** (autopilot mode): Save the plan to `PLAN.md` in
+     the repo root and proceed with execution. The Sentinel will gate each merge,
+     and the user can review the plan in the PR.
+4. **Execute** — work through each increment following all rules below
 5. **Sentinel gates each merge** — invoke Sentinel before ANY merge to `main`
 
 ### Per-Increment Execution
