@@ -331,6 +331,34 @@ This is more reliable than agent-invoked Sentinel. See `docs/SENTINEL.md` §Infr
 
 → See [`docs/SENTINEL.md`](./docs/SENTINEL.md) for the full verification checklist, review agent definitions, and workflow.
 
+### Compounding Quality — Learn from Every Rejection
+When Sentinel rejects a PR, **record the violation-correction pair in `LEARNINGS.md`**:
+- What was wrong, why it was wrong, how it was fixed
+- Future agents read LEARNINGS.md and avoid repeating the same mistakes
+- Quality compounds over time — the same violation should never occur twice
+
+### Never-Decrease Rule
+Code quality metrics can NEVER go down. Every PR must maintain or improve:
+- Test coverage percentage (never decrease)
+- Total passing test count (never decrease)
+- Zero linting errors (never introduce new ones)
+- Zero 🔴 CRITICAL Sentinel findings from previous reviews
+
+If a PR would decrease any metric, it MUST be reworked before Sentinel will approve.
+
+### Enforcement Ladder
+Rules operate at different enforcement levels. When a rule is violated, escalate it:
+
+| Level | Mechanism | Strength | Example |
+|-------|-----------|----------|---------|
+| L1 | AGENTS.md rules | Soft — agent may ignore | "Use descriptive names" |
+| L2 | Companion docs | Medium — requires reading | SENTINEL.md checklists |
+| L3 | Commit choreography | Structural — pattern enforced | test→feat→refactor commits |
+| L4 | Automated tests | Hard — blocks commit | TDD, test suite must pass |
+| L5 | Infrastructure | Unbypassable — physically enforced | Branch protection, CI required checks |
+
+**Escalation rule**: If a violation recurs after being caught at L1-L3, escalate it to L4 (write a test that enforces the rule) or L5 (add a CI check). Record the escalation in `LEARNINGS.md`.
+
 ## Incremental Development — REQUIRED
 
 - **1 PR = 1 logical unit** (one function, one component, one bugfix)
