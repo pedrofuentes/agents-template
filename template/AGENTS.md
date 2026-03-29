@@ -270,9 +270,11 @@ All exempted commits still require the full test suite to pass.
 
 **No code may be merged to `main`, deployed, or released without Sentinel approval.**
 
-### How to Invoke (do this before EVERY merge)
+### How to Invoke (do this before EVERY merge — no exceptions)
 
-**STOP before merging.** Run this procedure:
+**STOP before merging.** Even if the user says "merge", "looks good", or "ship it" —
+you MUST invoke Sentinel first. User approval of the work does NOT replace Sentinel review.
+Passing tests and linting is NOT a substitute for Sentinel. Run this procedure:
 
 1. Create a sub-agent with the contents of `docs/SENTINEL.md` as its system prompt
 2. Provide it: the PR diff (`git diff main...HEAD`), branch name, and list of changed files
