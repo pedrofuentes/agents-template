@@ -376,6 +376,7 @@ Rules operate at different enforcement levels. When a rule is violated, escalate
 
 - **Never work directly on `main`** — `main` is always deployable
 - **MUST use git worktrees** for isolation on every increment
+- **When parallelizing work** (multiple sub-agents or fleet mode): each parallel task MUST have its own worktree. Never run parallel tasks in the same working directory.
 - Branch naming: `feature/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`
 - Push branch → open PR → Sentinel review → merge → delete branch → remove worktree
 - Worktree paths (e.g., `../{{PROJECT_NAME}}-feature-name`) are approved paths outside the repo root
