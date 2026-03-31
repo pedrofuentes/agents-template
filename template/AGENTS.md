@@ -333,7 +333,7 @@ This is more reliable than agent-invoked Sentinel. See `docs/SENTINEL.md` §Infr
 - **If APPROVED**: Record the Report ID and reviewed SHA in the merge commit. This becomes a **Sentinel-approved baseline**.
 - **If REJECTED → you fix → re-run Sentinel**: The fix commits themselves MUST also be audited by Sentinel. Remediation commits on main without re-audit defeat the purpose. **Always re-invoke Sentinel after fixing CRITICAL findings until you get an APPROVED verdict.**
 - **Maximum 3 Sentinel cycles per PR.** If still REJECTED after 3 cycles, STOP — escalate to the user. Three failures on the same work means the approach needs human judgment, not another retry.
-- **After approval**: Track any 🟡 IMPORTANT findings as follow-up tasks — each one becomes a future PR through the full quality ratchet cycle.
+- **After approval**: Create **GitHub issues** for all 🟡 IMPORTANT and 🟢 MINOR findings from the Sentinel Report. Label them appropriately (`sentinel:important`, `sentinel:minor`). These become the backlog for future PRs through the quality ratchet cycle.
 
 → See [`docs/SENTINEL.md`](./docs/SENTINEL.md) for the full verification checklist, review agent definitions, and workflow.
 
