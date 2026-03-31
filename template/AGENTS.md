@@ -377,9 +377,17 @@ Rules operate at different enforcement levels. When a rule is violated, escalate
 - **Never work directly on `main`** — `main` is always deployable
 - **MUST use git worktrees** for isolation on every increment
 - **When parallelizing work** (multiple sub-agents or fleet mode): each parallel task MUST have its own worktree. Never run parallel tasks in the same working directory.
+- **Worktree location**: Create worktrees inside `.worktrees/` directory in the project root (this directory is gitignored):
+  ```bash
+  git worktree add .worktrees/feature-name feature/feature-name
+  ```
 - Branch naming: `feature/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`
-- Push branch → open PR → Sentinel review → merge → delete branch → remove worktree
-- Worktree paths (e.g., `../{{PROJECT_NAME}}-feature-name`) are approved paths outside the repo root
+- **Cleanup after merge**: After a branch is merged, you MUST remove its worktree and delete the branch:
+  ```bash
+  git worktree remove .worktrees/feature-name
+  git branch -d feature/feature-name
+  ```
+  Do NOT leave stale worktrees. Clean up immediately after merge.
 
 ## Sub-Agent Delegation
 

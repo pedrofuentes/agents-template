@@ -24,3 +24,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Git worktrees
+.worktrees/
+
+# Agent backups
+.agent-backup/
