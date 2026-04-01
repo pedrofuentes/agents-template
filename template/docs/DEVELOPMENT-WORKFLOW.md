@@ -12,13 +12,13 @@ Every increment MUST use a git worktree for isolation:
 
 ```bash
 # Create a worktree for a specific feature
-git worktree add ../{{PROJECT_NAME}}-feature-name feature/feature-name
+git worktree add .worktrees/feature-name feature/feature-name
 
 # List active worktrees
 git worktree list
 
 # Remove a worktree when done (after merge)
-git worktree remove ../{{PROJECT_NAME}}-feature-name
+git worktree remove .worktrees/feature-name
 ```
 
 ### Why Worktrees Are Required
@@ -30,7 +30,7 @@ git worktree remove ../{{PROJECT_NAME}}-feature-name
 ## Branching Details
 
 ### Branch Lifecycle
-1. Create worktree + branch from `main`: `git worktree add ../{{PROJECT_NAME}}-name feature/name`
+1. Create worktree + branch from `main`: `git worktree add .worktrees/name feature/name`
 2. TDD: write failing tests, implement, refactor
 3. Commit following the format in AGENTS.md
 4. Push and open a Pull Request

@@ -2,6 +2,8 @@
 
 This document maps sections from a typical pre-template AGENTS.md to their new locations in the two-tier system, and documents all new content added.
 
+> **Note:** Git worktrees are created inside `.worktrees/` in the project root (gitignored). See `AGENTS.md` §Branching & Worktrees for the canonical convention.
+
 ---
 
 ## What Changed (v1 → v4)
@@ -77,4 +79,7 @@ This document maps sections from a typical pre-template AGENTS.md to their new l
 | `docs/ARCHITECTURE.md` | ~50 | Project structure, technical decisions |
 | `docs/TESTING-STRATEGY.md` | ~85 | Test types, coverage, patterns, TDD verification details |
 | `docs/DEVELOPMENT-WORKFLOW.md` | ~58 | Worktrees, branching, PR process, sub-agent delegation |
+| `LEARNINGS.md` | ~10 | Lessons learned log — patterns, gotchas, and insights |
+| `DECISIONS.md` | ~10 | Architecture decision records |
+| `CHANGELOG.md` | ~10 | Release history and notable changes |
 | `MIGRATION-GUIDE.md` | this file | Migration mapping, what changed, what was added |

@@ -89,7 +89,7 @@ Sentinel (separate sub-agent) reviews
          ↓
     ✅ APPROVED → record baseline SHA → merge to main
          ↓
-    Track 🟡 findings as follow-up PRs → same loop
+    Create GitHub issues for 🟡/🟢 findings → follow-up PRs → same loop
          ↓
     3× REJECTED on same issue? → 🚨 escalate to human
 ```
@@ -116,6 +116,7 @@ This template was refined through **24 expert AI reviews across 8 different mode
 Live-tested on [gitnotate](https://github.com/pedrofuentes/gitnotate) (96 commits, 128 files, ~18K lines). Results:
 
 - **Sentinel caught a real XSS vulnerability** (innerHTML injection) the agent would have shipped
+- **Pre-merge checklist gate** prevents agents from merging without Sentinel — even for 1-line fixes
 - **Coverage jumped** from 45% to 98% on undertested packages
 - **TDD choreography violations detected** and documented as process debt
 - **Quality ratchet loop worked autonomously** — agent invoked Sentinel, got REJECTED, fixed findings, re-invoked without being told
