@@ -301,10 +301,13 @@ All exempted commits still require the full test suite to pass.
 **No fix is too small for Sentinel.** A 1-line change can introduce a security vulnerability or break an invariant. Size is not a proxy for risk. If you catch yourself thinking "this is too small to review," that is the exact moment you MUST invoke Sentinel.
 
 ### Testing & Iteration Workflow
-During manual testing or rapid fix-test-fix cycles, you do NOT need to run Sentinel on every individual commit. Instead:
-1. Work on a **feature/fix branch** — commit freely as you iterate
-2. Run Sentinel **once** when all testing and fixes are done, before merging the branch to `main`
-3. The Sentinel reviews the **entire branch diff** — all commits are covered in one review
+When entering a manual testing phase (user says "let's test", "test this", or testing begins after a milestone merge):
+1. **Immediately create a testing branch**: `git checkout -b test/[scope]-testing` — do NOT make fixes directly on `main`
+2. Commit fixes freely on the testing branch as issues are found
+3. Run Sentinel **once** when all testing and fixes are done, before merging the branch to `main`
+4. The Sentinel reviews the **entire branch diff** — all commits are covered in one review
+
+**If you are on `main` and the user reports a bug or asks for a fix during testing, STOP — create a branch first.**
 
 Sentinel gates the **merge to main**, not every individual commit on a branch.
 
