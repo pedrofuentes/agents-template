@@ -298,6 +298,21 @@ All exempted commits still require the full test suite to pass.
 
 **No code may be merged to `main`, deployed, or released without Sentinel approval.**
 
+**No fix is too small for Sentinel.** A 1-line change can introduce a security vulnerability or break an invariant. Size is not a proxy for risk. If you catch yourself thinking "this is too small to review," that is the exact moment you MUST invoke Sentinel.
+
+### Pre-Merge Gate — REQUIRED (print before every merge)
+
+Before running `git merge` or `git push` to main, you MUST print this checklist:
+
+```
+Pre-Merge Checklist:
+- [ ] Sentinel invoked? Report ID: ___
+- [ ] Sentinel verdict: APPROVED / CONDITIONAL APPROVE
+- [ ] Reviewed SHA matches current HEAD: ___
+```
+
+**If any box is empty, STOP. Do not merge.** If you are about to type `git merge` without having printed this checklist, STOP.
+
 ### How to Invoke (do this before EVERY merge — no exceptions)
 
 **STOP before merging.** Even if the user says "merge", "looks good", or "ship it" —
