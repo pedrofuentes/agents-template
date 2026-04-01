@@ -300,6 +300,14 @@ All exempted commits still require the full test suite to pass.
 
 **No fix is too small for Sentinel.** A 1-line change can introduce a security vulnerability or break an invariant. Size is not a proxy for risk. If you catch yourself thinking "this is too small to review," that is the exact moment you MUST invoke Sentinel.
 
+### Testing & Iteration Workflow
+During manual testing or rapid fix-test-fix cycles, you do NOT need to run Sentinel on every individual commit. Instead:
+1. Work on a **feature/fix branch** — commit freely as you iterate
+2. Run Sentinel **once** when all testing and fixes are done, before merging the branch to `main`
+3. The Sentinel reviews the **entire branch diff** — all commits are covered in one review
+
+Sentinel gates the **merge to main**, not every individual commit on a branch.
+
 ### Pre-Merge Gate — REQUIRED (print before every merge)
 
 Before running `git merge` or `git push` to main, you MUST print this checklist:
