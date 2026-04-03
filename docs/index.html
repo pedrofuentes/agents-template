@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>agents-template — The Operating System for AI Coding Agents</title>
+  <meta name="description" content="Battle-tested template with TDD enforcement, Sentinel quality gates, and quality ratchet loops for autonomous AI coding agents.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+       RESET & FOUNDATION
+       ═══════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* Observatory palette */
+      --bg-deep:      #080a14;
+      --bg-base:      #0c0f1a;
+      --bg-surface:   #131726;
+      --bg-elevated:  #1a1f33;
+      --bg-hover:     #222840;
+
+      --accent:       #d4a017;
+      --accent-bright:#f0bc3e;
+      --accent-dim:   #9a7510;
+      --accent-glow:  rgba(212, 160, 23, 0.12);
+      --accent-glow2: rgba(212, 160, 23, 0.06);
+
+      --green:        #34d399;
+      --green-dim:    rgba(52, 211, 153, 0.15);
+      --red:          #f87171;
+      --red-dim:      rgba(248, 113, 113, 0.15);
+      --blue:         #60a5fa;
+
+      --text-primary: #e2e4ec;
+      --text-secondary:#8b8fa8;
+      --text-muted:   #5c6078;
+      --border:       #1e2238;
+      --border-light: #2a2f48;
+
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+
+      --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-bright); }
+
+    /* ═══════════════════════════════════════
+       BACKGROUND EFFECTS
+       ═══════════════════════════════════════ */
+    .starfield {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.15) 50%, transparent 100%),
+        radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.1) 50%, transparent 100%),
+        radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.12) 50%, transparent 100%),
+        radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.08) 50%, transparent 100%),
+        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.1) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 15% 85%, rgba(212,160,23,0.2) 50%, transparent 100%),
+        radial-gradient(1px 1px at 45% 35%, rgba(255,255,255,0.08) 50%, transparent 100%),
+        radial-gradient(1px 1px at 65% 75%, rgba(255,255,255,0.06) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 85% 15%, rgba(212,160,23,0.15) 50%, transparent 100%),
+        radial-gradient(1px 1px at 25% 45%, rgba(255,255,255,0.1) 50%, transparent 100%),
+        radial-gradient(1px 1px at 55% 90%, rgba(255,255,255,0.07) 50%, transparent 100%),
+        radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,0.09) 50%, transparent 100%),
+        radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.11) 50%, transparent 100%),
+        radial-gradient(1px 1px at 95% 30%, rgba(255,255,255,0.08) 50%, transparent 100%),
+        radial-gradient(1px 1px at 35% 15%, rgba(255,255,255,0.06) 50%, transparent 100%);
+    }
+
+    .grid-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.12;
+      mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 20%, transparent 70%);
+    }
+
+    /* ═══════════════════════════════════════
+       NAVIGATION
+       ═══════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8, 10, 20, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(30, 34, 56, 0.5);
+      transition: background 0.3s;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo .sentinel-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent), 0 0 20px rgba(212,160,23,0.3);
+      animation: pulse-dot 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent), 0 0 20px rgba(212,160,23,0.3); }
+      50% { opacity: 0.6; box-shadow: 0 0 4px var(--accent), 0 0 10px rgba(212,160,23,0.15); }
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    .nav-github {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-secondary) !important;
+      transition: all 0.2s;
+    }
+
+    .nav-github:hover {
+      border-color: var(--accent-dim);
+      color: var(--text-primary) !important;
+      background: var(--accent-glow2);
+    }
+
+    .nav-github svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ═══════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════ */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem 4rem;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(212,160,23,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 860px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border: 1px solid var(--border-light);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      background: var(--bg-surface);
+      animation: fadeInUp 0.8s var(--ease-out) both;
+    }
+
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(52,211,153,0.5);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 4.8rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s var(--ease-out) 0.1s both;
+    }
+
+    .hero h1 .accent {
+      color: var(--accent);
+      position: relative;
+    }
+
+    .hero h1 .accent::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent);
+      opacity: 0.3;
+      border-radius: 2px;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+      animation: fadeInUp 0.8s var(--ease-out) 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 4rem;
+      animation: fadeInUp 0.8s var(--ease-out) 0.3s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: var(--bg-deep);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-bright);
+      color: var(--bg-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(212,160,23,0.3);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    /* Terminal mockup */
+    .hero-terminal {
+      max-width: 640px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      background: var(--bg-base);
+      text-align: left;
+      animation: fadeInUp 0.8s var(--ease-out) 0.4s both;
+      box-shadow:
+        0 4px 24px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(212,160,23,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: #ff5f56; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #27c93f; }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-right: 2rem;
+    }
+
+    .terminal-body {
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.8;
+      min-height: 280px;
+    }
+
+    .terminal-line {
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .terminal-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .terminal-line .prompt { color: var(--accent); }
+    .terminal-line .command { color: var(--text-primary); }
+    .terminal-line .comment { color: var(--text-muted); }
+    .terminal-line .success { color: var(--green); }
+    .terminal-line .error { color: var(--red); }
+    .terminal-line .info { color: var(--blue); }
+    .terminal-line .dim { color: var(--text-secondary); }
+    .terminal-line .separator { color: var(--accent-dim); }
+
+    .terminal-line .blink-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--accent);
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .verdict-box {
+      margin-top: 0.5rem;
+      padding: 0.5rem 0;
+    }
+
+    /* ═══════════════════════════════════════
+       SECTIONS COMMON
+       ═══════════════════════════════════════ */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--accent-dim);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s var(--ease-out);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ═══════════════════════════════════════
+       PROBLEM SECTION
+       ═══════════════════════════════════════ */
+    .problem {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-base) 100%);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .problem-card {
+      padding: 1.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .problem-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    .problem-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .problem-icon.warn { background: var(--red-dim); color: var(--red); }
+    .problem-icon.risk { background: rgba(251, 191, 36, 0.12); color: #fbbf24; }
+    .problem-icon.loss { background: rgba(96, 165, 250, 0.12); color: var(--blue); }
+
+    .problem-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .problem-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════
+       FEATURES
+       ═══════════════════════════════════════ */
+    .features {
+      background: var(--bg-base);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 40px var(--accent-glow2);
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-number {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-dim);
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+
+    .feature-card .tagline {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      opacity: 0.85;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    /* ═══════════════════════════════════════
+       HOW IT WORKS
+       ═══════════════════════════════════════ */
+    .workflow {
+      background: linear-gradient(180deg, var(--bg-base) 0%, var(--bg-deep) 100%);
+    }
+
+    .workflow-steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-top: 3.5rem;
+      position: relative;
+    }
+
+    .workflow-step {
+      flex: 1;
+      text-align: center;
+      padding: 0 1rem;
+      position: relative;
+    }
+
+    .workflow-step::after {
+      content: '';
+      position: absolute;
+      top: 24px;
+      right: -10%;
+      width: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-dim), var(--border));
+    }
+
+    .workflow-step:last-child::after { display: none; }
+
+    .step-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      transition: all 0.3s;
+    }
+
+    .workflow-step:hover .step-icon {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--accent-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .workflow-step h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .workflow-step p {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════
+       RESULTS / BATTLE-TESTED
+       ═══════════════════════════════════════ */
+    .results {
+      background: var(--bg-deep);
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .results-header .section-sub {
+      margin: 0 auto;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    .result-card {
+      text-align: center;
+      padding: 2rem 1.25rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .result-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+    }
+
+    .result-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .result-stat {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+
+    .result-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ═══════════════════════════════════════
+       QUICK START — TABS
+       ═══════════════════════════════════════ */
+    .quickstart {
+      background: var(--bg-base);
+    }
+
+    .qs-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 2.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+
+    .qs-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: -1px;
+    }
+
+    .qs-tab:hover {
+      color: var(--text-primary);
+      background: var(--accent-glow2);
+    }
+
+    .qs-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-icon {
+      font-size: 0.85rem;
+    }
+
+    .qs-panel {
+      display: none;
+    }
+
+    .qs-panel.active {
+      display: block;
+      animation: fadeInUp 0.4s var(--ease-out);
+    }
+
+    .quickstart-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .quickstart-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .qs-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .qs-num {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .qs-step h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .qs-step p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .qs-step code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: var(--bg-surface);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+
+    .quickstart-terminal {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      background: var(--bg-base);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    .quickstart-terminal .terminal-body {
+      min-height: auto;
+      padding: 1.25rem;
+      font-size: 0.78rem;
+      line-height: 1.9;
+    }
+
+    .terminal-copy {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .terminal-copy:hover {
+      color: var(--accent);
+      background: var(--accent-glow2);
+    }
+
+    .terminal-copy.copied {
+      color: var(--green);
+    }
+
+    /* Prompt box (replaces terminal in quickstart) */
+    .prompt-box {
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    .prompt-box-label {
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 0.02em;
+    }
+
+    .prompt-text {
+      padding: 1.25rem;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+    }
+
+    .prompt-text code {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: var(--bg-elevated);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+
+    .prompt-copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-top: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .prompt-copy-btn:hover {
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .prompt-copy-btn.copied {
+      color: var(--green);
+      background: var(--green-dim);
+    }
+
+    /* ═══════════════════════════════════════
+       CTA BANNER
+       ═══════════════════════════════════════ */
+    .cta {
+      background: var(--bg-base);
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+    }
+
+    .cta-glow {
+      position: absolute;
+      bottom: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(212,160,23,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .cta p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    .cta .btn-primary { position: relative; }
+
+    /* ═══════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════ */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .footer-left {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover { color: var(--text-secondary); }
+
+    /* ═══════════════════════════════════════
+       ANIMATIONS
+       ═══════════════════════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scanLine {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .problem-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: repeat(2, 1fr); }
+      .quickstart-content { grid-template-columns: 1fr; }
+      .qs-tabs { overflow-x: auto; }
+      .workflow-steps { flex-direction: column; gap: 1.5rem; }
+      .workflow-step::after { display: none; }
+      .workflow-step { text-align: left; display: flex; gap: 1rem; align-items: flex-start; }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .nav-links { display: none; }
+      .hero { padding: 5rem 1rem 3rem; }
+      .hero h1 { font-size: 2.2rem; }
+      section { padding: 4rem 1rem; }
+      .results-grid { grid-template-columns: 1fr 1fr; }
+      .footer-content { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="starfield"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- ─── NAVIGATION ─── -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <span class="sentinel-dot"></span>
+      agents-template
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#workflow">How It Works</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#quickstart">Get Started</a></li>
+      <li>
+        <a href="https://github.com/pedrofuentes/agents-template" class="nav-github" target="_blank">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        v0.2.0 · Open Source · MIT License
+      </div>
+      <h1>
+        You wouldn't review<br>
+        your own PR. <span class="accent">Why does<br>your AI agent?</span>
+      </h1>
+      <p class="hero-sub">
+        So I built a template that enforces TDD, separates the coder from the reviewer,
+        and never lets quality go down. It's opinionated, battle-tested on my own projects, and free.
+      </p>
+      <div class="hero-actions">
+        <a href="#quickstart" class="btn-primary">
+          Get Started →
+        </a>
+        <a href="https://github.com/pedrofuentes/agents-template" class="btn-secondary" target="_blank">
+          View on GitHub
+        </a>
+      </div>
+
+      <div class="hero-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">sentinel — review</span>
+        </div>
+        <div class="terminal-body" id="sentinel-terminal">
+          <div class="terminal-line" data-delay="0">
+            <span class="prompt">$ </span><span class="command">sentinel review --branch feat/user-auth</span>
+          </div>
+          <div class="terminal-line" data-delay="600">
+            <span class="dim">&nbsp;</span>
+          </div>
+          <div class="terminal-line" data-delay="900">
+            <span class="info">⟳ Scanning branch </span><span class="command">feat/user-auth</span><span class="info">...</span>
+          </div>
+          <div class="terminal-line" data-delay="1500">
+            <span class="dim">  ├── </span><span class="dim">Tests: </span><span class="success">47 passed, 0 failed ✓</span>
+          </div>
+          <div class="terminal-line" data-delay="2000">
+            <span class="dim">  ├── </span><span class="dim">Coverage: </span><span class="success">94.2% (threshold: 80%) ✓</span>
+          </div>
+          <div class="terminal-line" data-delay="2500">
+            <span class="dim">  ├── </span><span class="dim">Lint: </span><span class="success">0 errors, 0 warnings ✓</span>
+          </div>
+          <div class="terminal-line" data-delay="3000">
+            <span class="dim">  ├── </span><span class="dim">Security: </span><span class="success">No vulnerabilities found ✓</span>
+          </div>
+          <div class="terminal-line" data-delay="3500">
+            <span class="dim">  └── </span><span class="dim">TDD: </span><span class="success">All new code has tests ✓</span>
+          </div>
+          <div class="terminal-line" data-delay="4200">
+            <span class="dim">&nbsp;</span>
+          </div>
+          <div class="terminal-line" data-delay="4400">
+            <span class="separator">══════════════════════════════════════════</span>
+          </div>
+          <div class="terminal-line" data-delay="4800">
+            <span class="success" style="font-weight:600;">  VERDICT: APPROVED ✓</span>
+          </div>
+          <div class="terminal-line" data-delay="5200">
+            <span class="dim">  "Clean implementation. Ship it."</span>
+          </div>
+          <div class="terminal-line" data-delay="5400">
+            <span class="separator">══════════════════════════════════════════</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROBLEM ─── -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">The Problem</span>
+        <h2 class="section-title">The problem I kept running into.</h2>
+        <p class="section-sub">My AI agents were productive but sloppy. They'd skip tests, review their own code, and forget what they learned last session. I needed guardrails.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card reveal reveal-delay-1">
+          <div class="problem-icon warn">⚠</div>
+          <h3>Self-Review Bias</h3>
+          <p>Agents reviewing their own code is like grading your own exam. They miss bugs, skip edge cases, and rubber-stamp their work.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-2">
+          <div class="problem-icon risk">◈</div>
+          <h3>No Quality Enforcement</h3>
+          <p>Without gates, there's nothing preventing untested, insecure, or poorly structured code from reaching production.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-3">
+          <div class="problem-icon loss">⊘</div>
+          <h3>Knowledge Erosion</h3>
+          <p>Every agent session starts from scratch. Decisions, learnings, and architectural context vanish between runs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURES ─── -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Core Features</span>
+        <h2 class="section-title">What the template does.</h2>
+        <p class="section-sub">Four interlocking systems that keep agents honest — from first test to final merge.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-number">01</div>
+          <h3>TDD Enforcement</h3>
+          <div class="tagline">"No code exists without a failing test first."</div>
+          <p>Agents must write tests before implementation. Red → Green → Refactor is mandatory, not aspirational. Every line of code earns its place by satisfying a test.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-number">02</div>
+          <h3>Sentinel Review System</h3>
+          <div class="tagline">"The coder ≠ the reviewer. Always."</div>
+          <p>A separate agent with read-only access reviews every PR. No merge without Sentinel approval. Max 3 review cycles — then it escalates to a human.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-number">03</div>
+          <h3>Quality Ratchet</h3>
+          <div class="tagline">"Coverage can only go up. Never down."</div>
+          <p>The quality baseline is a one-way valve: test coverage, lint scores, and quality metrics increase monotonically. Compounding violations are tracked in LEARNINGS.md.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-4">
+          <div class="feature-number">04</div>
+          <h3>Companion Documents</h3>
+          <div class="tagline">"Institutional memory for your agents."</div>
+          <p>LEARNINGS.md, DECISIONS.md, CHANGELOG.md, ARCHITECTURE.md — structured knowledge that persists across sessions. Agents write here, not to AGENTS.md.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOW IT WORKS ─── -->
+  <section class="workflow" id="workflow">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="section-label">Workflow</span>
+        <h2 class="section-title">From plan to production,<br>every step is gated.</h2>
+      </div>
+      <div class="workflow-steps reveal">
+        <div class="workflow-step">
+          <div class="step-icon">📋</div>
+          <div>
+            <div class="step-num">STEP 01</div>
+            <h3>Plan</h3>
+            <p>Agent creates a plan and waits for human approval before writing code.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-icon">🧪</div>
+          <div>
+            <div class="step-num">STEP 02</div>
+            <h3>Test First</h3>
+            <p>Write failing tests that define the expected behavior. Red phase.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-icon">⚡</div>
+          <div>
+            <div class="step-num">STEP 03</div>
+            <h3>Implement</h3>
+            <p>Write minimal code to make tests pass. Green phase. Then refactor.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-icon">🔍</div>
+          <div>
+            <div class="step-num">STEP 04</div>
+            <h3>Sentinel</h3>
+            <p>Separate review agent scans for bugs, security issues, and quality gaps.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-icon">🚀</div>
+          <div>
+            <div class="step-num">STEP 05</div>
+            <h3>Ship</h3>
+            <p>Only Sentinel-approved code merges to main. No exceptions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── RESULTS ─── -->
+  <section class="results" id="results">
+    <div class="container">
+      <div class="results-header reveal">
+        <span class="section-label">Battle-Tested</span>
+        <h2 class="section-title">What it's caught so far.</h2>
+        <p class="section-sub">Real results from my own projects. The Sentinel caught things I would've missed.</p>
+      </div>
+      <div class="results-grid">
+        <div class="result-card reveal reveal-delay-1">
+          <div class="result-icon">🛡️</div>
+          <div class="result-stat">XSS</div>
+          <div class="result-label">Vulnerabilities caught before deploy</div>
+        </div>
+        <div class="result-card reveal reveal-delay-2">
+          <div class="result-icon">🔒</div>
+          <div class="result-stat">5 CVEs</div>
+          <div class="result-label">Flagged in dependency audits</div>
+        </div>
+        <div class="result-card reveal reveal-delay-3">
+          <div class="result-icon">📈</div>
+          <div class="result-stat">45→98%</div>
+          <div class="result-label">Test coverage improvement</div>
+        </div>
+        <div class="result-card reveal reveal-delay-4">
+          <div class="result-icon">🐛</div>
+          <div class="result-stat">Memory</div>
+          <div class="result-label">Leaks caught by Sentinel review</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── QUICK START ─── -->
+  <section class="quickstart" id="quickstart">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Quick Start</span>
+        <h2 class="section-title">Up and running in<br>under 5 minutes.</h2>
+        <p class="section-sub">Whether you're starting fresh, migrating from an existing config, or updating — there's a path for you.</p>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="qs-tabs reveal" role="tablist">
+        <button class="qs-tab active" data-tab="new" role="tab" aria-selected="true">
+          <span class="tab-icon">✦</span> New Project
+        </button>
+        <button class="qs-tab" data-tab="migrate" role="tab" aria-selected="false">
+          <span class="tab-icon">↗</span> Migration
+        </button>
+        <button class="qs-tab" data-tab="update" role="tab" aria-selected="false">
+          <span class="tab-icon">↻</span> Update
+        </button>
+      </div>
+
+      <!-- ── TAB: New Project ── -->
+      <div class="qs-panel active" id="tab-new">
+        <div class="quickstart-content">
+          <div class="quickstart-steps">
+            <div class="qs-step">
+              <div class="qs-num">1</div>
+              <div>
+                <h4>Copy the template</h4>
+                <p>Download the <code>template/</code> files into your project root — manually or let your agent fetch them.</p>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">2</div>
+              <div>
+                <h4>Auto-configure</h4>
+                <p>Your agent scans <code>package.json</code>, <code>tsconfig</code>, <code>pyproject.toml</code>, etc. and fills in the placeholders. It asks you for anything it can't infer.</p>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">3</div>
+              <div>
+                <h4>Start building</h4>
+                <p>Your agent now follows TDD, creates worktree branches, and runs Sentinel review on every PR.</p>
+              </div>
+            </div>
+          </div>
+          <div class="prompt-box">
+            <div class="prompt-box-label">Copy this prompt to your AI agent:</div>
+            <div class="prompt-text" id="prompt-new">Fetch the agents-template from https://github.com/pedrofuentes/agents-template — download all files from the <code>template/</code> directory into this project's root. Then read AGENTS.md and follow the First Run setup instructions. Scan my project files to auto-fill what you can, then ask me for anything you can't infer.</div>
+            <button class="prompt-copy-btn" data-prompt="new">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span>Copy prompt</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: Migration ── -->
+      <div class="qs-panel" id="tab-migrate">
+        <div class="quickstart-content">
+          <div class="quickstart-steps">
+            <div class="qs-step">
+              <div class="qs-num">1</div>
+              <div>
+                <h4>Backup existing config</h4>
+                <p>Your agent finds and backs up all agent config files — <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursorrules</code>, <code>copilot-instructions.md</code>, and more.</p>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">2</div>
+              <div>
+                <h4>Extract &amp; merge</h4>
+                <p>Project-specific rules, patterns, and conventions are extracted from your old config and merged into the template's structure.</p>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">3</div>
+              <div>
+                <h4>Confirm &amp; commit</h4>
+                <p>Your agent shows a migration summary — what was extracted, what's new, what moved to companion docs. You approve before it commits.</p>
+              </div>
+            </div>
+          </div>
+          <div class="prompt-box">
+            <div class="prompt-box-label">Copy this prompt to your AI agent:</div>
+            <div class="prompt-text" id="prompt-migrate">Fetch the agents-template from https://github.com/pedrofuentes/agents-template — first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to <code>.agent-backup/</code>, then download all files from the <code>template/</code> directory into this project's root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Ask me to confirm before finalizing.</div>
+            <button class="prompt-copy-btn" data-prompt="migrate">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span>Copy prompt</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: Update ── -->
+      <div class="qs-panel" id="tab-update">
+        <div class="quickstart-content">
+          <div class="quickstart-steps">
+            <div class="qs-step">
+              <div class="qs-num">1</div>
+              <div>
+                <h4>Fetch latest template</h4>
+                <p>Your agent pulls the latest <code>template/</code> files from the repo and compares them with your current versions.</p>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">2</div>
+              <div>
+                <h4>Smart diff &amp; merge</h4>
+                <p>It shows you what changed, applies updates while preserving your project-specific customizations — filled placeholders, custom rules, code examples.</p>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">3</div>
+              <div>
+                <h4>Approve changes</h4>
+                <p>You review the proposed changes and approve before anything is written. Your customizations are never overwritten.</p>
+              </div>
+            </div>
+          </div>
+          <div class="prompt-box">
+            <div class="prompt-box-label">Copy this prompt to your AI agent:</div>
+            <div class="prompt-text" id="prompt-update">Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare the <code>template/</code> files with my current versions. Show me what changed, apply updates while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Do NOT overwrite my customizations. Ask me to confirm before applying changes.</div>
+            <button class="prompt-copy-btn" data-prompt="update">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span>Copy prompt</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="cta">
+    <div class="cta-glow"></div>
+    <div class="container reveal">
+      <h2>Works for me.<br>Might <span style="color:var(--accent)">work for you</span> too.</h2>
+      <p>The template is free, MIT licensed, and ready to drop into any project. Give it a try.</p>
+      <a href="https://github.com/pedrofuentes/agents-template" class="btn-primary" target="_blank">
+        Get Started on GitHub →
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-left">
+        agents-template · v0.2.0 · MIT License
+      </div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/pedrofuentes/agents-template" target="_blank">GitHub</a></li>
+        <li><a href="https://github.com/pedrofuentes/agents-template/blob/main/CHANGELOG.md" target="_blank">Changelog</a></li>
+        <li><a href="https://github.com/pedrofuentes/agents-template/blob/main/LICENSE" target="_blank">License</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════
+       SCRIPTS
+       ═══════════════════════════════════════ -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // ── Terminal animation ──
+      const terminalLines = document.querySelectorAll('#sentinel-terminal .terminal-line');
+      const terminalObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            terminalLines.forEach(line => {
+              const delay = parseInt(line.dataset.delay) || 0;
+              setTimeout(() => line.classList.add('visible'), delay);
+            });
+            terminalObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+
+      const terminal = document.getElementById('sentinel-terminal');
+      if (terminal) terminalObserver.observe(terminal);
+
+      // ── Scroll reveal ──
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+      // ── Smooth scroll for nav links ──
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.querySelector(link.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      // ── Nav background on scroll ──
+      const nav = document.querySelector('nav');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          nav.style.background = 'rgba(8, 10, 20, 0.92)';
+          nav.style.borderBottomColor = 'rgba(30, 34, 56, 0.8)';
+        } else {
+          nav.style.background = 'rgba(8, 10, 20, 0.7)';
+          nav.style.borderBottomColor = 'rgba(30, 34, 56, 0.5)';
+        }
+      });
+
+      // ── Quick Start tabs ──
+      const tabs = document.querySelectorAll('.qs-tab');
+      const panels = document.querySelectorAll('.qs-panel');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = 'tab-' + tab.getAttribute('data-tab');
+
+          // Deactivate all
+          tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+          panels.forEach(p => p.classList.remove('active'));
+
+          // Activate clicked
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          const panel = document.getElementById(targetId);
+          if (panel) panel.classList.add('active');
+        });
+      });
+
+      // ── Copy prompt to clipboard ──
+      const prompts = {
+        'new': 'Fetch the agents-template from https://github.com/pedrofuentes/agents-template \u2014 download all files from the `template/` directory into this project\'s root. Then read AGENTS.md and follow the First Run setup instructions. Scan my project files to auto-fill what you can, then ask me for anything you can\'t infer.',
+        'migrate': 'Fetch the agents-template from https://github.com/pedrofuentes/agents-template \u2014 first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to `.agent-backup/`, then download all files from the `template/` directory into this project\'s root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Ask me to confirm before finalizing.',
+        'update': 'Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template \u2014 compare the `template/` files with my current versions. Show me what changed, apply updates while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Do NOT overwrite my customizations. Ask me to confirm before applying changes.'
+      };
+
+      document.querySelectorAll('.prompt-copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const promptType = this.getAttribute('data-prompt');
+          const text = prompts[promptType];
+          if (!text) return;
+
+          const self = this;
+          try {
+            navigator.clipboard.writeText(text).then(() => {
+              self.classList.add('copied');
+              self.querySelector('span').textContent = 'Copied!';
+              setTimeout(() => {
+                self.classList.remove('copied');
+                self.querySelector('span').textContent = 'Copy prompt';
+              }, 2000);
+            }).catch(() => {
+              fallbackCopy(text, self);
+            });
+          } catch {
+            fallbackCopy(text, self);
+          }
+        });
+      });
+
+      function fallbackCopy(text, btn) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          btn.classList.add('copied');
+          btn.querySelector('span').textContent = 'Copied!';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.querySelector('span').textContent = 'Copy prompt';
+          }, 2000);
+        } catch { /* ignore */ }
+        document.body.removeChild(ta);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -6,6 +6,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 ## [0.2.0] - 2026-04-03
 
 ### Added
+- GitHub Pages website (`docs/index.html`) with landing page, feature overview, and Quick Start prompts
+- GitHub Actions workflow (`deploy-pages.yml`) for automatic deployment on push to `main`
 - AGENTS.md compressed to 119 non-blank lines (65% reduction from v0.1.0)
 - SENTINEL.md compressed to 121 non-blank lines (60% reduction)
 - Documentation review dimension (F) in Sentinel verification
