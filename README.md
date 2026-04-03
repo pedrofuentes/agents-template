@@ -1,5 +1,7 @@
 # agents-template
 
+![Version](https://img.shields.io/badge/version-0.2.0-blue)
+
 > A battle-tested template for configuring autonomous AI coding agents with quality gates, TDD enforcement, and the Sentinel review system.
 
 ## What's Inside
@@ -27,6 +29,10 @@ Give your AI agent one of these prompts — it handles everything:
 ### Existing Project (already has AGENTS.md or other agent config)
 
 > **Fetch the agents-template from https://github.com/pedrofuentes/agents-template — first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to `.agent-backup/`, then download all files from the `template/` directory into this project's root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Ask me to confirm before finalizing.**
+
+### Update (already using agents-template, upgrading to latest version)
+
+> **Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare the `template/` files with my current versions. Show me what changed, apply updates while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Do NOT overwrite my customizations. Ask me to confirm before applying changes.**
 
 ### Manual Setup (fallback)
 
@@ -106,6 +112,8 @@ Each cycle ratchets quality up. The Sentinel never lowers its standards. The loo
 ## How It Was Built
 
 This template was refined through **24 expert AI reviews across 8 different models** (Claude Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See `MIGRATION-GUIDE.md` for the full evolution history.
+
+Current version: **v0.2.0**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## Battle-Tested
 

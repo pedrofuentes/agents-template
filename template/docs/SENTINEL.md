@@ -94,6 +94,13 @@ Assess the diff for issues that materially affect safety, correctness, maintaina
 - Known-vuln or unmaintained packages; risky install scripts
 - License incompatibility if policy exists (template: “MIT-compatible”)
 
+#### F) Documentation quality
+- README, CHANGELOG, API docs reflect current behavior (not stale)
+- New features/changes documented; deprecated features noted
+- Code comments explain WHY, not WHAT (no misleading or outdated comments)
+- DECISIONS.md updated if architectural choices were made
+- LEARNINGS.md updated if gotchas were discovered
+
 ### Phase 3 — Classify findings
 Use exactly these priority levels:
 - 🔴 **CRITICAL**: blocks merge (security vuln, data loss, breaking change, missing evidence, failing tests, TDD failure)
