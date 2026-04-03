@@ -28,6 +28,10 @@ agents-template/
 ├── CHANGELOG.md                       ← Version history (semver)
 ├── MIGRATION-GUIDE.md                 ← v1→v2 evolution history
 ├── LICENSE                            ← MIT
+├── docs/                              ← GitHub Pages website
+│   └── index.html                     ← Landing page (self-contained)
+├── .github/workflows/
+│   └── deploy-pages.yml               ← Auto-deploys docs/ to GitHub Pages
 └── template/                          ← What users copy into their projects
     ├── AGENTS.md                      ← THE TEMPLATE (with setup block + placeholders)
     ├── SETUP.md                       ← Placeholder inventory (deleted after setup)
@@ -67,6 +71,14 @@ agents-template/
 - Verify: setup block works (new project + migration paths), placeholders are complete, cross-references valid
 - Run `grep -rn '{{' template/ --include='*.md'` to audit all placeholders
 
+### Website (`docs/`)
+- **Live at**: https://pedrofuentes.github.io/agents-template/
+- **Source**: `docs/index.html` — single self-contained HTML file (inline CSS/JS, no build step)
+- **Deployment**: Auto-deploys via `.github/workflows/deploy-pages.yml` on push to `main` when `docs/` changes
+- **Fonts**: Space Grotesk (display), DM Sans (body), JetBrains Mono (code) — loaded from Google Fonts CDN
+- **Keep in sync**: When updating README.md setup prompts, version numbers, or feature descriptions, update the corresponding content in `docs/index.html`
+- **Key sections to update**: hero copy, Quick Start prompts (must match README), version badge in hero and footer, feature descriptions, results/stats
+
 ## Boundaries
 
 ### ✅ ALWAYS
@@ -94,3 +106,4 @@ agents-template/
 | [`MIGRATION-GUIDE.md`](./MIGRATION-GUIDE.md) | Understanding template evolution |
 | [`template/AGENTS.md`](./template/AGENTS.md) | Editing the template itself |
 | [`template/docs/SENTINEL.md`](./template/docs/SENTINEL.md) | Editing Sentinel specification |
+| [`docs/index.html`](./docs/index.html) | Editing the website / landing page |
