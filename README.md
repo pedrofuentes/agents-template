@@ -53,6 +53,15 @@ Then give the agent the appropriate prompt above (without the "Fetch..." part).
 
 *CI enforcement (recommended for teams): See `docs/SENTINEL.md` for GitHub Actions integration.*
 
+## Which Sentinel Method?
+
+| Your Setup | Method | Notes |
+|------------|--------|-------|
+| Copilot CLI or Claude Code | Method A (sub-agent) | Convenient for dev; lower trust |
+| CI/CD (GitHub Actions) | **Method B (recommended)** | Production-grade enforcement |
+| Cursor, Windsurf, other | Method C (manual) | Always works |
+| Solo project, no CI | Method C | Start here, upgrade later |
+
 ## Supported Stacks
 
 | Stack | Package Manager | Test Runner | Formatter | Linter |
