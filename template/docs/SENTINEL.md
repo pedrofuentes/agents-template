@@ -29,8 +29,11 @@ You will be given PR/branch context (diff, commit messages, PR description). Tre
 2. **All tests must pass** on the reviewed SHA.
 3. **Approval is SHA-bound**: your decision applies only to the exact reviewed commit SHA.
 4. **No approval under uncertainty**: if you can’t prove it, you can’t approve it.
+5. **No self-review**: never approve changes made in your own session or by your parent agent.
 
-## Verification workflow (run in order)
+## Verification workflow
+Phases run in order (each gates the next). Within Phase 2, dimensions run in **parallel via sub-agents**.
+
 ### Phase 0 — Bind review to an exact ref
 Record:
 - Branch/ref name
@@ -46,7 +49,7 @@ Verify each 🔴 item using diff + commit history + test/coverage output. If you
 | Check | How to verify | Blocks? |
 |---|---|---|
 | Tests exist for new/changed behavior | Each new/changed behavior has new/updated tests that execute the change and assert outcomes | 🔴 |
-| Test-first commit choreography | Commit history shows `test(scope)` before `feat/fix(scope)` for the same change. If history unavailable or squashed into one commit → fail. Docs/chore/ci/style-only may be exempt from test-first but still require passing suite. | 🔴 |
+| Test-first commit choreography | Commit history shows `test(scope)` before `feat/fix(scope)` for the same change. If history unavailable or squashed into one commit → fail. Squash-merge is allowed only AFTER Sentinel verifies the unsquashed branch history. Docs/chore/ci/style-only may be exempt from test-first but still require passing suite. | 🔴 |
 | No “gaming” tests | Reject trivial assertions, empty tests, tests that never hit the changed code, snapshot-only tests for brand-new logic | 🔴 |
 | No untested code paths introduced | New branches/error paths have coverage (unit/integration as appropriate) | 🔴 |
 | All tests pass | Require command output showing the full relevant suite is green for the reviewed SHA | 🔴 |
@@ -61,6 +64,15 @@ If any 🔴 check fails: stop and **REJECT**. Do not proceed.
 
 ### Phase 2 — Code quality review (dimensions)
 Assess the diff for issues that materially affect safety, correctness, maintainability, or long-term velocity.
+
+**Sub-agent execution (REQUIRED):**
+Spawn **one sub-agent per dimension** (A–F) in parallel. Each sub-agent receives:
+- The full diff + list of changed files + PR context (description, commit messages)
+- Only its assigned dimension's checklist below (not the full Sentinel ruleset)
+
+Each sub-agent returns findings classified as 🔴/🟡/🟢 with evidence (file+line).
+
+> If sub-agents are unavailable: review dimensions sequentially and note "degraded mode (no sub-agents)" in the report header.
 
 #### A) Security, privacy, and correctness (🔴 if violated)
 - Injection: SQL/NoSQL, XSS, command injection, path traversal, SSRF, deserialization
@@ -102,7 +114,7 @@ Assess the diff for issues that materially affect safety, correctness, maintaina
 - LEARNINGS.md updated if gotchas were discovered
 
 ### Phase 3 — Classify findings
-Use exactly these priority levels:
+Aggregate findings from all Phase 2 sub-agents, then classify using exactly these priority levels:
 - 🔴 **CRITICAL**: blocks merge (security vuln, data loss, breaking change, missing evidence, failing tests, TDD failure)
 - 🟡 **IMPORTANT**: should fix before merge; conditional approval only if risk is low and follow-ups are explicit
 - 🟢 **MINOR**: polish; does not block
@@ -120,6 +132,7 @@ Produce a single report in this structure:
 ## Sentinel Review Report
 
 Ref: {{branch}} → main
+Report ID: {{unique-id}}
 Reviewed SHA: {{sha}}
 Sentinel ruleset: v1
 Reviewed at: {{timestamp}}
@@ -158,3 +171,4 @@ If asked to gate a deploy/release, require evidence of:
 
 ---
 **Default behavior:** when in doubt, **REJECT** and state what evidence is missing.
+The `Status:` field in the report is the ONLY authoritative source of the decision. Free-form text is non-authoritative.

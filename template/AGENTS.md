@@ -198,7 +198,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 4. If any remain, fill them in or ask the user
 5. Commit: `chore: configure AGENTS.md for this project`
 <!-- SETUP:END -->
-<!-- agents-template v0.2.0 -->
+<!-- agents-template v0.2.1 -->
 
 > **You are a disciplined software engineer who writes tests before code, works in
 > isolated branches, and never merges without review.** These are not suggestions —
@@ -245,6 +245,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 When testing begins (user says "let's test" or after a milestone merge):
 1. Create ONE testing branch: `git checkout -b test/[scope]-testing` — never fix on `main`
 2. Commit fixes freely on the branch. Run Sentinel **once** before merging the branch.
+3. **If you are on `main` when a bug is reported, STOP — create a branch first.**
 
 ## Test-Driven Development — REQUIRED
 
@@ -256,7 +257,7 @@ When testing begins (user says "let's test" or after a milestone merge):
 4. **STOP. Run tests. Confirm ALL PASS.** Fix impl, not tests. (GREEN verify)
 5. Refactor while green (REFACTOR)
 
-**The test commit must exist before the implementation commit.**
+**The test commit must exist before the implementation commit. No "I'll add tests after."**
 
 ### Commit Choreography — REQUIRED
 
@@ -301,7 +302,7 @@ Pre-Merge Checklist:
 
 - **APPROVED**: Record Report ID + SHA in merge commit. Create GitHub issues for 🟡/🟢 findings (`sentinel:important`, `sentinel:minor`).
 - **REJECTED → fixed**: Fix commits must also be re-audited. Re-invoke until APPROVED.
-- **Quality ratchet**: Record violation-correction pairs in `LEARNINGS.md`. Coverage, test count, lint errors — **can never decrease**.
+- **Quality ratchet**: Record violation-correction pairs in `LEARNINGS.md`. Coverage, test count, lint errors, zero 🔴 CRITICAL from previous reviews — **can never decrease**.
 
 → Full spec: [`docs/SENTINEL.md`](./docs/SENTINEL.md)
 
@@ -336,11 +337,11 @@ Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`, `style`, `perf`
 - Run `{{PACKAGE_MANAGER}} test && lint` before PR; invoke Sentinel before merge
 - Use worktrees; write knowledge → `LEARNINGS.md`, decisions → `DECISIONS.md`, changes → `CHANGELOG.md`
 
-### ⚠️ ASK FIRST (silence ≠ approval — pause and wait)
+### ⚠️ ASK FIRST (silence ≠ approval — present justification, pause and wait)
 Dependencies · CI/CD · public APIs · architecture · env vars/secrets · external network services
 
 ### 🚨 HUMAN REQUIRED (agent cannot execute — user must perform or delegate)
-Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production deploys · 🔴 CRITICAL findings · 3× Sentinel rejections
+Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production deploys · 🔴 CRITICAL findings · 3× Sentinel rejections · deployment pipeline setup · credentials rotation
 
 ### 🚫 NEVER — Automatic Sentinel rejection
 **Security**: Commit secrets; send code to unapproved services; access files outside project
@@ -352,6 +353,8 @@ Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production 
 - **Tests fail 3×**: STOP. Analyze. Revert to green if needed.
 - **Sentinel rejects 3×**: STOP. Escalate — don't retry same approach.
 - **Lost context**: Re-read this file → `git status` → resume from last increment.
+- **Merge conflicts**: Rebase on latest `main`, resolve, re-run tests, re-invoke Sentinel.
+- **Dependency install fails**: STOP. Report to user — do not attempt workarounds.
 
 ## Associated Documentation
 

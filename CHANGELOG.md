@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+## [0.2.1] - 2026-04-07
+
+### Fixed
+- Restored sub-agent parallel execution instructions in SENTINEL.md Phase 2 — lost during compression pass (commit e302561)
+- Phase 2 now explicitly requires spawning one sub-agent per review dimension (A–F) in parallel
+- Phase 3 now explicitly aggregates sub-agent findings before classification
+- Added degraded-mode fallback when sub-agents are unavailable
+- Restored self-review prohibition in SENTINEL.md invariants (invariant #5)
+- Restored Report ID field in SENTINEL.md report format
+- Restored Status field authority rule (anti-report-parsing gaming)
+- Restored squash-merge policy clarification in SENTINEL.md Phase 1
+- Restored "No 'I'll add tests after'" deterrent in AGENTS.md TDD section
+- Restored never-decrease 4th metric: zero 🔴 CRITICAL from previous reviews
+- Restored "If on main during testing, STOP — create a branch first" guard
+- Restored ASK FIRST behavior: "present justification, pause and wait"
+- Restored HUMAN REQUIRED items: deployment pipeline setup, credentials rotation
+- Restored When Stuck: merge conflict recovery procedure and dep install failure rule
+
+### Changed
+- Website title updated to "Agents Sentinel Template - You wouldn't merge your own PR. Why does your AI agent?"
+- Hero tagline changed from "You wouldn't review your own PR." to "You wouldn't merge your own PR."
+- Social preview image (`docs/social-preview.png`) regenerated with updated tagline
+
 ## [0.2.0] - 2026-04-03
 
 ### Added

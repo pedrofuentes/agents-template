@@ -1,6 +1,6 @@
 # agents-template
 
-![Version](https://img.shields.io/badge/version-0.2.0-blue)
+![Version](https://img.shields.io/badge/version-0.2.1-blue)
 
 > A battle-tested template for configuring autonomous AI coding agents with quality gates, TDD enforcement, and the Sentinel review system.
 
@@ -13,7 +13,7 @@ The `template/` directory contains everything you copy into your project:
 | `template/AGENTS.md` | The agent operating system — MUST rules, TDD, workflow, boundaries |
 | `template/SETUP.md` | Placeholder inventory & customization checklist |
 | `template/ROADMAP.md` | Project phases template |
-| `template/docs/SENTINEL.md` | Quality gate — 4 review agents, invocation, infrastructure enforcement |
+| `template/docs/SENTINEL.md` | Quality gate — 6 parallel review sub-agents, invocation, infrastructure enforcement |
 | `template/docs/ARCHITECTURE.md` | Project structure template |
 | `template/docs/TESTING-STRATEGY.md` | Test strategy details |
 | `template/docs/DEVELOPMENT-WORKFLOW.md` | Git worktrees, branching, PR process |
@@ -101,7 +101,7 @@ Each cycle ratchets quality up. The Sentinel never lowers its standards. The loo
 ## Key Features
 
 - **TDD defense in depth** — Layer 1 (STOP checkpoint verbs) + Layer 2 (Sentinel verification)
-- **Sentinel quality gate** — 4 independent review agents with anti-prompt-injection
+- **Sentinel quality gate** — 6 parallel review sub-agents with anti-prompt-injection
 - **Quality ratchet** — continuous improvement loop until Sentinel approves
 - **Separation of concerns** — the coder ≠ the reviewer, always
 - **Autonomous workflow** — Plan → Approve → Execute → Sentinel → Merge
@@ -113,7 +113,7 @@ Each cycle ratchets quality up. The Sentinel never lowers its standards. The loo
 
 This template was refined through **24 expert AI reviews across 8 different models** (Claude Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See `MIGRATION-GUIDE.md` for the full evolution history.
 
-Current version: **v0.2.0**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
+Current version: **v0.2.1**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## Battle-Tested
 
