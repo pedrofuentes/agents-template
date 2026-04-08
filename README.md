@@ -98,6 +98,16 @@ Sentinel (separate sub-agent) reviews
 
 Each cycle ratchets quality up. The Sentinel never lowers its standards. The loop only exits when the quality threshold is met or a human takes over.
 
+### Severity Levels
+
+| Level | Meaning | Merge? | Examples |
+|-------|---------|--------|----------|
+| 🔴 CRITICAL | Must fix — blocks merge | No | Security vuln, data loss, incorrect behavior, failing tests, TDD violation |
+| 🟡 IMPORTANT | Improvements to working code | Conditional — tracked as GitHub issues | Missing error propagation, N+1 queries, resilience gaps, edge cases |
+| 🟢 MINOR | Polish | Yes | Naming, docs, code style suggestions |
+
+The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 3 cycles). 🟡 findings are tracked as GitHub issues (`sentinel:important`). If a 🟡 finding could cause data loss or security exposure, Sentinel reclassifies it as 🔴. For production deploys, all 🟡 issues must be resolved or explicitly risk-accepted.
+
 ## Key Features
 
 - **TDD defense in depth** — Layer 1 (STOP checkpoint verbs) + Layer 2 (Sentinel verification)

@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [Unreleased]
 
+### Changed
+- Severity definitions sharpened: 🔴 now includes "incorrect behavior under normal usage"; 🟡 defined as "improvements to working code" with reclassification rule (promote to 🔴 if data loss/security risk)
+- Deploy/release gating: 🟡 IMPORTANT issues must be resolved or explicitly risk-accepted before production deploy
+- README: added Severity Levels table for human readers (definitions were only in SENTINEL.md agent prompt)
+
 ## [0.2.2] - 2026-04-08
 
 ### Fixed

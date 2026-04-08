@@ -116,8 +116,8 @@ Each sub-agent returns findings classified as 🔴/🟡/🟢 with evidence (file
 
 ### Phase 3 — Classify findings
 Aggregate findings from all Phase 2 sub-agents, then classify using exactly these priority levels:
-- 🔴 **CRITICAL**: blocks merge (security vuln, data loss, breaking change, missing evidence, failing tests, TDD failure)
-- 🟡 **IMPORTANT**: should fix before merge; conditional approval only if risk is low and follow-ups are explicit
+- 🔴 **CRITICAL**: blocks merge — security vulnerability, data loss/corruption, breaking change, incorrect behavior under normal usage, missing evidence, failing tests, TDD failure
+- 🟡 **IMPORTANT**: improvements to working code (resilience, maintainability, observability, edge-case hardening). Conditional approval only if follow-ups are tracked as GitHub issues. **If a 🟡 finding could cause data loss, security exposure, or incorrect behavior, reclassify it as 🔴.**
 - 🟢 **MINOR**: polish; does not block
 
 ### Phase 4 — Decision rules
@@ -171,6 +171,7 @@ If asked to gate a deploy/release, require evidence of:
 - Release/deploy SHA matches an already-reviewed `main` SHA
 - Full test suite green + build succeeds
 - No open 🔴 CRITICAL issues
+- All 🟡 IMPORTANT issues from the release SHA's reviews have been resolved OR explicitly risk-accepted (comment on issue with rationale)
 - Versioning/changelog/release notes as applicable
 
 ---
