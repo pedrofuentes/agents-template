@@ -353,6 +353,7 @@ Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production 
 
 - **Tests fail 3×**: STOP. Analyze. Revert to green if needed.
 - **Sentinel rejects 3×**: STOP. Escalate to user — don't retry same approach. Three failures means human judgment needed.
+- **Not making progress** (2+ failed attempts at the same problem): STOP trying the same approach. Spawn a research sub-agent to investigate the root cause, explore alternative approaches, and recommend a solution before continuing.
 - **Lost context**: Re-read this file → `git status` → resume from last increment.
 - **Merge conflicts**: Rebase on latest `main`, resolve, re-run tests, re-invoke Sentinel.
 - **Dependency install fails**: STOP. Report to user — do not attempt workarounds.
