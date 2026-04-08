@@ -5,10 +5,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-04-08
+
+### Added
+- Stuck-agent delegation rule: after 2+ failed attempts, spawn research sub-agent before continuing
+- README: Severity Levels table for human readers (definitions were only in SENTINEL.md agent prompt)
+
 ### Changed
 - Severity definitions sharpened: 🔴 now includes "incorrect behavior under normal usage"; 🟡 defined as "improvements to working code" with reclassification rule (promote to 🔴 if data loss/security risk)
 - Deploy/release gating: 🟡 IMPORTANT issues must be resolved or explicitly risk-accepted before production deploy
-- README: added Severity Levels table for human readers (definitions were only in SENTINEL.md agent prompt)
+- Sentinel invocation: explicitly required for ALL changes (1-line fix, docs-only, config, everything) — agents must never ask if Sentinel is needed
+- Sentinel rejection loop: clarified as autonomous (no user interaction for cycles 1-3), escalation target is explicitly the user
 
 ## [0.2.2] - 2026-04-08
 

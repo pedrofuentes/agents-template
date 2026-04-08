@@ -1,4 +1,4 @@
-<!-- agents-template v0.2.2 -->
+<!-- agents-template v0.2.3 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
