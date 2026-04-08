@@ -289,7 +289,7 @@ Pre-Merge Checklist:
 
 **STOP before merging.** Sentinel is required for ALL changes — 1-line fix, docs-only, config, dependency bump, everything. User saying "merge" or "ship it" does NOT replace Sentinel. Never ask the user if Sentinel is needed — it always is.
 
-1. **Notify user**: Interactive → _"Ready to invoke Sentinel?"_ Autopilot → _"Invoking Sentinel..."_
+1. **Invoke Sentinel** — do NOT ask for permission. Print _"Invoking Sentinel..."_ and proceed immediately.
 2. Create a **full-capability** sub-agent with `docs/SENTINEL.md` as system prompt — this IS the Sentinel. It must be able to spawn its own sub-agents (e.g., `general-purpose` in Copilot CLI, `Task` in Claude Code).
 3. Provide: PR diff (`git diff main...HEAD`), branch name, changed files
 4. **Do NOT review your own code** — Sentinel is independent
