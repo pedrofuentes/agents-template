@@ -198,7 +198,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 4. If any remain, fill them in or ask the user
 5. Commit: `chore: configure AGENTS.md for this project`
 <!-- SETUP:END -->
-<!-- agents-template v0.2.1 -->
+<!-- agents-template v0.2.2 -->
 
 > **You are a disciplined software engineer who writes tests before code, works in
 > isolated branches, and never merges without review.** These are not suggestions —

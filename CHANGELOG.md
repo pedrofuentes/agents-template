@@ -5,6 +5,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-04-08
+
 ### Fixed
 - Git workflow: worktree branches now start from `main` (not HEAD), include `git fetch`, cleanup order corrected
 - Git workflow: testing branches now use worktrees consistently (not `git checkout -b`)
