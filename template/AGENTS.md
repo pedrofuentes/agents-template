@@ -230,7 +230,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 ### Plan → Approve → Execute Loop
 1. **Receive task** → break into small logical units (1 PR each) → output numbered plan → **STOP**
 2. **Interactive mode**: Print _"Plan ready for review."_ Wait for explicit approval.
-   **Autopilot mode**: Save plan to `PLAN.md`, proceed. Sentinel gates each merge.
+   **Autopilot mode**: Save plan to `PLAN.md`, proceed. "Proceed" = skip plan approval only — Sentinel and all other gates still apply.
 3. **Execute** each increment following all rules below
 
 ### Per-Increment Execution
@@ -243,7 +243,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 
 ### Testing & Iteration
 When testing begins (user says "let's test" or after a milestone merge):
-1. Create ONE testing branch: `git checkout -b test/[scope]-testing` — never fix on `main`
+1. Create ONE testing worktree: `git worktree add .worktrees/test-scope -b test/scope-testing main`
 2. Commit fixes freely on the branch. Run Sentinel **once** before merging the branch.
 3. **If you are on `main` when a bug is reported, STOP — create a branch first.**
 
@@ -268,7 +268,7 @@ When testing begins (user says "let's test" or after a milestone merge):
 | 3 | `refactor(scope): ...` | Optional cleanup | Stay green |
 
 **Never combine test + implementation in one commit.** Sentinel verifies ordering.
-**Exemptions** (no test-first required): `docs`, `chore`, `build`, `ci`, `refactor`, `style` — suite must still pass.
+**Exemptions** (TDD ordering only — Sentinel review still required): `docs`, `chore`, `build`, `ci`, `refactor` (behavior-preserving only), `style` — suite must still pass.
 
 ## Sentinel — MANDATORY Quality Gate
 
@@ -279,7 +279,7 @@ When testing begins (user says "let's test" or after a milestone merge):
 ```
 Pre-Merge Checklist:
 - [ ] Sentinel invoked? Report ID: ___
-- [ ] Verdict: APPROVED / CONDITIONAL APPROVE
+- [ ] Verdict: APPROVED / CONDITIONAL
 - [ ] Reviewed SHA matches HEAD: ___
 ```
 
@@ -290,17 +290,18 @@ Pre-Merge Checklist:
 **STOP before merging.** User saying "merge" or "ship it" does NOT replace Sentinel.
 
 1. **Notify user**: Interactive → _"Ready to invoke Sentinel?"_ Autopilot → _"Invoking Sentinel..."_
-2. Create sub-agent with `docs/SENTINEL.md` as system prompt — this IS the Sentinel
+2. Create a **full-capability** sub-agent with `docs/SENTINEL.md` as system prompt — this IS the Sentinel. It must be able to spawn its own sub-agents (e.g., `general-purpose` in Copilot CLI, `Task` in Claude Code).
 3. Provide: PR diff (`git diff main...HEAD`), branch name, changed files
 4. **Do NOT review your own code** — Sentinel is independent
 5. If **REJECTED**: fix, re-commit, re-invoke (max 3 cycles — then escalate)
 6. If **APPROVED**: include Report ID + SHA in PR description, merge
 
-> No sub-agents? Run SENTINEL.md checks yourself (lower trust). Cannot run at all? **Do not merge** — escalate.
+> No sub-agents? Run SENTINEL.md checks yourself — mark PR with `⚠️ SELF-REVIEWED` and require explicit user approval before merge. Cannot run at all? **Do not merge** — escalate.
 
 ### After Sentinel
 
 - **APPROVED**: Record Report ID + SHA in merge commit. Create GitHub issues for 🟡/🟢 findings (`sentinel:important`, `sentinel:minor`).
+- **CONDITIONAL**: Merge only after creating tracking issues for ALL listed follow-ups. Include issue links in PR description.
 - **REJECTED → fixed**: Fix commits must also be re-audited. Re-invoke until APPROVED.
 - **Quality ratchet**: Record violation-correction pairs in `LEARNINGS.md`. Coverage, test count, lint errors, zero 🔴 CRITICAL from previous reviews — **can never decrease**.
 
@@ -308,14 +309,14 @@ Pre-Merge Checklist:
 
 ## Branching & Worktrees — REQUIRED
 
-- **Never work on `main`**; use `git worktree add .worktrees/name branch` for every increment
+- **Never work on `main`**; use `git fetch origin main && git worktree add .worktrees/name -b branch-name main` then `cd .worktrees/name`
 - **Parallel work**: each task MUST have its own worktree
 - Branch naming: `feature/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`
-- **Cleanup after merge**: `git worktree remove` + `git branch -d` — no stale worktrees
+- **Cleanup after merge**: `git worktree remove .worktrees/name` then `git branch -D branch-name` — no stale worktrees
 
 ## Sub-Agents & Commits
 
-**Delegate** to sub-agents for: research (>5 sources), docs (>100 words), test data, perf analysis, security review. Provide full context; integrate output ensuring it follows this file.
+**Delegate** to sub-agents for: research (>5 sources), docs (>100 words), test data, perf analysis, security review. Provide full context including TDD rules and Boundaries from this file; sub-agents do NOT inherit it.
 
 ```
 type(scope): short description
@@ -337,7 +338,7 @@ Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`, `style`, `perf`
 - Run `{{PACKAGE_MANAGER}} test && lint` before PR; invoke Sentinel before merge
 - Use worktrees; write knowledge → `LEARNINGS.md`, decisions → `DECISIONS.md`, changes → `CHANGELOG.md`
 
-### ⚠️ ASK FIRST (silence ≠ approval — present justification, pause and wait)
+### ⚠️ ASK FIRST (silence ≠ approval — present justification, pause and wait; unlisted actions default here)
 Dependencies · CI/CD · public APIs · architecture · env vars/secrets · external network services
 
 ### 🚨 HUMAN REQUIRED (agent cannot execute — user must perform or delegate)

@@ -11,14 +11,23 @@
 Every increment MUST use a git worktree for isolation:
 
 ```bash
-# Create a worktree for a specific feature
-git worktree add .worktrees/feature-name feature/feature-name
+# Fetch latest main, create worktree with new branch
+git fetch origin main
+git worktree add .worktrees/feature-name -b feature/feature-name main
+
+# Change into the worktree
+cd .worktrees/feature-name
+
+# If worktree already exists (retry/recovery), just cd into it
+# git worktree list  # check existing worktrees
 
 # List active worktrees
 git worktree list
 
-# Remove a worktree when done (after merge)
+# Remove a worktree when done (after merge — cd back to main worktree first)
+cd <main-worktree-root>
 git worktree remove .worktrees/feature-name
+git branch -D feature/feature-name
 ```
 
 ### Why Worktrees Are Required
@@ -30,14 +39,16 @@ git worktree remove .worktrees/feature-name
 ## Branching Details
 
 ### Branch Lifecycle
-1. Create worktree + branch from `main`: `git worktree add .worktrees/name feature/name`
-2. TDD: write failing tests, implement, refactor
-3. Commit following the format in AGENTS.md
-4. Push and open a Pull Request
-5. Invoke Sentinel for review
-6. Address any Sentinel feedback, re-submit
-7. On Sentinel approval, merge to `main`
-8. Delete the feature branch and remove worktree
+1. Fetch latest: `git fetch origin main`
+2. Create worktree + branch from `main`: `git worktree add .worktrees/name -b feature/name main && cd .worktrees/name`
+3. TDD: write failing tests, implement, refactor
+4. Commit following the format in AGENTS.md
+5. Push branch: `git push -u origin feature/name`
+6. Open PR: `gh pr create` or via GitHub UI
+7. Invoke Sentinel for review
+8. Address any Sentinel feedback, re-submit
+9. On Sentinel approval, merge to `main`
+10. Cleanup: `cd <main-root> && git worktree remove .worktrees/name && git branch -D feature/name`
 
 ### Branch Naming Convention
 | Prefix | Use For |
@@ -64,10 +75,14 @@ git worktree remove .worktrees/feature-name
 → See [`docs/SENTINEL.md`](./SENTINEL.md) for the full process and invocation methods.
 
 ### After Merge
-- Delete the feature branch
-- Remove the worktree
-- Pull latest `main`
+```bash
+cd <main-worktree-root>
+git worktree remove .worktrees/feature-name
+git branch -D feature/name
+git pull origin main
+```
 - Start next increment from the plan
+- If other worktrees are in progress, rebase them: `cd .worktrees/other && git fetch origin main && git rebase origin/main`
 
 ## Sub-Agent Delegation
 

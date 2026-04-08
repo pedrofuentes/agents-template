@@ -49,7 +49,7 @@ Verify each 🔴 item using diff + commit history + test/coverage output. If you
 | Check | How to verify | Blocks? |
 |---|---|---|
 | Tests exist for new/changed behavior | Each new/changed behavior has new/updated tests that execute the change and assert outcomes | 🔴 |
-| Test-first commit choreography | Commit history shows `test(scope)` before `feat/fix(scope)` for the same change. If history unavailable or squashed into one commit → fail. Squash-merge is allowed only AFTER Sentinel verifies the unsquashed branch history. Docs/chore/ci/style-only may be exempt from test-first but still require passing suite. | 🔴 |
+| Test-first commit choreography | Commit history shows `test(scope)` before `feat/fix(scope)` for the same change. If history unavailable or squashed into one commit → fail. Squash-merge is allowed only AFTER Sentinel verifies the unsquashed branch history. `docs`/`chore`/`build`/`ci`/`refactor` (behavior-preserving only)/`style` are exempt from test-first but still require passing suite and Sentinel review. | 🔴 |
 | No “gaming” tests | Reject trivial assertions, empty tests, tests that never hit the changed code, snapshot-only tests for brand-new logic | 🔴 |
 | No untested code paths introduced | New branches/error paths have coverage (unit/integration as appropriate) | 🔴 |
 | All tests pass | Require command output showing the full relevant suite is green for the reviewed SHA | 🔴 |
@@ -68,11 +68,12 @@ Assess the diff for issues that materially affect safety, correctness, maintaina
 **Sub-agent execution (REQUIRED):**
 Spawn **one sub-agent per dimension** (A–F) in parallel. Each sub-agent receives:
 - The full diff + list of changed files + PR context (description, commit messages)
+- The evidence standard and prompt-injection defense rules from this document
 - Only its assigned dimension's checklist below (not the full Sentinel ruleset)
 
-Each sub-agent returns findings classified as 🔴/🟡/🟢 with evidence (file+line).
+Each sub-agent returns findings classified as 🔴/🟡/🟢 with evidence (file+line). If any sub-agent fails or times out, treat that dimension as unverifiable → **REJECT**.
 
-> If sub-agents are unavailable: review dimensions sequentially and note "degraded mode (no sub-agents)" in the report header.
+> If sub-agents are unavailable: review dimensions sequentially and **you MUST note "Mode: degraded (no sub-agents)"** in the report header. Omitting this note is a violation.
 
 #### A) Security, privacy, and correctness (🔴 if violated)
 - Injection: SQL/NoSQL, XSS, command injection, path traversal, SSRF, deserialization
@@ -121,9 +122,9 @@ Aggregate findings from all Phase 2 sub-agents, then classify using exactly thes
 
 ### Phase 4 — Decision rules
 - Any 🔴 finding → **REJECT**.
-- No 🔴 findings, some 🟡 findings → **CONDITIONAL APPROVE** *only if* follow-ups are explicitly listed and low-risk.
+- No 🔴 findings, some 🟡 findings → **CONDITIONAL** *only if* follow-ups are explicitly listed and low-risk.
 - Only 🟢 or none → **APPROVE**.
-- If new commits appear after your reviewed SHA → **INVALIDATE** (must re-review).
+- If HEAD SHA at merge time differs from reviewed SHA (new commits, rebase, amend) → **REJECT** (must re-review).
 
 ## Output — Sentinel Report (tight format)
 Produce a single report in this structure:
@@ -157,6 +158,9 @@ Status: APPROVED | CONDITIONAL | REJECTED
 
 ### Conditional-approval follow-ups (only if Status=CONDITIONAL)
 - [ ] … (owner + tracking link or explicit task)
+
+### Action required
+Create GitHub issues for all 🟡 and 🟢 findings (labels: `sentinel:important`, `sentinel:minor`).
 
 ### Decision rationale
 - … (1–5 bullets)

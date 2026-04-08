@@ -5,6 +5,27 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [Unreleased]
 
+### Fixed
+- Git workflow: worktree branches now start from `main` (not HEAD), include `git fetch`, cleanup order corrected
+- Git workflow: testing branches now use worktrees consistently (not `git checkout -b`)
+- Git workflow: `git push` and `gh pr create` steps added to DEVELOPMENT-WORKFLOW.md branch lifecycle
+- Git workflow: `git branch -d` → `-D` (works after squash merge), worktree idempotency guidance added
+- TDD: exemption list synced between AGENTS.md and SENTINEL.md (added `build`, `refactor`)
+- TDD: `refactor` exemption now requires behavior-preserving constraint
+- TDD: exemptions clarified as TDD-ordering-only — Sentinel review still required
+- TDD: coverage scope defined as diff coverage; project-wide must never decrease
+- TDD: test-only PRs for existing code now have explicit choreography path
+- Sentinel: standardized verdict enum — `CONDITIONAL` (not `CONDITIONAL APPROVE`)
+- Sentinel: removed `INVALIDATE` phantom state — SHA mismatch is now a `REJECT`
+- Sentinel: added CONDITIONAL handling in AGENTS.md "After Sentinel" section
+- Sentinel: partial sub-agent failure now treated as unverifiable → REJECT
+- Sentinel: sub-agents now receive evidence standard + anti-injection rules
+- Sentinel: SHA invalidation now covers rebase, amend, and force-push (not just new commits)
+- Compliance: autopilot "proceed" clarified — skip plan approval only, all other gates remain
+- Compliance: sub-agent delegation now specifies what context to include (TDD rules, boundaries)
+- Compliance: boundary catch-all added — unlisted actions default to ASK FIRST
+- Compliance: self-review fallback now requires `⚠️ SELF-REVIEWED` label + user approval
+
 ## [0.2.1] - 2026-04-07
 
 ### Fixed

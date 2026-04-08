@@ -16,10 +16,15 @@
 
 ## Coverage Requirements
 
-- **New code**: {{COVERAGE_THRESHOLD}}% coverage required
+- **New code**: {{COVERAGE_THRESHOLD}}% diff coverage required (lines added/modified in the PR)
+- **Project-wide coverage**: must never decrease from the previous merge baseline
 - **Critical paths**: 100% coverage required (auth, payments, data mutations)
 - **Run coverage**: `{{PACKAGE_MANAGER}} test --coverage`
 - **Sentinel verifies coverage thresholds on every PR**
+
+## Test-Only PRs
+
+PRs that only add tests to existing (untested) code use commit type `test(scope)` and are exempt from test-first choreography ordering (there is no `feat`/`fix` to follow). Sentinel verifies the tests are meaningful and pass.
 
 ## Testing Patterns
 
