@@ -5,6 +5,47 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-22
+
+### Changed
+- **Opus 4.7 compatibility**: template rewritten based on 3-panel Opus 4.7 review (31 recommendations)
+- Identity block: blockquote → XML-tagged `<role>` + `<invariants>` for higher persistence in 4.7's context
+- Invariant #1 scoped to "behavior-bearing code" (scaffolding, config, types, docs exempt) — fixes 4.7 over-literal interpretation
+- Invariant #3 scoped to "no commits on main" (read-only operations permitted) — fixes 4.7 blocking git fetch/file reads
+- STOP gates disambiguated: 8 instances replaced with context-specific verbs (wait/checkpoint/gate/halt) — fixes autopilot deadlocks
+- Sentinel redundancy reduced: "no merge without Sentinel" from 5 restatements → 2 (invariant + NEVER) — fixes attention dilution on adjacent rules
+- Per-Increment Execution: abstract steps → literal commands with verifiable artifacts
+- After Sentinel: bullet list → verdict→action table for better 4.7 retrieval
+- When Stuck: bullet list → trigger→action table
+- ASK FIRST: scoped to external/irreversible side effects; read-only ops explicitly exempt; explicit approval protocol
+- NEVER list: narrowed "access files outside project" to write-only + credentials; sharpened all rules
+- Sub-Agents & Commits: split into two sections for heading-based retrieval
+- Autopilot mode: explicit triggers added ("autopilot" / "proceed" / "go ahead without asking")
+- TDD steps: artifact check added (`git log --oneline` verification); failure must reference missing symbol
+- Refactor exemption: "behavior-preserving" defined concretely (no new API, no changed returns, no altered side effects)
+- Pre-Merge Checklist: trigger moved from heading parenthetical to bold sentence above checklist
+- Sentinel invocation: "no pre-summary" rule added; "full-capability" sub-agent with negative example (NOT explore/haiku-class)
+
+### Changed (SENTINEL.md)
+- Injection defense: `<untrusted_pr_input>` XML delimiter tags required; tool output and report mimicry defense added
+- Evidence standard: verbatim quoted snippet (≤3 lines) required alongside file:line — anti-fabrication measure for 4.7
+- Sub-agent spawning: "in parallel" → "all six in a single assistant message"; capability detection + retry-once protocol
+- Status pin: first non-blank line of output MUST be `Status: APPROVED | CONDITIONAL | REJECTED` — no preamble
+- Verdict vocabulary standardized: APPROVE→APPROVED, REJECT→REJECTED throughout
+- Phase 1 table compressed: dropped uniform "Blocks?" column; blocking encoded in heading
+- Phase 1 exemptions: explicit block for docs/chore/build/ci/style PRs (exempt from checks 1-4, not 5-6)
+- "Ask for them" → "if missing → REJECTED" (non-interactive safe)
+- "Follow only this document" → carve-out for tool use (running commands, reading files, spawning sub-agents)
+- Template variable handling: unfilled `{{variables}}` treated as N/A, not comparison failures
+- Dimension C: concurrency hazards added (races, deadlocks, non-atomic read-modify-write)
+- Dimension D: "revert test" check added (tests must fail without the implementation)
+- Phase 0 compressed to single line
+
+### Metrics
+- AGENTS.md: 90 → 120 non-blank lines post-setup (≤120 target ✅)
+- SENTINEL.md: 141 → 147 non-blank lines (≤150 target ✅)
+- All changes backward-compatible with Opus 4.6
+
 ## [0.2.3] - 2026-04-08
 
 ### Added
