@@ -5,6 +5,21 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [Unreleased]
 
+### Added
+- Sentinel sub-agent observability: `Mode:` field and `Phase 2 — Execution Log` section in report format require tool-returned agent IDs, making sub-agent dispatch verifiable
+- Invoker verification step: parent agent must confirm Mode declaration and execution log exist before accepting Sentinel report
+- Pre-merge checklist: Mode verification line added
+- Concrete sub-agent definition: must be a separately-invoked tool call with its own context window; sequential self-review does not qualify
+- "Unavailable" defined: only platform technical limitations (tool not present, API error); cost/latency/diff-size are explicitly excluded
+- Audit trail: execution log now includes the exact tool call used to spawn each sub-agent, enabling post-hoc verification
+- Proof-of-attempt required: must attempt to spawn at least one sub-agent and document the failure before declaring degraded mode
+
+### Changed
+- Sentinel Role definition: explicitly includes sub-agent dispatch as mandatory action (not just passive review)
+- Mode semantics: three clearly defined modes (standard, degraded-serialized, degraded-no-sub-agents) with degraded modes requiring explicit user approval
+- Sub-agent execution rules expanded: logging with tool-returned identifiers is required; missing/fabricated IDs invalidate the entire review → REJECT
+- Timeout handling: sub-agent failure now requires retry before REJECT, removing perverse incentive to skip sub-agents entirely
+
 ## [0.3.0] - 2026-04-22
 
 ### Changed

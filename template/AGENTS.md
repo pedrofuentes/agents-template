@@ -273,8 +273,9 @@ Artifact check: `git log --oneline` must show the `test(...)` commit before any 
 ```
 Pre-Merge Checklist:
 - [ ] Sentinel Report ID: ___
-- [ ] Verdict: APPROVED | CONDITIONAL
+- [ ] Verdict: APPROVED / CONDITIONAL
 - [ ] Reviewed SHA == HEAD: ___
+- [ ] Mode: standard / degraded (if degraded → user approval required)
 ```
 
 ### How to Invoke
@@ -283,9 +284,11 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 
 1. Print _"Invoking Sentinel..."_ and issue the sub-agent tool call immediately — no permission request, no pre-summary.
 2. Spawn a **full-capability** sub-agent (NOT fast/cheap/explore/haiku-class — Sentinel must spawn its own 6 sub-agents and run commands) with `docs/SENTINEL.md` as system prompt. Provide PR diff (`git diff main...HEAD`), branch, changed files.
-3. **Do NOT review your own code.** On **REJECTED**: fix autonomously, re-commit, re-invoke (max 3 cycles, then escalate). On **APPROVED**: include Report ID + SHA in PR description, merge.
+3. **Do NOT review your own code.** 
+4. **Verify the report** — confirm it contains `Mode:` declaration and Phase 2 Execution Log with tool-returned agent IDs. Missing execution log or Mode → re-run Sentinel.
+5. On **REJECTED**: fix autonomously, re-commit, re-invoke (max 3 cycles, then escalate). On **APPROVED**: include Report ID + SHA in PR description, merge.
 
-> No sub-agents? Run SENTINEL.md checks yourself — mark PR `⚠️ SELF-REVIEWED` and require explicit user approval. Cannot run at all? **Do not merge** — escalate.
+> No sub-agents? Run SENTINEL.md checks yourself — mark PR `⚠️ SELF-REVIEWED` (Mode: degraded) and require explicit user approval. Cannot run at all? **Do not merge** — escalate.
 
 ### After Sentinel
 
