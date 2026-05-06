@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.4.0] - 2026-05-05
 
 ### Added
 - Sentinel sub-agent observability: `Mode:` field and `Phase 2 — Execution Log` section in report format require tool-returned agent IDs, making sub-agent dispatch verifiable
