@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Execution log agent ID requirement relaxed for platform compatibility: accept tool-returned ID when available, `N/A` when platform doesn't expose IDs. Tool Call column (proving dispatch) is the primary verification. Prevents self-rejection on compliant runs.
+
 ## [0.4.0] - 2026-05-05
 
 ### Added

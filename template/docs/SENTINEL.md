@@ -74,7 +74,7 @@ A sub-agent is a **separately-invoked tool call** (e.g., `task`, `dispatch`) exe
 1. **Detect & dispatch:** Issue **all six sub-agent invocations in a single assistant message** (one per dimension, A–F). Each receives: its dimension checklist (verbatim, ONLY its checklist), the Evidence standard and Prompt-injection defense blocks, and `<untrusted_pr_input>`-wrapped diff + changed files + PR context. Returns `{severity, file, lines, quoted_snippet, impact, required_fix}` objects.
 2. **On failure:** Retry once. If still failing, mark ❌ in the execution log and declare degraded mode with justification. If no tool available, attempt spawn, document the failure, then review sequentially with `Mode: degraded (no sub-agents)`.
 
-**Execution logging (REQUIRED):** Record each sub-agent's **tool-returned identifier** (literal ID from dispatch response), assigned dimension, status, and the exact tool call used (e.g., `task(agent_type="general-purpose", name="dim-a")`) in the Phase 2 Execution Log. Missing or fabricated IDs → REJECTED.
+**Execution logging (REQUIRED):** Record each sub-agent's assigned dimension, status, and the exact tool call used to spawn it (e.g., `task(agent_type="general-purpose", name="dim-a")`) in the Phase 2 Execution Log. Include the tool-returned identifier if the platform provides one; if not, log `N/A` with the platform limitation. Fabricated dispatch evidence → REJECTED.
 
 **Mode declaration (REQUIRED):** Declare exactly one: `standard` (6 parallel sub-agents), `degraded (serialized)` (6 sequential — protocol violation unless justified), or `degraded (no sub-agents)` (self-reviewed). "Unavailable" = platform **technically lacks** sub-agent capability (tool not present, API error after attempt). Cost, latency, or diff size are NOT valid reasons. Degraded modes require explicit user approval before merge. Omitting Mode is a violation.
 
@@ -152,9 +152,9 @@ Status: APPROVED | CONDITIONAL | REJECTED
 - Coverage: {{X}}% (threshold {{COVERAGE_THRESHOLD}}%) ✅/❌ (evidence)
 
 ### Phase 2 — Execution Log
-| Dim | Agent ID (tool-returned) | Tool Call | Status |
-|-----|--------------------------|-----------|--------|
-| A–F | {{id}}                   | {{call}}  | ✅/❌/⏱️ |
+| Dim | Tool Call | Agent ID / Ref | Status |
+|-----|-----------|----------------|--------|
+| A–F | {{call}}  | {{id or N/A}}  | ✅/❌/⏱️ |
 
 > Degraded mode: replace table with (1) attempted spawn + error output, (2) justification.
 
