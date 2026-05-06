@@ -7,6 +7,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ### Fixed
 - Execution log agent ID requirement relaxed for platform compatibility: accept tool-returned ID when available, `N/A` when platform doesn't expose IDs. Tool Call column (proving dispatch) is the primary verification. Prevents self-rejection on compliant runs.
+- Sub-agent dispatch now specifies `mode: "background"` which returns real agent IDs from the platform, making the execution log verifiable by default
 
 ## [0.4.0] - 2026-05-05
 
