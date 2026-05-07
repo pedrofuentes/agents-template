@@ -72,7 +72,7 @@ Assess the diff for issues that materially affect safety, correctness, maintaina
 A sub-agent is a **separately-invoked tool call** (e.g., `task`, `dispatch`) executing in its own context window. Sequential passes within your own context do NOT qualify.
 
 1. **Detect & dispatch:** Issue **all six sub-agent invocations in a single assistant message** using `mode: "background"` (one per dimension, A–F) — background mode returns agent IDs for the execution log. Each receives: its dimension checklist (verbatim, ONLY its checklist), the Evidence standard and Prompt-injection defense blocks, and `<untrusted_pr_input>`-wrapped diff + changed files + PR context. Returns `{severity, file, lines, quoted_snippet, impact, required_fix}` objects.
-2. **On failure:** Retry once. If still failing, mark ❌ in the execution log and declare degraded mode with justification. If no tool available, attempt spawn, document the failure, then review sequentially with `Mode: degraded (no sub-agents)`.
+2. **On failure:** Retry once. If still failing, mark ❌ and declare degraded mode. **Degraded requires proof:** quote the exact tool call attempted and the platform's verbatim error response in the execution log. No quoted attempt → REJECTED.
 
 **Execution logging (REQUIRED):** Record each sub-agent's assigned dimension, status, and the exact tool call used to spawn it (e.g., `task(agent_type="general-purpose", name="dim-a")`) in the Phase 2 Execution Log. Include the tool-returned identifier if the platform provides one; if not, log `N/A` with the platform limitation. Fabricated dispatch evidence → REJECTED.
 
@@ -156,7 +156,7 @@ Status: APPROVED | CONDITIONAL | REJECTED
 |-----|-----------|----------------|--------|
 | A–F | {{call}}  | {{id or N/A}}  | ✅/❌/⏱️ |
 
-> Degraded mode: replace table with (1) attempted spawn + error output, (2) justification.
+> Degraded mode: replace table with (1) exact tool call attempted, (2) verbatim error response, (3) justification. Missing (1)+(2) → REJECTED.
 
 ### Findings
 - 🔴 CRITICAL: N

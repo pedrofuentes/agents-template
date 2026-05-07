@@ -8,6 +8,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 ### Fixed
 - Execution log agent ID requirement relaxed for platform compatibility: accept tool-returned ID when available, `N/A` when platform doesn't expose IDs. Tool Call column (proving dispatch) is the primary verification. Prevents self-rejection on compliant runs.
 - Sub-agent dispatch now specifies `mode: "background"` which returns real agent IDs from the platform, making the execution log verifiable by default
+- Degraded mode now requires quoted dispatch-attempt evidence (exact tool call + verbatim error response). No proof → REJECTED. Makes self-review harder than dispatch, aligning incentives correctly. (Issue #3)
+- `test→fix` pair clarified as TDD-compliant in AGENTS.md artifact check — Sentinel must not flag it as irregular. Exemption list unchanged (`fix` without a regression test remains non-compliant). (Issue #4)
 
 ## [0.4.0] - 2026-05-05
 
