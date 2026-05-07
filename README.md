@@ -13,6 +13,9 @@ The `template/` directory contains everything you copy into your project:
 | `template/AGENTS.md` | The agent operating system — MUST rules, TDD, workflow, boundaries |
 | `template/SETUP.md` | Placeholder inventory & customization checklist |
 | `template/ROADMAP.md` | Project phases template |
+| `template/LEARNINGS.md` | Discovered knowledge log |
+| `template/DECISIONS.md` | Architecture decision records |
+| `template/CHANGELOG.md` | User-facing changes log |
 | `template/docs/SENTINEL.md` | Quality gate — 6 parallel review sub-agents, invocation, infrastructure enforcement |
 | `template/docs/ARCHITECTURE.md` | Project structure template |
 | `template/docs/TESTING-STRATEGY.md` | Test strategy details |
@@ -111,23 +114,25 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 3 cycl
 ## Key Features
 
 - **TDD defense in depth** — Layer 1 (STOP checkpoint verbs) + Layer 2 (Sentinel verification)
-- **Sentinel quality gate** — 6 parallel review sub-agents with anti-prompt-injection
+- **Sentinel quality gate** — 6 parallel review sub-agents with anti-prompt-injection and dispatch-proof enforcement
 - **Quality ratchet** — continuous improvement loop until Sentinel approves
 - **Separation of concerns** — the coder ≠ the reviewer, always
 - **Autonomous workflow** — Plan → Approve → Execute → Sentinel → Merge
 - **4-tier boundaries** — ALWAYS / ASK FIRST / HUMAN REQUIRED / NEVER
 - **Commit choreography** — `test(red)` → `feat(green)` → `refactor` with exemptions
+- **Git worktrees** — mandatory branch isolation for every task
+- **Pre-merge checklist** — SHA-bound, Mode-verified gate before every merge
 - **Identity framing** — Prompt engineering techniques for higher agent compliance
 
 ## How It Was Built
 
-This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See `MIGRATION-GUIDE.md` for the full evolution history.
+This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See [`MIGRATION-GUIDE.md`](./MIGRATION-GUIDE.md) for the full evolution history.
 
 Current version: **v0.4.1**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## Battle-Tested
 
-Live-tested on [gitnotate](https://github.com/pedrofuentes/gitnotate) (96 commits, 128 files, ~18K lines). Results:
+Live-tested on [gitnotate](https://github.com/pedrofuentes/gitnotate), [Arbol](https://github.com/pedrofuentes/arbol), and [Council](https://github.com/pedrofuentes/Council). Results:
 
 - **Sentinel caught a real XSS vulnerability** (innerHTML injection) the agent would have shipped
 - **Pre-merge checklist gate** prevents agents from merging without Sentinel — even for 1-line fixes

@@ -1,4 +1,4 @@
-# Migration Guide: Old AGENTS.md → v4 Autonomous Agent Operating System
+# Migration Guide: Template Evolution History (v1 → v4)
 
 This document maps sections from a typical pre-template AGENTS.md to their new locations in the two-tier system, and documents all new content added.
 

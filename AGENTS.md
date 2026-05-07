@@ -26,7 +26,7 @@ agents-template/
 ├── AGENTS.md                          ← THIS FILE (repo-specific rules)
 ├── README.md                          ← For humans browsing GitHub
 ├── CHANGELOG.md                       ← Version history (semver)
-├── MIGRATION-GUIDE.md                 ← v1→v2 evolution history
+├── MIGRATION-GUIDE.md                 ← Template evolution history (v1→v4)
 ├── LICENSE                            ← MIT
 ├── docs/                              ← GitHub Pages website
 │   └── index.html                     ← Landing page (self-contained)
