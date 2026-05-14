@@ -198,7 +198,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 4. If any remain, fill them in or ask the user
 5. Commit: `chore: configure AGENTS.md for this project`
 <!-- SETUP:END -->
-<!-- agents-template v0.4.1 -->
+<!-- agents-template v0.5.0 -->
 
 <role>You write tests before code, work in isolated worktree branches, and never merge without Sentinel review. These rules are enforced mechanically — Sentinel verifies compliance on every PR and non-compliant work is rejected.</role>
 
@@ -239,7 +239,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 2. Write failing test(s). Commit as `test(scope): ...`. Run suite — confirm FAIL.
 3. Write minimal impl. Commit as `feat|fix(scope): ...`. Run suite — confirm PASS.
 4. Push branch, open PR — do NOT merge yet, proceed to Sentinel.
-5. Invoke Sentinel (see §How to Invoke). On APPROVED → merge. On REJECTED → fix, re-invoke (max 3 cycles, then escalate to user).
+5. Invoke Sentinel (see §How to Invoke). On APPROVED → merge. On REJECTED → fix, re-invoke (max 5 cycles, then escalate to user).
 
 ### Testing & Iteration
 1. Create ONE testing worktree: `git worktree add .worktrees/test-scope -b test/scope-testing main`. Commit fixes freely. Run Sentinel **once** before merging.
@@ -286,7 +286,7 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 2. Spawn a **full-capability** sub-agent (NOT fast/cheap/explore/haiku-class — Sentinel must spawn its own 6 sub-agents and run commands) with `docs/SENTINEL.md` as system prompt. Provide PR diff (`git diff main...HEAD`), branch, changed files.
 3. **Do NOT review your own code.** 
 4. **Verify the report** — confirm it contains `Mode:` declaration and Phase 2 Execution Log with tool-returned agent IDs. Missing execution log or Mode → re-run Sentinel.
-5. On **REJECTED**: fix autonomously, re-commit, re-invoke (max 3 cycles, then escalate). On **APPROVED**: include Report ID + SHA in PR description, merge.
+5. On **REJECTED**: fix autonomously, re-commit, re-invoke with previous Report ID + fix delta (`git diff <prev-SHA>..HEAD`) for scoped re-review (max 5 cycles, then escalate). On **APPROVED**: include Report ID + SHA in PR description, merge.
 
 > No sub-agents? Run SENTINEL.md checks yourself — mark PR `⚠️ SELF-REVIEWED` (Mode: degraded) and require explicit user approval. Cannot run at all? **Do not merge** — escalate.
 
@@ -296,7 +296,7 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 |---------|--------|
 | APPROVED | Record Report ID + SHA in merge commit. File 🟡/🟢 findings as issues (`sentinel:important`, `sentinel:minor`). |
 | CONDITIONAL | File issues for ALL follow-ups first, link in PR, then merge. |
-| REJECTED | Fix autonomously (no user prompt). Re-commit, re-invoke. Max 3 cycles. |
+| REJECTED | Fix autonomously (no user prompt). Re-commit, re-invoke. Max 5 cycles. |
 
 **Ratchet**: coverage, test count, lint-clean, zero 🔴 — never decrease. Log violation/correction pairs in `LEARNINGS.md`.
 
@@ -340,7 +340,7 @@ Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`, `style`, `perf`
 Unlisted actions with **external or irreversible side effects** default to ASK FIRST. Read-only operations (reading files, running tests, searching code) do not require asking.
 
 ### 🚨 HUMAN REQUIRED (agent cannot execute — user must perform or delegate)
-Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production deploys · 🔴 CRITICAL findings · 3× Sentinel rejections · deployment pipeline setup · credentials rotation
+Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production deploys · 🔴 CRITICAL findings · 5× Sentinel rejections · deployment pipeline setup · credentials rotation
 
 ### 🚫 NEVER — Automatic Sentinel rejection
 - **Security**: commit secrets · send code to unapproved services · access files/credentials outside project root
@@ -352,7 +352,7 @@ Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production 
 | Trigger | Action |
 |---------|--------|
 | Same test fails 3× | Revert to last green; re-analyze assumptions |
-| Sentinel rejects 3× | Escalate to user — do not retry same approach |
+| Sentinel rejects 5× | Escalate to user — do not retry same approach |
 | Same problem, 2+ failed attempts | Spawn research sub-agent for root-cause + alternatives |
 | Lost context | Re-read this file → `git status` → resume from last increment |
 | Merge conflict | Rebase on `main`, re-test, re-invoke Sentinel |
