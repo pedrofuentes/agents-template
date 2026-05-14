@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-05-13
+
+### Added
+- **Scope guard** for Phase 2: findings must originate from changed lines or code whose reachability/inputs/trust-boundary is altered by the diff. Pre-existing issues in unchanged code are out of scope (🟢 max) unless the diff newly exposes or depends on them
+- **Selective sub-agent dispatch**: PRs with only `docs` or `style` commits dispatch only applicable dimensions (`docs`→F; `style`→D,F) instead of all six. Cross-cutting risk triggers escalation to full A–F. Closes #7
+- **Docs severity cap**: Dimension F completeness/staleness findings capped at 🟡 — documentation gaps do not block merge. Policy-weakening or unsafe-instruction changes remain uncapped
+- **Re-review mode**: when invoker provides previous Report ID + fix delta, Phase 2 sub-agents review the fix delta instead of the full PR diff. All dimensions still dispatched; previous 🔴 findings explicitly verified as resolved. Reduces re-review cycle time from ~15-50 min to ~5-10 min
+- **Test evidence fallback**: test execution timeouts no longer auto-reject. Sentinel accepts parent-provided test output for the reviewed SHA (flagged as `⚠️ parent-provided evidence`); rejects only if no fallback is available
+
+### Changed
+- **Cycle limit raised from 3 to 5**: agents get more room on complex PRs where each cycle produces a genuinely different fix before escalating to user
+- **Phase 4 severity calibration**: removed "and low-risk" qualifier from CONDITIONAL verdict. 🟡 findings always produce CONDITIONAL (never REJECTED), provided Phase 3 reclassification is applied first. Tightens the intent: if it could cause data loss/security exposure, reclassify as 🔴 — otherwise file as issue and merge
+- **Phase 4 decision rules compressed**: four bullets → two for clarity
+- **Coverage threshold check**: strengthened skip instruction — if `{{COVERAGE_THRESHOLD}}` still has braces, check is N/A (do not invent a threshold)
+- **Deploy/release gating section**: compressed for line budget
+
 ## [0.4.1] - 2026-05-07
 
 ### Fixed
