@@ -374,7 +374,7 @@
       font-family: var(--font-mono);
       font-size: 0.8rem;
       line-height: 1.8;
-      min-height: 280px;
+      min-height: 360px;
     }
 
     .terminal-line {
@@ -396,6 +396,9 @@
     .terminal-line .info { color: var(--blue); }
     .terminal-line .dim { color: var(--text-secondary); }
     .terminal-line .separator { color: var(--accent-dim); }
+    .terminal-line .agent-bullet { color: var(--accent); font-weight: 600; }
+    .terminal-line .conditional { color: var(--accent-bright); font-weight: 600; }
+    .terminal-line .check { color: var(--green); }
 
     .terminal-line .blink-cursor {
       display: inline-block;
@@ -1133,47 +1136,65 @@
           <span class="terminal-dot red"></span>
           <span class="terminal-dot yellow"></span>
           <span class="terminal-dot green"></span>
-          <span class="terminal-title">sentinel — review</span>
+          <span class="terminal-title">copilot — PR #478</span>
         </div>
         <div class="terminal-body" id="sentinel-terminal">
           <div class="terminal-line" data-delay="0">
-            <span class="prompt">$ </span><span class="command">sentinel review --branch feat/user-auth</span>
+            <span class="agent-bullet">● </span><span class="dim">All 1145 tests pass (1 new test). Opening PR...</span>
           </div>
           <div class="terminal-line" data-delay="600">
             <span class="dim">&nbsp;</span>
           </div>
-          <div class="terminal-line" data-delay="900">
-            <span class="info">⟳ Scanning branch </span><span class="command">feat/user-auth</span><span class="info">...</span>
+          <div class="terminal-line" data-delay="800">
+            <span class="agent-bullet">● </span><span class="command">PR #478 created.</span> <span class="info">Invoking Sentinel...</span>
           </div>
-          <div class="terminal-line" data-delay="1500">
-            <span class="dim">  ├── </span><span class="dim">Tests: </span><span class="success">47 passed, 0 failed ✓</span>
-          </div>
-          <div class="terminal-line" data-delay="2000">
-            <span class="dim">  ├── </span><span class="dim">Coverage: </span><span class="success">94.2% (threshold: 80%) ✓</span>
-          </div>
-          <div class="terminal-line" data-delay="2500">
-            <span class="dim">  ├── </span><span class="dim">Lint: </span><span class="success">0 errors, 0 warnings ✓</span>
-          </div>
-          <div class="terminal-line" data-delay="3000">
-            <span class="dim">  ├── </span><span class="dim">Security: </span><span class="success">No vulnerabilities found ✓</span>
-          </div>
-          <div class="terminal-line" data-delay="3500">
-            <span class="dim">  └── </span><span class="dim">TDD: </span><span class="success">All new code has tests ✓</span>
-          </div>
-          <div class="terminal-line" data-delay="4200">
+          <div class="terminal-line" data-delay="1400">
             <span class="dim">&nbsp;</span>
           </div>
+          <div class="terminal-line" data-delay="1800">
+            <span class="agent-bullet">● </span><span class="dim">Sentinel is running for PR #478. This is a small,</span>
+          </div>
+          <div class="terminal-line" data-delay="1800">
+            <span class="dim">&nbsp;&nbsp;surgical fix — 2 commits in proper TDD order,</span>
+          </div>
+          <div class="terminal-line" data-delay="1800">
+            <span class="dim">&nbsp;&nbsp;~25 lines changed. Waiting for the review.</span>
+          </div>
+          <div class="terminal-line" data-delay="2800">
+            <span class="dim">&nbsp;</span>
+          </div>
+          <div class="terminal-line" data-delay="3200">
+            <span class="agent-bullet">● </span><span class="conditional">CONDITIONAL</span><span class="dim"> — no 🔴 blockers. The 🟡 about</span>
+          </div>
+          <div class="terminal-line" data-delay="3200">
+            <span class="dim">&nbsp;&nbsp;listener cleanup is valid. Let me file the</span>
+          </div>
+          <div class="terminal-line" data-delay="3200">
+            <span class="dim">&nbsp;&nbsp;issue and merge.</span>
+          </div>
+          <div class="terminal-line" data-delay="3800">
+            <span class="dim">&nbsp;</span>
+          </div>
+          <div class="terminal-line" data-delay="4000">
+            <span class="dim">&nbsp;&nbsp;Pre-Merge Checklist:</span>
+          </div>
+          <div class="terminal-line" data-delay="4200">
+            <span class="check">&nbsp;&nbsp;☑</span> <span class="dim">Report: SR-PR478-184643b-...</span>
+          </div>
           <div class="terminal-line" data-delay="4400">
-            <span class="separator">══════════════════════════════════════════</span>
+            <span class="check">&nbsp;&nbsp;☑</span> <span class="dim">Verdict:</span> <span class="conditional">CONDITIONAL</span>
+          </div>
+          <div class="terminal-line" data-delay="4600">
+            <span class="check">&nbsp;&nbsp;☑</span> <span class="dim">SHA == HEAD: 184643b</span>
           </div>
           <div class="terminal-line" data-delay="4800">
-            <span class="success" style="font-weight:600;">  VERDICT: APPROVED ✓</span>
-          </div>
-          <div class="terminal-line" data-delay="5200">
-            <span class="dim">  "Clean implementation. Ship it."</span>
+            <span class="check">&nbsp;&nbsp;☑</span> <span class="dim">Follow-up issue filed: #479</span>
           </div>
           <div class="terminal-line" data-delay="5400">
-            <span class="separator">══════════════════════════════════════════</span>
+            <span class="dim">&nbsp;</span>
+          </div>
+          <div class="terminal-line" data-delay="5800">
+            <span class="agent-bullet">● </span><span class="success">Merged!</span>
           </div>
         </div>
       </div>
