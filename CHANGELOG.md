@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-05-16
+
+### Fixed
+- **Sentinel selective dispatch conflict**: removed hardcoded "6 sub-agents" from `template/AGENTS.md` §How to Invoke. The count contradicted SENTINEL.md's selective dispatch rule (docs→F, style→D,F), causing agents to always spawn all six dimensions
+
 ## [0.5.0] - 2026-05-13
 
 ### Added
