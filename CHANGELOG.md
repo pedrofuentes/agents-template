@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-05-16
+
+### Added
+- **Known Sentinel issues (de-duplication)**: optional input allowing invokers to pass open `sentinel:*` GitHub issues from previous reviews. Findings matching a known issue (same defect mechanism + fix) are classified as **Known** — appear in report for transparency but excluded from verdict count. Prevents the same systemic pattern from being re-flagged across every PR
+- **Root cause consolidation**: multiple Phase 2 findings with identical root cause are consolidated into a single finding (citing all locations), reducing issue inflation
+- **Verdict calibration**: CONDITIONAL now requires ≥1 *new* 🟡 finding (not Known). If all 🟡 findings match known issues → APPROVED instead of CONDITIONAL. Reserves CONDITIONAL for genuinely new, actionable findings
+
+### Changed
+- **Phase 3 ordering**: severity reclassification (🟡→🔴 if data loss/security) now explicitly applies *before* known-issue matching — ensures critical findings can never be suppressed
+- **Report format**: findings counts now show `N new / K known` for 🟡; details support `[Known]` marker with issue # citation; follow-ups and actions merged into single section with "new" qualifier to avoid duplicate issue creation
+- **Deploy/release gating**: compressed from 4 to 2 non-blank lines (semantics preserved)
+- **AGENTS.md §How to Invoke**: invoking agent now queries open `sentinel:*` GitHub issues and passes them as known issues context to Sentinel
+- **AGENTS.md compression**: Per-Increment Execution steps 4+5 merged; Testing & Iteration merged to single line; When Stuck table rows consolidated. Post-setup: 123→120 non-blank lines (≤120 target ✅)
+
+### Metrics
+- SENTINEL.md: 149→148 non-blank lines (≤150 target ✅)
+- AGENTS.md: 123→120 non-blank lines (≤120 target ✅)
+
+### Safeguards
+- 🔴 CRITICAL findings can **NEVER** be classified as Known
+- Known issues must be verified `sentinel:*` GitHub issues (same defect mechanism + fix — cite issue #)
+- Known findings remain visible in the report — nothing is hidden
+- Without known issues input, behavior is unchanged (backward-compatible)
+
 ## [0.5.1] - 2026-05-16
 
 ### Fixed

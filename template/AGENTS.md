@@ -198,7 +198,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 4. If any remain, fill them in or ask the user
 5. Commit: `chore: configure AGENTS.md for this project`
 <!-- SETUP:END -->
-<!-- agents-template v0.5.1 -->
+<!-- agents-template v0.6.0 -->
 
 <role>You write tests before code, work in isolated worktree branches, and never merge without Sentinel review. These rules are enforced mechanically — Sentinel verifies compliance on every PR and non-compliant work is rejected.</role>
 
@@ -238,12 +238,10 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 1. `git worktree add .worktrees/<name> -b <branch> main && cd .worktrees/<name>`
 2. Write failing test(s). Commit as `test(scope): ...`. Run suite — confirm FAIL.
 3. Write minimal impl. Commit as `feat|fix(scope): ...`. Run suite — confirm PASS.
-4. Push branch, open PR — do NOT merge yet, proceed to Sentinel.
-5. Invoke Sentinel (see §How to Invoke). On APPROVED → merge. On REJECTED → fix, re-invoke (max 5 cycles, then escalate to user).
+4. Push branch, open PR. Invoke Sentinel (§How to Invoke). On APPROVED → merge. On REJECTED → fix, re-invoke (max 5 cycles, then escalate).
 
 ### Testing & Iteration
-1. Create ONE testing worktree: `git worktree add .worktrees/test-scope -b test/scope-testing main`. Commit fixes freely. Run Sentinel **once** before merging.
-2. **If HEAD is `main` when a bug is reported, do not commit — create a worktree branch first.**
+Create ONE testing worktree: `git worktree add .worktrees/test-scope -b test/scope-testing main`. Commit fixes freely. Run Sentinel **once** before merging. **If HEAD is `main`, create a worktree branch before any commits.**
 
 ## Test-Driven Development — REQUIRED
 
@@ -283,7 +281,7 @@ Pre-Merge Checklist:
 Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump, everything. User saying "merge" or "ship it" does NOT substitute. Never ask if Sentinel is needed.
 
 1. Print _"Invoking Sentinel..."_ and issue the sub-agent tool call immediately — no permission request, no pre-summary.
-2. Spawn a **full-capability** sub-agent (NOT fast/cheap/explore/haiku-class — Sentinel must be capable of spawning sub-agents and running commands) with `docs/SENTINEL.md` as system prompt. Provide PR diff (`git diff main...HEAD`), branch, changed files.
+2. Spawn a **full-capability** sub-agent (NOT fast/cheap/explore/haiku-class — Sentinel must be capable of spawning sub-agents and running commands) with `docs/SENTINEL.md` as system prompt. Provide PR diff (`git diff main...HEAD`), branch, changed files, and open `sentinel:*` GitHub issues as known issues context.
 3. **Do NOT review your own code.** 
 4. **Verify the report** — confirm it contains `Mode:` declaration and Phase 2 Execution Log with tool-returned agent IDs. Missing execution log or Mode → re-run Sentinel.
 5. On **REJECTED**: fix autonomously, re-commit, re-invoke with previous Report ID + fix delta (`git diff <prev-SHA>..HEAD`) for scoped re-review (max 5 cycles, then escalate). On **APPROVED**: include Report ID + SHA in PR description, merge.
@@ -354,8 +352,7 @@ Auth/crypto/PII · DB migrations · AGENTS.md/SENTINEL.md changes · production 
 | Same test fails 3× | Revert to last green; re-analyze assumptions |
 | Sentinel rejects 5× | Escalate to user — do not retry same approach |
 | Same problem, 2+ failed attempts | Spawn research sub-agent for root-cause + alternatives |
-| Lost context | Re-read this file → `git status` → resume from last increment |
-| Merge conflict | Rebase on `main`, re-test, re-invoke Sentinel |
+| Lost context / merge conflict | Re-read this file → `git status` → resume. If conflict: rebase on `main`, re-test, re-invoke Sentinel |
 | Dependency install fails | Report to user; do not attempt workarounds |
 
 ## Associated Documentation
