@@ -53,6 +53,7 @@ Read EVERY backed-up file. Extract ALL project-specific information into these c
 
 **Identify content to move to companion docs:**
 - Review/CI processes (lengthy review panels, CI pipelines) → `docs/SENTINEL.md`
+- Security review checklists → already covered by `docs/sentinel/` dimension files (no migration needed)
 - Project structure trees → `docs/ARCHITECTURE.md`
 - Detailed testing strategy → `docs/TESTING-STRATEGY.md`
 - Git workflow tutorials, worktree guides → `docs/DEVELOPMENT-WORKFLOW.md`
@@ -115,7 +116,7 @@ If yes, configure via GitHub CLI or instruct user to set up manually:
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
-4. Commit: `chore: migrate AGENTS.md to agents-template v4`
+4. Commit: `chore: migrate to agents-template v0.9.0`
 5. The `.agent-backup/` can be deleted after the user confirms everything works
 
 ---
@@ -196,7 +197,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
 4. If any remain, fill them in or ask the user
-5. Commit: `chore: configure AGENTS.md for this project`
+5. Commit: `chore: configure AGENTS.md (agents-template v0.9.0)`
 <!-- SETUP:END -->
 <!-- agents-template v0.9.0 -->
 
