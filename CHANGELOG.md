@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-05-17
+
+### Changed
+- **Phase 1 coverage skip for exempt PRs**: fully-exempt PRs (all types except `refactor`) now skip check 6 (coverage threshold). No source code changed → coverage instrumentation is pure overhead. `refactor` retains check 6 because restructuring can shift measured coverage. Ratchet catches regressions on next behavior-bearing PR
+- **Selective dispatch expanded**: `chore`/`build`/`ci`-only PRs now dispatch A (security), E (supply chain), F (docs) only — B, C, D skipped. `refactor` retains full A–F. Saves 3 sub-agent invocations (~40% latency reduction) on config/CI PRs without sacrificing the security and supply-chain checks that catch high-value issues (e.g., mutable GH Action refs)
+- **Dimension F cross-reference rule**: DECISIONS.md and LEARNINGS.md update checks consolidated — content already documented in another companion doc satisfies the check if cited by path/section (🟢 max, not 🟡). Prevents CONDITIONAL verdicts for documentation bookkeeping
+- **Mode declaration fixed**: `standard` mode no longer hardcodes "6 parallel sub-agents" — now reads "all applicable dimensions dispatched in parallel" to align with selective dispatch (partial fix in v0.5.1 only addressed AGENTS.md; SENTINEL.md still had the conflict)
+
+### Metrics
+- SENTINEL.md: 148→147 non-blank lines (≤150 target ✅)
+- AGENTS.md: 120 non-blank lines unchanged (≤120 target ✅)
+
+### Origin
+Changes informed by real-world feedback from 3 Sentinel cycles on Council (downstream project, v0.6.0). Feedback triaged — accepted suggestions refined with rubber-duck review; rejected raw forms that would have removed value (e.g., keeping dim E for chore/ci since it caught the mutable action refs finding).
+
 ## [0.6.0] - 2026-05-16
 
 ### Added
