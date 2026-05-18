@@ -1,6 +1,6 @@
 # agents-template
 
-![Version](https://img.shields.io/badge/version-0.7.0-blue)
+![Version](https://img.shields.io/badge/version-0.9.0-blue)
 
 > A battle-tested template for configuring autonomous AI coding agents with quality gates, TDD enforcement, and the Sentinel review system.
 
@@ -16,7 +16,8 @@ The `template/` directory contains everything you copy into your project:
 | `template/LEARNINGS.md` | Discovered knowledge log |
 | `template/DECISIONS.md` | Architecture decision records |
 | `template/CHANGELOG.md` | User-facing changes log |
-| `template/docs/SENTINEL.md` | Quality gate — 6 parallel review sub-agents, invocation, infrastructure enforcement |
+| `template/docs/SENTINEL.md` | Quality gate — 7 parallel review sub-agents, tiered review, invocation |
+| `template/docs/sentinel/` | Dimension-specific sub-agent prompts (A1, A2, B–F) — no customization needed |
 | `template/docs/ARCHITECTURE.md` | Project structure template |
 | `template/docs/TESTING-STRATEGY.md` | Test strategy details |
 | `template/docs/DEVELOPMENT-WORKFLOW.md` | Git worktrees, branching, PR process |
@@ -35,7 +36,7 @@ Give your AI agent one of these prompts — it handles everything:
 
 ### Update (already using agents-template, upgrading to latest version)
 
-> **Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare the `template/` files with my current versions. Show me what changed, apply updates while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Do NOT overwrite my customizations. Ask me to confirm before applying changes.**
+> **Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare ALL files and directories in `template/` with my current versions. Add any new files or directories that don't exist locally (e.g., `docs/sentinel/`). Remove any local files that no longer exist in the latest template. Update existing files while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Show me a summary of what will be added, changed, and removed before applying. Ask me to confirm.**
 
 ### Manual Setup (fallback)
 
@@ -88,7 +89,7 @@ Coding Agent writes code (TDD, worktrees, small increments)
          ↓
 Sentinel (separate sub-agent) reviews
          ↓
-    ❌ REJECTED → Coding Agent fixes → Sentinel reviews again (max 3 cycles)
+    ❌ REJECTED → Coding Agent fixes → Sentinel reviews again (max 5 cycles)
          ↓                                    ↑
          └────────── loop until ──────────────┘
          ↓
@@ -96,7 +97,7 @@ Sentinel (separate sub-agent) reviews
          ↓
     Create GitHub issues for 🟡/🟢 findings → follow-up PRs → same loop
          ↓
-    3× REJECTED on same issue? → 🚨 escalate to human
+    5× REJECTED on same issue? → 🚨 escalate to human
 ```
 
 Each cycle ratchets quality up. The Sentinel never lowers its standards. The loop only exits when the quality threshold is met or a human takes over.
@@ -109,12 +110,12 @@ Each cycle ratchets quality up. The Sentinel never lowers its standards. The loo
 | 🟡 IMPORTANT | Improvements to working code | Conditional — tracked as GitHub issues | Missing error propagation, N+1 queries, resilience gaps, edge cases |
 | 🟢 MINOR | Polish | Yes | Naming, docs, code style suggestions |
 
-The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 3 cycles). 🟡 findings are tracked as GitHub issues (`sentinel:important`). If a 🟡 finding could cause data loss or security exposure, Sentinel reclassifies it as 🔴. For production deploys, all 🟡 issues must be resolved or explicitly risk-accepted.
+The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 5 cycles). 🟡 findings are tracked as GitHub issues (`sentinel:important`). If a 🟡 finding could cause data loss or security exposure, Sentinel reclassifies it as 🔴. For production deploys, all 🟡 issues must be resolved or explicitly risk-accepted.
 
 ## Key Features
 
 - **TDD defense in depth** — Layer 1 (STOP checkpoint verbs) + Layer 2 (Sentinel verification)
-- **Sentinel quality gate** — 6 parallel review sub-agents with anti-prompt-injection and dispatch-proof enforcement
+- **Sentinel quality gate** — 7 parallel review sub-agents with tiered fast-path, anti-prompt-injection, and dispatch-proof enforcement
 - **Quality ratchet** — continuous improvement loop until Sentinel approves
 - **Separation of concerns** — the coder ≠ the reviewer, always
 - **Autonomous workflow** — Plan → Approve → Execute → Sentinel → Merge
@@ -128,7 +129,7 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 3 cycl
 
 This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See [`MIGRATION-GUIDE.md`](./MIGRATION-GUIDE.md) for the full evolution history.
 
-Current version: **v0.7.0**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
+Current version: **v0.9.0**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## Battle-Tested
 

@@ -1,4 +1,4 @@
-<!-- agents-template v0.7.0 -->
+<!-- agents-template v0.9.0 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -39,6 +39,10 @@ agents-template/
     └── docs/
         ├── SENTINEL.md                ← Quality gate specification
         ├── ARCHITECTURE.md, TESTING-STRATEGY.md, DEVELOPMENT-WORKFLOW.md
+        └── sentinel/                  ← Dimension-specific sub-agent prompts
+            ├── dim-a1-security-attacks.md, dim-a2-security-defenses.md
+            ├── dim-b-resilience.md, dim-c-performance.md
+            ├── dim-d-testing.md, dim-e-dependencies.md, dim-f-documentation.md
 ```
 
 ## Rules for Working on This Repo
@@ -51,10 +55,11 @@ agents-template/
 - Test template changes by running the migration/setup on a real project
 
 ### Compression
-- `template/AGENTS.md` target: ≤120 non-blank lines (post-setup)
-- `template/docs/SENTINEL.md` target: ≤150 non-blank lines
+- `template/AGENTS.md` target: ≤130 non-blank lines (post-setup)
+- `template/docs/SENTINEL.md` target: ≤165 non-blank lines
 - Before adding content, consider: can it go in a companion doc instead?
 - Run a compression panel (multi-model review) before merging significant additions
+- Do NOT compress compliance-critical instructions to meet line budgets — raise the budget instead
 
 ### Versioning
 - Follow semver: MAJOR.MINOR.PATCH

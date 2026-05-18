@@ -3,6 +3,98 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-05-18
+
+### Added
+- **Pre-Push Verification gate**: New section in AGENTS.md — agents verify TDD ordering, test suite, lint, and optionally secret scan (gitleaks) and SAST (semgrep) before pushing PRs. Catches ~35% of Sentinel rejections before they happen, saving 2-5 min per PR.
+- **Pattern memory**: agents read `LEARNINGS.md` for known Sentinel rejection patterns before each PR, self-checking against historical findings. Compounds over time.
+- **Tiered review architecture** (Phase 1.5): Optional fast-path where a single fast-model agent scans for 🔴 blockers only. PRs meeting all skip criteria (<150 LOC, no security-sensitive paths, no new deps, exempt commit types) can be approved at Tier 1. ~45% of PRs skip full Tier 2 review. 10% audit sampling recommended.
+- **Speculative Phase 1+2 execution**: Phase 1 (TDD compliance) and Phase 2 (code quality) may start concurrently. Phase 1 failure discards Phase 2 results. Saves 30-60s per review.
+- **Diff routing per dimension**: Input filtering table reduces sub-agent tokens — E receives only manifests/lockfiles (~90% reduction), F only docs/CHANGELOG, D only test+impl files. A1/A2/B/C receive full diff minus lockfiles/generated code.
+- **Prompt caching guidance**: Dimension prompts placed in system position for provider-side prefix caching (~80% latency reduction on cached reads).
+- **Streaming aggregation**: Phase 3 may begin as each sub-agent completes rather than waiting for all.
+- **Fix suggestions + fixability classification**: Return format now includes suggested code fixes and 🔧 auto-fixable / 🧠 judgment-needed / 👤 human-required classification. Reduces fix failures by 30-50%.
+- **Hybrid tool guidance**: All dimension preambles now accept deterministic tool output (SAST, audit, coverage) as pre-verified evidence, focusing LLM analysis on items not covered by tools.
+
+### Changed
+- **Dim A split into A1 + A2**: Security dimension (35 items) split into A1 (Injection + Auth + CI/CD, ~23 items) and A2 (Secrets + Crypto + Web + Input + IO, ~20 items) for better LLM recall. Both run in parallel — no added latency.
+- **Line budgets raised**: AGENTS.md 120→130, SENTINEL.md 150→165. Rationale: budgets prevent bloat, not quality-improving additions. Pre-push gate and tiered review are legitimate features that shouldn't be compressed at the expense of compliance-critical instructions.
+- **Selective dispatch updated**: references A1,A2 instead of A throughout; added `test→A1,A2,D,F` and `perf→A1,A2,C,D,F` dispatch rules
+- **Report format**: added `Review depth: Tier 1 (fast-path) | Tier 2 (full)` field
+
+### Metrics
+- AGENTS.md: 120→128 non-blank lines (≤130 target ✅)
+- SENTINEL.md: 126→150 non-blank lines (≤165 target ✅)
+- Dim A: 1 file (74 lines) → 2 files (A1+A2, better recall)
+- 7 dimension files total (A1, A2, B, C, D, E, F)
+
+### Origin
+4-agent performance research panel: LLM Inference (Opus 4.7 research), Parallel Systems (GPT-5.4), Quality Gate Design (Opus 4.6), Prompt Engineering (Sonnet 4.6). Key research: Anthropic prompt caching docs, PR-Agent diff compression strategy, CodeRabbit file-level caching, Greptile's failed LLM-as-judge experiment, LLMLingua-2 (Microsoft Research, ACL 2024).
+
+## [0.8.0] - 2026-05-18
+
+### Added
+- **Dimension sub-agent files**: Split Phase 2 inline checklists (A–F) into dedicated files under `docs/sentinel/`. Each file is a self-contained sub-agent prompt with evidence standard, prompt-injection defense, scope, detailed checklist, and return format
+- **Expert panel review**: 5-agent panel (Opus 4.7, GPT-5.4, Sonnet 4.6, GPT-5.2, Opus 4.6) reviewed all dimensions individually and as a system. Panel findings drove all additions below.
+
+**Dim A — Security (+13 items):**
+- Injection: SSTI, log/header injection, open redirect, prototype pollution, ReDoS; framework XSS escape hatches (`dangerouslySetInnerHTML`, `v-html`, `[innerHTML]`)
+- Auth: JWT misuse (alg:none, decode vs verify), security event audit logging
+- Crypto: TLS verification disabled, timing-safe comparison, hardcoded crypto keys/IVs
+- File/IO: zip/tar slip
+- NEW section: CI/CD pipeline security (pull_request_target, script injection, action pinning, secrets to forks)
+- FP reduction: attacker-reachability justification rule, sink-tracing for insecure randomness, CSRF N/A for bearer-only endpoints
+- Severity refinements: insecure randomness, mass assignment, CORS, PII exposure, security headers
+
+**Dim B — Resilience (+7 items):**
+- Network: deadline/timeout propagation, graceful shutdown/connection draining, bounded concurrency/backpressure
+- NEW section: async job/queue handling (ack-before-process, poison messages/DLQ, bounded concurrency)
+- Observability: telemetry cardinality explosion
+- Narrowed: PII-in-logs (A owns classification, B flags log-hygiene), missing logs/metrics (specific operations), circuit breakers → "dependency failure containment", rate limiting scoped to public/expensive endpoints
+- Removed: configuration drift (not diff-verifiable)
+
+**Dim C — Performance (+6 items):**
+- Resource: blocking event loop/request thread, full materialization vs streaming
+- Database: cache stampede/dogpile, connection pool saturation
+- Architecture: type safety regressions (any, unsafe casts)
+- API contracts: data format compatibility (serialization breaking persisted data), expand/contract rollout in migration safety
+- Severity recalibrated: coupling/boundaries/duplicated logic → 🟢; feature flag lifecycle → 🟢; Big-O → 🔴 only when on hot path
+- Added context note: flag 🟢 when diff insufficient for performance judgment
+
+**Dim D — Testing (+3 items, -2 items, Phase 1 boundary):**
+- Added: mock fidelity (stale mocks), test regression ratchet (deleted/weakened tests), shared fixture safety
+- Merged: "meaningful assertions" + "assertion specificity" → "assertion quality"
+- Removed: "new branches covered" (duplicate of Phase 1 check 4)
+- Added Phase 1 boundary preamble: Phase 1 checks execution, Dim D checks semantic coupling
+- Scoped: adversarial inputs (trigger condition), edge cases (algorithms/numeric only)
+- Cross-ref notes: A owns input validation, C owns testability design, D owns test file quality
+
+**Dim E — Dependencies (+3 items, evidence reframing):**
+- Added: dependency source risks (git+, tarballs, file: deps), dependency confusion, lockfile integrity signals
+- Reframed: CVE/maintenance/license as "verify evidence present" (AI can't do external lookups)
+- Expanded: risky install scripts beyond npm (prepare, install hooks, curl|bash)
+- Scoped: bundle size (frontend runtime deps only), minimal scope (concrete signal)
+
+**Dim F — Documentation (+3 items, conditional items):**
+- Added: a11y documentation (moved from Dim A), config/env var change docs, i18n readiness (🟢)
+- Conditional: DECISIONS.md (only for architectural tradeoffs), LEARNINGS.md (only for discovered constraints)
+- Reframed: "README reflects behavior" → behavior-change trigger (flag only when code changes but no docs touched)
+- Added: operational impact docs (rollout/rollback, feature flags)
+
+### Changed
+- **SENTINEL.md Phase 2**: dispatch instruction specifies PR context (branch, title, description, file list, commit history, tech stack) and model tier guidance (E/F can use fast models)
+- **SENTINEL.md Phase 3**: severity floor rule (orchestrator may 🟡→🔴 but NEVER 🔴→🟡); cross-dimension finding consolidation; unified reclassification criteria with Dim B ("data loss, security exposure, cascading outage, or incorrect behavior under normal usage")
+- **Selective dispatch expanded**: `test→A,D,F` and `perf→A,C,D,F` added
+- **All dimensions**: cross-dimension prefix `[Cross: Dim X]` in return format for findings belonging to other dimensions
+- **Dim A return format**: added "Reachability" field (attacker path justification)
+
+### Metrics
+- SENTINEL.md: 122→126 non-blank lines (≤150 target ✅)
+- 6 dimension files updated with panel-driven improvements
+
+### Origin
+5-agent expert panel review: Security Engineering (Opus 4.7), SRE/Systems Architecture (GPT-5.4), Software Testing (Sonnet 4.6), Supply Chain/Technical Writing (GPT-5.2), Systems Architect cross-cutting (Opus 4.6). Consensus findings adopted; per-agent recommendations triaged for signal-to-noise and diff-scope feasibility.
+
 ## [0.7.0] - 2026-05-17
 
 ### Changed

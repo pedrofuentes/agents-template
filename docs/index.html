@@ -1112,7 +1112,7 @@
     <div class="hero-content">
       <div class="hero-badge">
         <span class="dot"></span>
-        v0.7.0 · Open Source · MIT License
+        v0.9.0 · Open Source · MIT License
       </div>
       <h1>
         You wouldn't merge<br>
@@ -1248,7 +1248,7 @@
           <div class="feature-number">02</div>
           <h3>Sentinel Review System</h3>
           <div class="tagline">"The coder ≠ the reviewer. Always."</div>
-          <p>A separate agent with read-only access reviews every PR using 6 parallel sub-agents — one per review dimension. Required for ALL changes — even 1-line fixes. 🔴 findings block, 🟡 tracked as issues, auto-fix loop up to 3 cycles.</p>
+          <p>A separate agent with read-only access reviews every PR using 7 parallel sub-agents across security, resilience, performance, testing, dependencies, and docs. Tiered review fast-paths small PRs in ~30s; full review in 2-5 min. Fix suggestions with fixability classification (🔧/🧠/👤) help agents fix issues on the first try.</p>
         </div>
         <div class="feature-card reveal reveal-delay-3">
           <div class="feature-number">03</div>
@@ -1295,7 +1295,7 @@
           <div>
             <div class="step-num">STEP 03</div>
             <h3>Implement</h3>
-            <p>Write minimal code to make tests pass. Green phase. Then refactor.</p>
+            <p>Write minimal code to make tests pass. Green phase. Then refactor. Pre-push gate validates TDD ordering, tests, and lint before PR.</p>
           </div>
         </div>
         <div class="workflow-step">
@@ -1303,7 +1303,7 @@
           <div>
             <div class="step-num">STEP 04</div>
             <h3>Sentinel</h3>
-            <p>Separate review agent spawns 6 parallel sub-agents to scan for bugs, security issues, and quality gaps.</p>
+            <p>Separate review agent spawns 7 parallel sub-agents. Small PRs get a fast-path (~30s); complex changes get full multi-dimension review.</p>
           </div>
         </div>
         <div class="workflow-step">
@@ -1475,7 +1475,7 @@
           </div>
           <div class="prompt-box">
             <div class="prompt-box-label">Copy this prompt to your AI agent:</div>
-            <div class="prompt-text" id="prompt-update">Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare the <code>template/</code> files with my current versions. Show me what changed, apply updates while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Do NOT overwrite my customizations. Ask me to confirm before applying changes.</div>
+            <div class="prompt-text" id="prompt-update">Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare ALL files and directories in <code>template/</code> with my current versions. Add any new files or directories that don't exist locally (e.g., <code>docs/sentinel/</code>). Remove any local files that no longer exist in the latest template. Update existing files while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Show me a summary of what will be added, changed, and removed before applying. Ask me to confirm.</div>
             <button class="prompt-copy-btn" data-prompt="update">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.5"/></svg>
               <span>Copy prompt</span>
@@ -1502,7 +1502,7 @@
   <footer>
     <div class="footer-content">
       <div class="footer-left">
-        agents-template · v0.7.0 · MIT License
+        agents-template · v0.9.0 · MIT License
       </div>
       <ul class="footer-links">
         <li><a href="https://github.com/pedrofuentes/agents-template" target="_blank">GitHub</a></li>
@@ -1593,7 +1593,7 @@
       const prompts = {
         'new': 'Fetch the agents-template from https://github.com/pedrofuentes/agents-template \u2014 download all files from the `template/` directory into this project\'s root. Then read AGENTS.md and follow the First Run setup instructions. Scan my project files to auto-fill what you can, then ask me for anything you can\'t infer.',
         'migrate': 'Fetch the agents-template from https://github.com/pedrofuentes/agents-template \u2014 first back up any existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, copilot-instructions.md, etc.) to `.agent-backup/`, then download all files from the `template/` directory into this project\'s root. Read AGENTS.md and follow the Migration setup path. Extract all project-specific information from the backed-up files and use it to configure the template. Ask me to confirm before finalizing.',
-        'update': 'Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template \u2014 compare the `template/` files with my current versions. Show me what changed, apply updates while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Do NOT overwrite my customizations. Ask me to confirm before applying changes.'
+        'update': 'Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template \u2014 compare ALL files and directories in `template/` with my current versions. Add any new files or directories that don\'t exist locally (e.g., `docs/sentinel/`). Remove any local files that no longer exist in the latest template. Update existing files while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Show me a summary of what will be added, changed, and removed before applying. Ask me to confirm.'
       };
 
       document.querySelectorAll('.prompt-copy-btn').forEach(btn => {

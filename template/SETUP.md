@@ -68,3 +68,5 @@ When no results are returned (except SETUP.md itself), you're done.
 1. Choose your Sentinel invocation method (see README.md)
 2. Set up infrastructure enforcement if using CI (see docs/SENTINEL.md §Infrastructure Enforcement)
 3. Delete this file (SETUP.md) — it's only needed during initial setup
+
+**Note:** The `docs/sentinel/` directory contains dimension-specific sub-agent prompts (A1, A2, B–F). These files require no customization — they are project-type-agnostic and work as-is. Copy them alongside `docs/SENTINEL.md`.

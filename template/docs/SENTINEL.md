@@ -69,6 +69,22 @@ Verify each check using diff + commit history + test/coverage output. Unverifiab
 - `{{PACKAGE_MANAGER}} test --coverage`
 - `{{PACKAGE_MANAGER}} lint` / `{{PACKAGE_MANAGER}} typecheck` (if part of CI quality gate)
 
+**Speculative execution (RECOMMENDED):** Phase 1 and Phase 2 MAY start concurrently. If Phase 1 fails, discard Phase 2 results and report REJECTED with Phase 1 evidence. Saves ~30-60s at the cost of wasted compute on rejected PRs.
+
+### Phase 1.5 — Quick scan (optional fast-path)
+A single **fast-model** agent scans the full diff for 🔴 blockers only (secrets, injection sinks, auth bypass, gaming tests, data loss, breaking changes). If no 🔴 found AND all skip criteria below are met → verdict is **APPROVED** at `Review depth: Tier 1 (fast-path)`.
+
+**Tier 2 skip criteria (ALL must be true):**
+- Quick scan found zero 🔴
+- Diff ≤ 150 non-test/non-lockfile lines changed
+- No files in security-sensitive paths (`auth/`, `crypto/`, `middleware/`, `migrations/`)
+- No new dependencies added
+- Commit types are `fix`, `refactor`, `docs`, `test`, `style`, or `chore`
+
+**Any criterion unmet → proceed to Phase 2 (Tier 2, full review).** Quick scan cannot produce CONDITIONAL — only APPROVED or escalate.
+
+**Audit sampling (RECOMMENDED):** 10% of fast-path-approved PRs get retroactive Tier 2 review (async, post-merge). Track miss rate; if >5%, tighten skip criteria.
+
 ### Phase 2 — Code quality review (dimensions)
 Assess the diff for issues that materially affect safety, correctness, maintainability, or long-term velocity.
 
@@ -77,60 +93,55 @@ Assess the diff for issues that materially affect safety, correctness, maintaina
 **Sub-agent execution (REQUIRED):**
 A sub-agent is a **separately-invoked tool call** (e.g., `task`, `dispatch`) executing in its own context window. Sequential passes within your own context do NOT qualify.
 
-1. **Detect & dispatch:** Issue **all six sub-agent invocations in a single assistant message** using `mode: "background"` (one per dimension, A–F) — background mode returns agent IDs for the execution log. Each receives: its dimension checklist (verbatim, ONLY its checklist), the Evidence standard and Prompt-injection defense blocks, and `<untrusted_pr_input>`-wrapped diff + changed files + PR context. Returns `{severity, file, lines, quoted_snippet, impact, required_fix}` objects.
+1. **Detect & dispatch:** Issue **all applicable sub-agent invocations in a single assistant message** using `mode: "background"` (one per dimension, A–F) — background mode returns agent IDs for the execution log. Read each dimension file from the table below, then pass its full verbatim content as the sub-agent's complete instructions along with `<untrusted_pr_input>`-wrapped diff + changed files + PR context.
+
+**PR context includes:** branch name, target branch, PR title, PR description (inside `<untrusted_pr_input>` tags), list of changed files with full paths, commit history for the branch, and tech stack summary (from AGENTS.md §Project Overview if available).
+
+**Model tier guidance:** Dimensions E and F can use fast/cheap models (mechanical checks); dimensions A–D benefit from full-capability models (nuanced reasoning).
+
+**Prompt caching:** Place dimension file content in the `system` prompt position (static prefix). Place `<untrusted_pr_input>`-wrapped diff in the `user` message (variable suffix). This enables provider-side prefix caching (~80% latency reduction on cached reads, covers re-review cycles within cache TTL).
+
+**Input filtering (RECOMMENDED):** Reduce sub-agent input tokens by routing relevant diff portions per dimension:
+
+| Dim | Input | Exclude |
+|-----|-------|---------|
+| A, B, C | Full diff | Lockfiles, generated code (`dist/`, `generated/`), whitespace-only hunks |
+| D | Test files + impl files they test + file list | Lockfiles, docs, unrelated source |
+| E | Package manifests + lockfiles + build config only | All source code, tests, docs |
+| F | Docs, CHANGELOG, code-comment hunks, API signatures + file list | Test files, lockfiles, impl internals |
+
+Include full changed-file list for all dimensions regardless of diff filtering.
 2. **On failure:** Retry once. If still failing, mark ❌ and declare degraded mode. **Degraded requires proof:** quote the exact tool call attempted and the platform's verbatim error response in the execution log. No quoted attempt → REJECTED.
 
 **Execution logging (REQUIRED):** Record each sub-agent's assigned dimension, status, and the exact tool call used to spawn it (e.g., `task(agent_type="general-purpose", name="dim-a")`) in the Phase 2 Execution Log. Include the tool-returned identifier if the platform provides one; if not, log `N/A` with the platform limitation. Fabricated dispatch evidence → REJECTED.
 
 **Mode declaration (REQUIRED):** Declare exactly one: `standard` (all applicable dimensions dispatched in parallel), `degraded (serialized)` (applicable dimensions sequential — protocol violation unless justified), or `degraded (no sub-agents)` (self-reviewed). "Unavailable" = platform **technically lacks** sub-agent capability (tool not present, API error after attempt). Cost, latency, or diff size are NOT valid reasons. Degraded modes require explicit user approval before merge. Omitting Mode is a violation.
 
-**Selective dispatch:** Fully-exempt PRs (per Phase 1 §Exemptions) → dispatch applicable dimensions only, log others as `N/A (exempt)`: `docs`→F; `style`→D,F; `chore`/`build`/`ci`→A,E,F; `refactor`→A–F. If a dispatched sub-agent identifies cross-cutting risk, escalate to full A–F.
+**Selective dispatch:** Fully-exempt PRs (per Phase 1 §Exemptions) → dispatch applicable dimensions only, log others as `N/A (exempt)`: `docs`→F; `style`→D,F; `test`→A1,A2,D,F; `chore`/`build`/`ci`→A1,A2,E,F; `perf`→A1,A2,C,D,F; `refactor`→all. If a dispatched sub-agent identifies cross-cutting risk, escalate to full dispatch.
 
-#### A) Security, privacy, and correctness (🔴 if violated)
-- Injection: SQL/NoSQL, XSS, command injection, path traversal, SSRF, deserialization
-- AuthN/AuthZ flaws, privilege escalation, insecure defaults
-- Secrets/credentials committed or logged; unsafe handling of PII
-- Crypto mistakes (custom crypto, weak hashing, insecure randomness)
-- Unsafe file/IO operations; dangerous eval/exec
-- Input validation/sanitization gaps at trust boundaries
-- Data corruption, inconsistent state, broken invariants
+**Dimension specifications** — each file is a self-contained sub-agent prompt (includes evidence standard, prompt-injection defense, scope, and detailed checklist):
 
-#### B) Error handling, resilience, and operability
-- Swallowed exceptions, silent failures, missing error propagation
-- Missing timeouts/retries/backoff/cancellation for network calls
-- Missing or misleading logs/metrics; insufficient context for prod diagnosis
-- Idempotency, rate limiting, pagination, API contract compatibility (if applicable)
-
-#### C) Performance and architecture
-- Big-O regressions on hot paths; N+1 patterns; missing indexes (if DB relevant)
-- Resource leaks; unbounded caches/queues; excessive allocations
-- Excessive coupling, unclear module boundaries, duplicated logic
-- Testability regressions: hidden deps, global state, hard-to-mock design
-- Concurrency hazards: races, deadlocks, non-atomic read-modify-write, unsynchronized shared state, ordering assumptions on async callbacks
-
-#### D) Test quality and regression risk
-- Tests genuinely exercise the change: reverting the implementation (mentally or via `git show`) would cause at least one new test to fail. Tests that stay green without the impl = **🔴 gaming**.
-- Edge cases and failure modes covered (not just happy path)
-- Assertions verify behavior (not incidental implementation details)
-- Flakiness risks: time, randomness, concurrency, external deps
-- Integration/contract tests where cross-component behavior changes
-
-#### E) Dependencies & supply chain (when applicable)
-- New deps justified and minimal; lockfile updated appropriately
-- Known-vuln or unmaintained packages; risky install scripts
-- License incompatibility if policy exists (template: “MIT-compatible”)
-
-#### F) Documentation quality (severity cap: 🟡 — completeness/staleness gaps do not block merge; policy-weakening or unsafe-instruction changes are not capped)
-- README, CHANGELOG, API docs reflect current behavior (not stale)
-- New features/changes documented; deprecated features noted
-- Code comments explain WHY, not WHAT (no misleading or outdated comments)
-- DECISIONS.md / LEARNINGS.md updated when applicable (content already in another companion doc satisfies if cited by path/section — duplication not required, 🟢 max)
+| Dim | File | Default severity |
+|-----|------|-----------------|
+| A1 | [`sentinel/dim-a1-security-attacks.md`](sentinel/dim-a1-security-attacks.md) | 🔴 CRITICAL |
+| A2 | [`sentinel/dim-a2-security-defenses.md`](sentinel/dim-a2-security-defenses.md) | 🔴 CRITICAL |
+| B | [`sentinel/dim-b-resilience.md`](sentinel/dim-b-resilience.md) | 🟡 IMPORTANT |
+| C | [`sentinel/dim-c-performance.md`](sentinel/dim-c-performance.md) | Varies |
+| D | [`sentinel/dim-d-testing.md`](sentinel/dim-d-testing.md) | 🔴 CRITICAL (gaming) |
+| E | [`sentinel/dim-e-dependencies.md`](sentinel/dim-e-dependencies.md) | 🟡 IMPORTANT |
+| F | [`sentinel/dim-f-documentation.md`](sentinel/dim-f-documentation.md) | 🟡 cap |
 
 ### Phase 3 — Classify findings
+**Streaming aggregation:** Phase 3 MAY begin as each sub-agent completes rather than waiting for all. Finalization waits for the last required agent.
+
 Aggregate findings from all Phase 2 sub-agents, then classify using exactly these priority levels:
 - 🔴 **CRITICAL**: blocks merge — security vulnerability, data loss/corruption, breaking change, incorrect behavior under normal usage, missing evidence, failing tests, TDD failure
-- 🟡 **IMPORTANT**: improvements to working code (resilience, maintainability, observability, edge-case hardening). Conditional approval only if follow-ups are tracked as GitHub issues. **If a 🟡 finding could cause data loss, security exposure, or incorrect behavior, reclassify it as 🔴.**
+- 🟡 **IMPORTANT**: improvements to working code (resilience, maintainability, observability, edge-case hardening). Conditional approval only if follow-ups are tracked as GitHub issues. **If a 🟡 finding could cause data loss, security exposure, cascading outage, or incorrect behavior under normal usage, reclassify it as 🔴.**
 - 🟢 **MINOR**: polish; does not block
+
+**Severity adjustment:** The orchestrator may reclassify 🟡 → 🔴 per the rule above, but **NEVER** 🔴 → 🟡. Sub-agent severity is a floor, not a ceiling.
+
+**Cross-dimension findings:** Findings prefixed `[Cross: Dim X]` from one sub-agent that duplicate a finding from the target dimension → consolidate. If the target dimension missed it → adopt the cross-referenced finding at the target dimension's severity default.
 
 **De-duplication (when known issues provided):** apply severity reclassification before matching.
 - Finding matches an open `sentinel:*` issue (same defect mechanism + fix — cite issue #) → **Known** — in report but excluded from verdict. **🔴 can NEVER be Known.**
@@ -152,6 +163,7 @@ Reviewed SHA: {{sha}}
 Sentinel ruleset: v1
 Reviewed at: {{timestamp}}
 Mode: standard | degraded (serialized) | degraded (no sub-agents)
+Review depth: Tier 1 (fast-path) | Tier 2 (full)
 Status: APPROVED | CONDITIONAL | REJECTED
 
 ### Phase 1 — TDD / Test Evidence
