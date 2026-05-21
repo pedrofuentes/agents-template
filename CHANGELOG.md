@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.10.0] - 2026-05-21
+
+### Changed
+- **🟡 materiality calibration**: Tightened 🟡 IMPORTANT definition — requires an articulated risk path (plausible trigger, reachable failure mode, concrete impact). Theoretical/speculative concerns without a demonstrated risk path → 🟢 MINOR. Reduces CONDITIONAL verdicts by filtering low-signal findings while preserving the quality bar for genuine concerns.
+- **🟢 MINOR expanded**: Now explicitly includes theoretical improvements and speculative edge cases where no reachable trigger or material impact is identified.
+- **Severity adjustment updated**: Orchestrator may now reclassify 🟡 → 🟢 (when finding lacks articulated risk path), in addition to existing 🟡 → 🔴. 🔴 remains an absolute floor — never downgraded. Sub-agent 🟡 is advisory; 🔴 is authoritative.
+
+### Metrics
+- SENTINEL.md: 149/165 non-blank lines (unchanged)
+- AGENTS.md: 128/130 non-blank lines (unchanged)
+
+### Origin
+Agent feedback from a small project (~300-400 LOC) on v0.6.0 reporting CONDITIONAL as default verdict. 5 suggestions triaged → 1 accepted (materiality calibration), 4 rejected (cascade cap would lower quality bar; Tier 1 criteria intentionally conservative; pre-existing code scope rule already explicit; batch follow-ups handled by known-issue de-dup).
+
 ## [0.9.0] - 2026-05-18
 
 ### Added

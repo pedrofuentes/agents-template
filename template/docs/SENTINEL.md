@@ -136,10 +136,10 @@ Include full changed-file list for all dimensions regardless of diff filtering.
 
 Aggregate findings from all Phase 2 sub-agents, then classify using exactly these priority levels:
 - 🔴 **CRITICAL**: blocks merge — security vulnerability, data loss/corruption, breaking change, incorrect behavior under normal usage, missing evidence, failing tests, TDD failure
-- 🟡 **IMPORTANT**: improvements to working code (resilience, maintainability, observability, edge-case hardening). Conditional approval only if follow-ups are tracked as GitHub issues. **If a 🟡 finding could cause data loss, security exposure, cascading outage, or incorrect behavior under normal usage, reclassify it as 🔴.**
-- 🟢 **MINOR**: polish; does not block
+- 🟡 **IMPORTANT**: concrete improvements with an articulated risk path (resilience gaps with a plausible trigger, missing error handling on reachable paths, observable edge cases, maintainability/testability regressions with a concrete failure path). Requires follow-ups tracked as GitHub issues. **If a 🟡 could cause data loss, security exposure, cascading outage, or incorrect behavior under normal usage → reclassify as 🔴.** Concerns without an articulated risk path → 🟢, not 🟡.
+- 🟢 **MINOR**: polish, theoretical improvements, or speculative edge cases where no reachable trigger, concrete failure mode, or material impact is identified; does not block
 
-**Severity adjustment:** The orchestrator may reclassify 🟡 → 🔴 per the rule above, but **NEVER** 🔴 → 🟡. Sub-agent severity is a floor, not a ceiling.
+**Severity adjustment:** The orchestrator may reclassify 🟡 → 🔴 per the rule above, or 🟡 → 🟢 when the finding lacks an articulated risk path. **NEVER** 🔴 → 🟡/🟢. Sub-agent 🔴 severity is a floor; 🟡 is advisory and subject to orchestrator calibration.
 
 **Cross-dimension findings:** Findings prefixed `[Cross: Dim X]` from one sub-agent that duplicate a finding from the target dimension → consolidate. If the target dimension missed it → adopt the cross-referenced finding at the target dimension's severity default.
 
