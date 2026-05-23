@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.11.0] - 2026-05-23
+
+### Added
+- **Pre-existing test failure classification** (Phase 1): Narrow mechanism for classifying test failures as pre-existing — requires baseline evidence from merge-base + PR must not touch the failing test/SUT/fixtures. Issue-linked → excluded from verdict (⚠️); no issue → CONDITIONAL with requirement to file one. Invariant #2 updated to acknowledge classification.
+- **Dim E auto-skip**: Skip Dim E when no dependency surface files changed (manifests, lockfiles, configs, Dockerfiles, CI install steps, build scripts, vendored code). Applies regardless of commit type.
+
+### Changed
+- **Phase 1.5 fast-path now REQUIRED evaluation**: Orchestrator must evaluate fast-path eligibility for every PR passing Phase 1. Skipping evaluation when criteria are met is a protocol violation. Safety criteria unchanged.
+- **Selective dispatch enforced**: Added `(REQUIRED)` tag with enforcement language. Dispatching exempted dimensions is a protocol violation. Mixed PRs (any non-exempt commit) require full dispatch. Clarified "fully-exempt" means ALL commits/files, not just PR title.
+- **🟡 criteria tightened with 3-part risk chain**: Each 🟡 must state trigger (what activates), mechanism (reachable path to failure), and consequence (observable damage). Missing any element → 🟢. Reduces speculative CONDITIONAL verdicts.
+- **Scoped re-review**: Re-reviews now re-dispatch only dimensions with 🔴/🟡 findings. Previously-clean dimensions may be skipped when fix delta is limited to re-dispatched dimensions' file scope. Cross-cutting fixes trigger full dispatch. "When in doubt, dispatch fully" default.
+
+### Metrics
+- SENTINEL.md: 151/165 non-blank lines (+2 from v0.10.0)
+- AGENTS.md: 128/130 non-blank lines (unchanged)
+
+### Origin
+Agent feedback from 11+ Sentinel reviews in a downstream project. 6 suggestions triaged → 6 accepted with safety modifications. Quality audit verified no invariant weakening: 4 changes are quality-neutral/positive (A, B, D, F), 2 involve principled trade-offs with tight safety constraints (C, E). TDD enforcement, 6-dimension model, evidence standard, SHA binding, 🔴 floor all preserved.
+
 ## [0.10.0] - 2026-05-21
 
 ### Changed
