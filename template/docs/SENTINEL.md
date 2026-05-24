@@ -153,7 +153,7 @@ Aggregate findings from all Phase 2 sub-agents, then classify using exactly thes
 
 ### Phase 4 — Decision rules
 - Any 🔴 → **REJECTED**. Only 🟢/none → **APPROVED**. HEAD SHA ≠ reviewed SHA → **REJECTED** (re-review required).
-- No 🔴, some new 🟡 (not Known) → **CONDITIONAL**. All 🟡 Known → **APPROVED**. Follow-ups filed as GitHub issues before merge.
+- No 🔴, some new 🟡 (not Known) → **CONDITIONAL** (file 🟡/🟢 as issues before merge). All 🟡 Known → **APPROVED**.
 
 ## Output — Sentinel Report (tight format)
 Produce a single report in this structure:
@@ -169,6 +169,7 @@ Reviewed at: {{timestamp}}
 Mode: standard | degraded (serialized) | degraded (no sub-agents)
 Review depth: Tier 1 (fast-path) | Tier 2 (full)
 Status: APPROVED | CONDITIONAL | REJECTED
+Required action: MERGE | FILE_ISSUES_AND_MERGE | FIX_AND_REINVOKE
 
 ### Phase 1 — TDD / Test Evidence
 - Tests exist & meaningful: ✅/❌ (evidence)
@@ -192,14 +193,19 @@ Status: APPROVED | CONDITIONAL | REJECTED
 1) [🔴/🟡/🟢/Known] Title — **file:line** (Known: cite issue #)
    - Evidence: …
    - Impact: …
-   - Required fix: …
+   - Remediation: …
 
 ### Follow-ups & Actions
-- GitHub issues for all new 🟡/🟢 findings (`sentinel:important`, `sentinel:minor`). If CONDITIONAL: owner-tracked follow-ups linked before merge.
+- APPROVED → MERGE: file new 🟡/🟢 as issues (`sentinel:important`, `sentinel:minor`) post-merge.
+- CONDITIONAL → FILE_ISSUES_AND_MERGE: file issues for all new 🟡/🟢, link in PR, then merge.
+- REJECTED → FIX_AND_REINVOKE: fix 🔴 blockers only, re-commit, re-invoke. File 🟡/🟢 from final verdict report.
+- ⚠️ Do NOT fix 🟡/🟢 findings in this PR — file as issues only.
 
 ### Decision rationale
 - … (1–5 bullets)
 ```
+
+**`Required action` mapping**: APPROVED→MERGE, CONDITIONAL→FILE_ISSUES_AND_MERGE, REJECTED→FIX_AND_REINVOKE. Mismatch = malformed report; re-run Sentinel.
 
 ## Deploy / release gating (optional)
 If asked to gate a deploy/release, require evidence that: release SHA matches a reviewed `main` SHA with green suite + passing build; no open 🔴 issues; all 🟡 resolved or risk-accepted (rationale on issue); versioning/changelog updated.

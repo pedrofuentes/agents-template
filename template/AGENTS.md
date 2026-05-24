@@ -116,7 +116,7 @@ If yes, configure via GitHub CLI or instruct user to set up manually:
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
-4. Commit: `chore: migrate to agents-template v0.11.0`
+4. Commit: `chore: migrate to agents-template v0.11.1`
 5. The `.agent-backup/` can be deleted after the user confirms everything works
 
 ---
@@ -197,9 +197,9 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
 4. If any remain, fill them in or ask the user
-5. Commit: `chore: configure AGENTS.md (agents-template v0.11.0)`
+5. Commit: `chore: configure AGENTS.md (agents-template v0.11.1)`
 <!-- SETUP:END -->
-<!-- agents-template v0.11.0 -->
+<!-- agents-template v0.11.1 -->
 
 <role>You write tests before code, work in isolated worktree branches, and never merge without Sentinel review. These rules are enforced mechanically — Sentinel verifies compliance on every PR and non-compliant work is rejected.</role>
 
@@ -239,7 +239,7 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 1. `git worktree add .worktrees/<name> -b <branch> main && cd .worktrees/<name>`
 2. Write failing test(s). Commit as `test(scope): ...`. Run suite — confirm FAIL.
 3. Write minimal impl. Commit as `feat|fix(scope): ...`. Run suite — confirm PASS.
-4. Run Pre-Push Verification (below). Push branch, open PR. Invoke Sentinel (§How to Invoke). On APPROVED → merge. On REJECTED → fix, re-invoke (max 5 cycles, then escalate).
+4. Run Pre-Push Verification (below). Push branch, open PR. Invoke Sentinel (§How to Invoke). Follow §After Sentinel for verdict-specific action.
 
 ### Pre-Push Verification (before opening PR)
 Catches ~35% of Sentinel rejections — run before every push:
@@ -293,7 +293,7 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 2. Spawn a **full-capability** sub-agent (NOT fast/cheap/explore/haiku-class — Sentinel must be capable of spawning sub-agents and running commands) with `docs/SENTINEL.md` as system prompt. Provide PR diff (`git diff main...HEAD`), branch, changed files, and open `sentinel:*` GitHub issues as known issues context.
 3. **Do NOT review your own code.** 
 4. **Verify the report** — confirm it contains `Mode:` declaration and Phase 2 Execution Log with tool-returned agent IDs. Missing execution log or Mode → re-run Sentinel.
-5. On **REJECTED**: fix autonomously, re-commit, re-invoke with previous Report ID + fix delta (`git diff <prev-SHA>..HEAD`) for scoped re-review (max 5 cycles, then escalate). On **APPROVED**: include Report ID + SHA in PR description, merge.
+5. Follow §After Sentinel for the verdict. For REJECTED re-invocation: provide previous Report ID + fix delta (`git diff <prev-SHA>..HEAD`) for scoped re-review.
 
 > No sub-agents? Run SENTINEL.md checks yourself — mark PR `⚠️ SELF-REVIEWED` (Mode: degraded) and require explicit user approval. Cannot run at all? **Do not merge** — escalate.
 
@@ -301,9 +301,9 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 
 | Verdict | Action |
 |---------|--------|
-| APPROVED | Record Report ID + SHA in merge commit. File 🟡/🟢 findings as issues (`sentinel:important`, `sentinel:minor`). |
-| CONDITIONAL | File issues for ALL follow-ups first, link in PR, then merge. |
-| REJECTED | Fix autonomously (no user prompt). Re-commit, re-invoke. Max 5 cycles. |
+| APPROVED | Record Report ID + SHA in merge commit. File new 🟡/🟢 findings as issues (`sentinel:important`, `sentinel:minor`). |
+| CONDITIONAL | File issues for all new 🟡/🟢 — do NOT fix in-PR. Link issues in PR, then merge. |
+| REJECTED | Fix 🔴 blockers; do not independently fix 🟡/🟢. Re-commit, re-invoke. File 🟡/🟢 from final verdict report. Max 5 cycles. |
 
 **Ratchet**: coverage, test count, lint-clean, zero 🔴 — never decrease. Log violation/correction pairs in `LEARNINGS.md`.
 **Pattern memory**: before each PR, read `LEARNINGS.md` for known Sentinel rejection patterns and self-check against them.

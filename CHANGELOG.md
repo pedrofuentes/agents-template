@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.11.1] - 2026-05-24
+
+### Changed
+- **Sentinel report now includes `Required action` field**: Report header includes `Required action: MERGE | FILE_ISSUES_AND_MERGE | FIX_AND_REINVOKE` with enforced mapping constraint so consuming agents know what to do without needing AGENTS.md context.
+- **Follow-ups & Actions section is now per-verdict directive**: Each verdict maps to an explicit action. REJECTED defers 🟡/🟢 issue filing to final verdict report (prevents stale issues from intermediate cycles). Warning: "Do NOT fix 🟡/🟢 findings in this PR."
+- **After Sentinel table tightened**: CONDITIONAL says "do NOT fix in-PR." REJECTED says "Fix 🔴 blockers; do not independently fix 🟡/🟢" — allows incidental resolution when inseparable from a 🔴 fix.
+- **Removed "fix autonomously" ambiguity**: Per-Increment Execution and How to Invoke sections now defer to §After Sentinel instead of embedding verdict logic that could conflict with the table.
+- **Phase 4 CONDITIONAL verdict scoped**: "Follow-ups filed before merge" now explicitly inside the CONDITIONAL clause, not ambiguously applying to APPROVED.
+- **Renamed `Required fix` → `Remediation` in finding template**: "Required fix" on 🟡/🟢 findings semantically conflicted with "do not fix" directives. Multi-model panel (Opus 4.7, GPT-5.5, Opus 4.5) unanimously flagged this as likely to recreate the original failure.
+- **Added "new" qualifier to issue filing**: All verdict actions now specify "new 🟡/🟢" to prevent re-filing Known findings that already have tracked issues.
+
+### Metrics
+- SENTINEL.md: 156/165 non-blank lines (+5 from v0.11.0)
+- AGENTS.md: 129/130 non-blank lines (+1 from v0.11.0)
+
 ## [0.11.0] - 2026-05-23
 
 ### Added
