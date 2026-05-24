@@ -1,4 +1,4 @@
-<!-- agents-template v0.11.0 -->
+<!-- agents-template v0.11.1 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -84,6 +84,8 @@ agents-template/
 - Reject feedback that reflects project-specific quirks, agent misunderstandings, or changes that would weaken the template for other adopters
 - When accepting or rejecting feedback, briefly explain the reasoning to the user
 - Remember: this template serves multiple projects — optimizing for one downstream agent's preferences can degrade quality for all others
+- **Deferred issues**: if a panel or review identifies a theoretical issue with no observed downstream failure, file it as a GitHub issue with the `sentinel:deferred` label. Include: the issue, current mitigation, when to revisit, and proposed fix. Do not implement until observed in practice.
+- **When receiving new feedback**: check open `sentinel:deferred` issues — if the feedback confirms a previously theoretical issue is now occurring in practice, promote it to an active fix.
 
 ### Website (`docs/`)
 - **Live at**: https://pedrofuentes.github.io/agents-template/
