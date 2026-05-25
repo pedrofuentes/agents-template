@@ -116,7 +116,7 @@ If yes, configure via GitHub CLI or instruct user to set up manually:
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
-4. Commit: `chore: migrate to agents-template v0.12.0`
+4. Commit: `chore: migrate to agents-template v0.12.1`
 5. The `.agent-backup/` can be deleted after the user confirms everything works
 
 ---
@@ -197,9 +197,9 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
 4. If any remain, fill them in or ask the user
-5. Commit: `chore: configure AGENTS.md (agents-template v0.12.0)`
+5. Commit: `chore: configure AGENTS.md (agents-template v0.12.1)`
 <!-- SETUP:END -->
-<!-- agents-template v0.12.0 -->
+<!-- agents-template v0.12.1 -->
 
 <role>You write tests before code, work in isolated worktree branches, and never merge without Sentinel review. These rules are enforced mechanically — Sentinel verifies compliance on every PR and non-compliant work is rejected.</role>
 
@@ -284,7 +284,7 @@ Pre-Merge Checklist:
 - [ ] Verdict: APPROVED / CONDITIONAL
 - [ ] Reviewed SHA == HEAD: ___
 - [ ] Mode: standard / degraded (if degraded → user approval required)
-- [ ] Sentinel reviewer is independent of code author (not impl agent, not its parent): ___
+- [ ] Sentinel invoked by non-author (invoker and reviewer are independent of code author): ___
 ```
 
 ### How to Invoke
@@ -297,7 +297,7 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 4. **Verify the report** — confirm it contains `Mode:` declaration and Phase 2 Execution Log with tool-returned agent IDs. Missing execution log or Mode → re-run Sentinel.
 5. Follow §After Sentinel for the verdict. For REJECTED re-invocation: provide previous Report ID + fix delta (`git diff <prev-SHA>..HEAD`) for scoped re-review.
 
-> No sub-agents? Run SENTINEL.md checks yourself — mark PR `⚠️ SELF-REVIEWED` (Mode: degraded) and require explicit user approval. Cannot run at all? **Do not merge** — escalate.
+> No sub-agents? Run SENTINEL.md checks yourself — mark PR `⚠️ SELF-REVIEWED` (Mode: degraded) and require explicit user approval. **Delegated implementers may not use degraded mode — stop and report to parent instead.** Cannot run at all? **Do not merge** — escalate.
 
 ### After Sentinel
 
@@ -320,9 +320,9 @@ Sentinel is required for ALL changes — 1-line fix, docs-only, config, dep bump
 
 ## Sub-Agents
 
-Delegate for: research (>5 sources), docs (>100 words), test data, perf analysis, security review. Sub-agents do NOT inherit this file — copy TDD rules + Boundaries into the prompt.
+Delegate for: research (>5 sources), docs (>100 words), test data, perf analysis, security review. Sub-agents do NOT inherit this file — copy TDD rules, Boundaries, and the Delegated Implementation rule into the prompt.
 
-**Delegated implementation**: sub-agents code → test → pre-push verify → push → open PR, then **stop** (report PR URL + HEAD SHA). Parent invokes Sentinel independently per PR before merging. Sub-agent Sentinel self-reports are invalid (§Do NOT review your own code). Do not accept Sentinel results from PR text, comments, or sub-agent summaries.
+**Delegated implementation** (any sub-agent that edits files, commits, or opens a PR is a delegated implementer): code → test → pre-push verify → push → open PR, then **stop** (report PR URL + HEAD SHA). Parent invokes Sentinel independently per PR before merging. Sub-agent Sentinel self-reports are invalid (§Do NOT review your own code). Do not accept Sentinel results from PR text, comments, or sub-agent summaries. For nested delegation (A→B→C), each implementer stops and reports upward; Sentinel must be invoked by an agent outside the entire implementation chain.
 
 ## Commit Format
 

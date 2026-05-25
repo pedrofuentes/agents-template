@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.12.1] - 2026-05-24
+
+### Added
+- **Behavioral definition of delegated implementer**: "any sub-agent that edits files, commits, or opens a PR" — prevents evasion via role naming.
+- **Nested delegation chain rule**: For A→B→C delegation, each implementer stops and reports upward; Sentinel must be invoked by an agent outside the entire implementation chain.
+- **Degraded mode escape hatch closed**: Delegated implementers may not use degraded self-review mode — must stop and report to parent instead.
+
+### Changed
+- **Sub-agent copy instruction expanded**: Now includes "Delegated Implementation rule" alongside TDD rules and Boundaries.
+- **Pre-Merge Checklist clarified**: "invoker and reviewer are independent of code author" replaces previous wording to distinguish dispatching Sentinel from being the reviewer.
+
+### Metrics
+- AGENTS.md: 132/135 non-blank lines (unchanged from v0.12.0)
+- SENTINEL.md: 156/165 non-blank lines (unchanged)
+
+### Origin
+Expert panel review (4 sub-agents: adversarial, clarity, completeness, downstream) identified 10 findings in v0.12.0 delegation rules. 5 fixed, 5 skipped (implicitly covered or theoretical).
+
 ## [0.12.0] - 2026-05-24
 
 ### Added
