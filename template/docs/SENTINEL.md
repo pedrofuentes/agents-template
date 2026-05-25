@@ -48,7 +48,7 @@ Record: branch/ref name, reviewed commit SHA (exact), timestamp (ISO-8601), Sent
 
 If you cannot identify the exact SHA being reviewed → verdict is **REJECTED**.
 
-**Re-review:** If invoker provides a previous Report ID + fix delta (previous reviewed SHA → current SHA), Phase 2 re-dispatches dimensions that had 🔴/🟡 findings — verify each is resolved, cite the fix. Previously-clean dimensions MAY be skipped ONLY IF the fix delta is limited to files within the re-dispatched dimensions' scope; if the fix delta touches files relevant to other dimensions, those must also be dispatched. When in doubt, dispatch fully. Phase 1 runs in full.
+**Re-review:** If invoker provides a previous Report ID + fix delta (previous reviewed SHA → current SHA), Phase 2 re-dispatches dimensions that had 🔴/🟡 findings — verify each is resolved, cite the fix. Previously-clean dimensions MUST be skipped when the fix delta is limited to files whose dimension scope is explicitly documented in the Execution Log (log skipped dimensions with justification); if the fix delta touches files relevant to other dimensions, those must also be dispatched. When in doubt, dispatch fully. Phase 1 runs in full.
 
 ### Phase 1 — TDD compliance (BLOCKING — any failure = REJECTED)
 Verify each check using diff + commit history + test/coverage output. Unverifiable = failure.
@@ -64,7 +64,9 @@ Verify each check using diff + commit history + test/coverage output. Unverifiab
 | 5 | All tests pass on reviewed SHA | Require command output showing full relevant suite green |
 | 6 | Coverage meets threshold | If enforced, require output ≥ **{{COVERAGE_THRESHOLD}}%**. Unset (braces remain) → N/A, do not invent a threshold |
 
-**Pre-existing test failures:** A failure MAY be classified as pre-existing if ALL hold: (1) the same test fails with the same error on the merge-base commit (baseline evidence required — run suite on merge-base or cite CI); (2) the PR diff does not touch the failing test, its SUT, shared fixtures/infra, or dependencies. If linked to an open issue → excluded from verdict, reported as ⚠️. If NOT linked to an open issue → verdict is **CONDITIONAL** with requirement to file an issue for the flake. Unverifiable baseline → failure counts normally.
+**Pre-existing test failures:** A failure MAY be classified as pre-existing via either path:
+- **Known flake (fast path):** same test + failure signature is documented in an open GitHub issue labeled `flaky` with prior CI/run evidence, AND the PR does not touch the failing test, its SUT, shared fixtures/infra, or dependencies → excluded from verdict, reported as ⚠️. No merge-base run required.
+- **Unknown failure:** the same test fails with the same error on the merge-base commit (baseline evidence required — run suite on merge-base or cite CI) AND the PR does not touch the failing test, its SUT, shared fixtures/infra, or dependencies. If linked to an open issue → excluded from verdict (⚠️). If NOT linked → **CONDITIONAL** with requirement to file issue. Unverifiable baseline → failure counts normally.
 
 **If you can run commands**, prefer verifying directly (examples; adapt to repo):
 - `{{PACKAGE_MANAGER}} test`
@@ -84,6 +86,8 @@ The orchestrator MUST evaluate fast-path eligibility for every PR that passes Ph
 - Commit types are `fix`, `refactor`, `docs`, `test`, `style`, or `chore`
 
 **Any criterion unmet → proceed to Phase 2 (Tier 2, full review).** Quick scan cannot produce CONDITIONAL — only APPROVED or escalate.
+
+**Fast-path checklist (REQUIRED in report):** Before dispatching Phase 2, record: (1) quick scan 🔴 count, (2) non-test LOC changed vs 150 threshold, (3) security paths touched (Y/N), (4) new dependencies (Y/N), (5) all commit types qualify (Y/N). Eligible → APPROVED at Tier 1. Ineligible → Phase 2. Missing checklist → protocol violation.
 
 **Audit sampling (RECOMMENDED):** 10% of fast-path-approved PRs get retroactive Tier 2 review (async, post-merge). Track miss rate; if >5%, tighten skip criteria.
 
@@ -117,6 +121,8 @@ Include full changed-file list for all dimensions regardless of diff filtering.
 
 **Execution logging (REQUIRED):** Record each sub-agent's assigned dimension, status, and the exact tool call used to spawn it (e.g., `task(agent_type="general-purpose", name="dim-a")`) in the Phase 2 Execution Log. Include the tool-returned identifier if the platform provides one; if not, log `N/A` with the platform limitation. Fabricated dispatch evidence → REJECTED.
 
+**Dispatch verification (REQUIRED):** After Phase 2, verify the Execution Log contains one row for each dimension A–F: dispatched rows must have distinct tool-returned identifiers (when the platform provides them); skipped rows must state an allowed `N/A` reason (exempt, auto-skip, or degraded with proof). Missing rows, duplicate provided identifiers, or unjustified skips → REJECTED with "dispatch not verified."
+
 **Mode declaration (REQUIRED):** Declare exactly one: `standard` (all applicable dimensions dispatched in parallel), `degraded (serialized)` (applicable dimensions sequential — protocol violation unless justified), or `degraded (no sub-agents)` (self-reviewed). "Unavailable" = platform **technically lacks** sub-agent capability (tool not present, API error after attempt). Cost, latency, or diff size are NOT valid reasons. Degraded modes require explicit user approval before merge. Omitting Mode is a violation.
 
 **Selective dispatch (REQUIRED):** Fully-exempt PRs (per Phase 1 §Exemptions — ALL commits and changed files must qualify, not just the PR title) → dispatch applicable dimensions only, log others as `N/A (exempt)`: `docs`→F; `style`→D,F; `test`→A1,A2,D,F; `chore`/`build`/`ci`→A1,A2,E,F; `perf`→A1,A2,C,D,F; `refactor`→all. Dispatching exempted dimensions is a protocol violation — log as `N/A (exempt)` without spawning a sub-agent. Mixed PRs (any non-exempt commit) → full dispatch. If a dispatched sub-agent identifies cross-cutting risk, escalate to full dispatch.
@@ -140,7 +146,7 @@ Include full changed-file list for all dimensions regardless of diff filtering.
 
 Aggregate findings from all Phase 2 sub-agents, then classify using exactly these priority levels:
 - 🔴 **CRITICAL**: blocks merge — security vulnerability, data loss/corruption, breaking change, incorrect behavior under normal usage, missing evidence, failing tests, TDD failure
-- 🟡 **IMPORTANT**: concrete improvements with an articulated risk path. Each 🟡 must state: (1) **trigger** — what action or input activates the path, (2) **mechanism** — the reachable code path from trigger to failure, (3) **consequence** — the observable damage (data loss, error, degraded UX, outage). Missing any element → 🟢, not 🟡. Requires follow-ups tracked as GitHub issues. **If a 🟡 could cause data loss, security exposure, cascading outage, or incorrect behavior under normal usage → reclassify as 🔴.** Concerns without an articulated risk path → 🟢, not 🟡.
+- 🟡 **IMPORTANT**: concrete improvements with an articulated risk path. Each 🟡 must state: (1) **trigger** — what action or input activates the path, (2) **mechanism** — the reachable code path from trigger to failure, (3) **consequence** — the observable damage (data loss, error, degraded UX, outage). Missing any element → 🟢, not 🟡. Requires follow-ups tracked as GitHub issues. **If a 🟡 could cause data loss, security exposure, cascading outage, or incorrect behavior under normal usage → reclassify as 🔴.** Concerns without an articulated risk path → 🟢, not 🟡. **🟡 exclusions (classify as 🟢):** missing CHANGELOG/docs with no release/API/user-impact requirement, "better abstraction" without a failure path, rename/restructure suggestions, stylistic preferences — these lack the required trigger→mechanism→consequence chain.
 - 🟢 **MINOR**: polish, theoretical improvements, or speculative edge cases where no reachable trigger, concrete failure mode, or material impact is identified; does not block
 
 **Severity adjustment:** The orchestrator may reclassify 🟡 → 🔴 per the rule above, or 🟡 → 🟢 when the finding lacks an articulated risk path. **NEVER** 🔴 → 🟡/🟢. Sub-agent 🔴 severity is a floor; 🟡 is advisory and subject to orchestrator calibration.
@@ -176,6 +182,10 @@ Required action: MERGE | FILE_ISSUES_AND_MERGE | FIX_AND_REINVOKE
 - Test-first history verified: ✅/❌ (evidence)
 - Full suite green on SHA: ✅/❌ (evidence)
 - Coverage: {{X}}% (threshold {{COVERAGE_THRESHOLD}}%) ✅/❌ (evidence)
+
+### Phase 1.5 — Fast-path Evaluation
+🔴 count: 0 | LOC: {{N}} (≤150: Y/N) | Security paths: Y/N | New deps: Y/N | Commit types qualify: Y/N
+→ Fast-path eligible: YES → APPROVED / NO → Phase 2
 
 ### Phase 2 — Execution Log
 | Dim | Tool Call | Agent ID / Ref | Status |

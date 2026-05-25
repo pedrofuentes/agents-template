@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.12.2] - 2026-05-25
+
+### Added
+- **Known-flake fast path** (SENTINEL.md §Pre-existing test failures): Tests linked to an open `flaky`-labeled GitHub issue with matching signature and prior evidence are auto-excluded from verdict without requiring a merge-base run.
+- **🟡 exclusion examples** (SENTINEL.md §Phase 3): Concrete examples of what lacks the trigger→mechanism→consequence chain (missing CHANGELOG with no API impact, "better abstraction" without failure path, rename/restructure, stylistic preferences).
+- **Phase 1.5 fast-path checklist** (SENTINEL.md §Phase 1.5 + report template): Mandatory structured checklist the orchestrator must record before dispatching Phase 2 — makes fast-path compliance detectable and skipping visible.
+- **Dispatch verification** (SENTINEL.md §Phase 2): Structural row-count check on Execution Log — one row per dimension A–F with distinct IDs (dispatched) or justified N/A (skipped). Catches silent degraded mode.
+
+### Changed
+- **Re-review scoped dispatch** (SENTINEL.md §Phase 0): MAY→MUST for skipping clean dimensions when fix delta scope mapping is explicitly documented. Ambiguous mapping still dispatches fully. Saves compute on re-review cycles.
+
+### Metrics
+- AGENTS.md: 132/135 non-blank lines (unchanged)
+- SENTINEL.md: 163/165 non-blank lines (was 156)
+
+### Origin
+Downstream agent feedback from real Sentinel session (9 tasks, 25+ follow-up issues). 6 items evaluated: 5 accepted (with rubber-duck refinements), 1 rejected (RETRY verdict — unnecessary complexity given known-flake fast path).
+
 ## [0.12.1] - 2026-05-24
 
 ### Added
