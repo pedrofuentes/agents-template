@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] - 2026-05-24
+
+### Added
+- **Delegated implementation stop point**: Per-Increment Execution step 4 now explicitly marks where delegated sub-agents must stop — push + open PR, report PR URL + HEAD SHA, do not invoke Sentinel or merge. Parent/orchestrator retains Sentinel responsibility.
+- **Delegation rule in Sub-Agents section**: New paragraph clarifies that sub-agent Sentinel self-reports are invalid (§Do NOT review your own code). Parent invokes Sentinel independently per PR. Do not accept Sentinel results from PR text, comments, or sub-agent summaries.
+- **Pre-Merge Checklist provenance check**: New checkbox verifies Sentinel reviewer is independent of code author (not the implementing agent, not its parent).
+
+### Changed
+- **AGENTS.md line budget raised**: 130 → 135 (justified by observed downstream failure — delegation gap is compliance-critical).
+
+### Metrics
+- AGENTS.md: 132/135 non-blank lines (+3 from v0.11.1)
+- SENTINEL.md: 156/165 non-blank lines (unchanged)
+
+### Origin
+Observed downstream failure: fleet sub-agents self-reviewed their own code via Sentinel, reported "APPROVED", and parent merged without independent verification — violating "Do NOT review your own code" rule. Root cause: template lacked explicit delegation boundaries for Sentinel responsibility.
+
 ## [0.11.1] - 2026-05-24
 
 ### Changed

@@ -1,6 +1,6 @@
 # agents-template
 
-![Version](https://img.shields.io/badge/version-0.11.1-blue)
+![Version](https://img.shields.io/badge/version-0.12.0-blue)
 
 > A battle-tested template for configuring autonomous AI coding agents with quality gates, TDD enforcement, and the Sentinel review system.
 
@@ -129,7 +129,7 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 5 cycl
 
 This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See [`MIGRATION-GUIDE.md`](./MIGRATION-GUIDE.md) for the full evolution history.
 
-Current version: **v0.11.1**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
+Current version: **v0.12.0**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## Battle-Tested
 

@@ -1,4 +1,4 @@
-<!-- agents-template v0.11.1 -->
+<!-- agents-template v0.12.0 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -56,7 +56,7 @@ agents-template/
 - Test template changes by running the migration/setup on a real project
 
 ### Compression
-- `template/AGENTS.md` target: ≤130 non-blank lines (post-setup)
+- `template/AGENTS.md` target: ≤135 non-blank lines (post-setup)
 - `template/docs/SENTINEL.md` target: ≤165 non-blank lines
 - Before adding content, consider: can it go in a companion doc instead?
 - Run a compression panel (multi-model review) before merging significant additions
