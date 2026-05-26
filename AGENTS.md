@@ -57,7 +57,7 @@ agents-template/
 
 ### Compression
 - `template/AGENTS.md` target: ≤135 non-blank lines (post-setup)
-- `template/docs/SENTINEL.md` target: ≤165 non-blank lines
+- `template/docs/SENTINEL.md` target: ≤170 non-blank lines
 - Before adding content, consider: can it go in a companion doc instead?
 - Run a compression panel (multi-model review) before merging significant additions
 - Do NOT compress compliance-critical instructions to meet line budgets — raise the budget instead

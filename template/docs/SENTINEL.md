@@ -66,6 +66,7 @@ Verify each check using diff + commit history + test/coverage output. Unverifiab
 
 **Pre-existing test failures:** A failure MAY be classified as pre-existing via either path:
 - **Known flake (fast path):** same test + failure signature is documented in an open GitHub issue labeled `flaky` with prior CI/run evidence, AND the PR does not touch the failing test, its SUT, shared fixtures/infra, or dependencies → excluded from verdict, reported as ⚠️. No merge-base run required.
+  - **SUT-touching override:** if the PR modifies the SUT but meets all other conditions (tracked `flaky` issue, same failure signature, no touch to failing test/fixtures/infra/dependencies), exclusion still applies when the flaking test passes in targeted isolation on the PR branch; report as `⚠️ (isolation-verified)`.
 - **Unknown failure:** the same test fails with the same error on the merge-base commit (baseline evidence required — run suite on merge-base or cite CI) AND the PR does not touch the failing test, its SUT, shared fixtures/infra, or dependencies. If linked to an open issue → excluded from verdict (⚠️). If NOT linked → **CONDITIONAL** with requirement to file issue. Unverifiable baseline → failure counts normally.
 
 **If you can run commands**, prefer verifying directly (examples; adapt to repo):
@@ -73,7 +74,7 @@ Verify each check using diff + commit history + test/coverage output. Unverifiab
 - `{{PACKAGE_MANAGER}} test --coverage`
 - `{{PACKAGE_MANAGER}} lint` / `{{PACKAGE_MANAGER}} typecheck` (if part of CI quality gate)
 
-**Speculative execution (RECOMMENDED):** Phase 1 and Phase 2 MAY start concurrently. If Phase 1 fails, discard Phase 2 results and report REJECTED with Phase 1 evidence. Saves ~30-60s at the cost of wasted compute on rejected PRs.
+**Speculative execution (RECOMMENDED):** Phase 1 and Phase 2 MAY start concurrently. If Phase 1 fails, report REJECTED with Phase 1 evidence. If the failure is solely from suspected pre-existing flakes, include Phase 2 findings labeled `⚠️ speculative (SHA: <reviewed-sha>)` so re-review can reuse them when the diff is unchanged; otherwise discard Phase 2 results.
 
 ### Phase 1.5 — Quick scan (REQUIRED fast-path evaluation)
 The orchestrator MUST evaluate fast-path eligibility for every PR that passes Phase 1. A single **fast-model** agent scans the full diff for 🔴 blockers only (secrets, injection sinks, auth bypass, gaming tests, data loss, breaking changes). If no 🔴 found AND all skip criteria below are met → verdict is **APPROVED** at `Review depth: Tier 1 (fast-path)`. Skipping this evaluation when criteria are met (proceeding directly to Phase 2) is a protocol violation.

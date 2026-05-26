@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.13.1] - 2026-05-25
+
+### Changed
+- **SUT-touching override** (SENTINEL.md §Pre-existing test failures): Known flake exclusion now applies when the PR modifies the SUT file — provided the flaking test passes in targeted isolation on the PR branch and all other conditions (tracked `flaky` issue, same failure signature, no fixture/infra/dependency touch) are met. Reduces wasted Sentinel cycles on file-level false positives.
+- **Speculative Phase 2 preservation** (SENTINEL.md §Speculative execution): When Phase 1 fails solely on suspected pre-existing flakes, Phase 2 findings are preserved (labeled `⚠️ speculative` with reviewed SHA) instead of discarded — re-review can reuse them when the diff is unchanged.
+
+### Metrics
+- AGENTS.md: 132/135 non-blank lines (unchanged)
+- SENTINEL.md: 164/170 non-blank lines (+1 line, budget raised 165→170)
+
 ## [0.13.0] - 2026-05-25
 
 ### Added
