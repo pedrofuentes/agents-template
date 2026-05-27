@@ -49,6 +49,9 @@ User-controlled values flowing into dangerous sinks without context-appropriate 
 - Third-party actions pinned by mutable tag instead of SHA
 - Overly permissive `permissions:` blocks
 
+## Context acquisition
+If the routed input is insufficient to assess any changed file, you MUST use available tools (file read, grep, git commands) to fetch additional context before concluding "No findings." Review the changed-file list to identify files in your scope not included in the routed input. Filtered input is a starting point, not a scope limit.
+
 ## Return format
 
 For each finding, provide:

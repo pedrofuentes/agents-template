@@ -57,6 +57,9 @@ Findings must originate from changed lines or code whose reachability, inputs, o
 - Hardcoded values — operationally-tuned configuration that should be externalized: timeouts, retry counts, connection limits, base URLs, feature flags
 - Missing validation — env vars or config values used without validation or default fallback
 
+## Context acquisition
+If the routed input is insufficient to assess any changed file, you MUST use available tools (file read, grep, git commands) to fetch additional context before concluding "No findings." Review the changed-file list to identify files in your scope not included in the routed input. Filtered input is a starting point, not a scope limit.
+
 ## Return format
 
 For each finding, provide:

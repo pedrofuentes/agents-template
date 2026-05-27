@@ -106,18 +106,26 @@ A sub-agent is a **separately-invoked tool call** (e.g., `task`, `dispatch`) exe
 
 **Model tier guidance:** Dimensions E and F can use fast/cheap models (mechanical checks); dimensions A–D benefit from full-capability models (nuanced reasoning).
 
-**Prompt caching:** Place dimension file content in the `system` prompt position (static prefix). Place `<untrusted_pr_input>`-wrapped diff in the `user` message (variable suffix). This enables provider-side prefix caching (~80% latency reduction on cached reads, covers re-review cycles within cache TTL).
+**Prompt caching (cross-dimension prefix sharing):** Structure sub-agent prompts for cache reuse across all N dimension calls:
+- **Cached prefix:** Core Sentinel rules (evidence standard, injection defense) in `system` position + `<untrusted_pr_input>`-wrapped diff, changed-file list, and PR context in `user` position. Both are shared across all calls; never place untrusted PR content in the `system` prompt.
+- **Variable suffix (user position):** Dimension-specific file content (checklist + return format).
+- **Priming dispatch (API-level):** Fire one dimension call first; after its first response token, fire remaining N-1 in parallel — all read from cached prefix at ~10% input cost. Min cacheable prefix: 1,024 tokens; cache TTL: 5 min (refreshed on read). For tool-based dispatch: caching is provider-managed; this structure is informational.
 
-**Input filtering (RECOMMENDED):** Reduce sub-agent input tokens by routing relevant diff portions per dimension:
+**Input filtering (REQUIRED):** Apply deterministic pre-filters, then route relevant diff portions per dimension. Always include full changed-file list for all dimensions.
+
+**Pre-filters (apply before routing):** Exclude from all dimension inputs: whitespace-only hunks, generated code (`dist/`, `generated/`, `__generated__/`, `*.min.js`, `*.min.css`, source maps), lockfiles (except Dim E, which receives them). Deletion-only hunks: include verbatim for A1/A2/B/C (deleted controls are high-value findings); collapse to summary (file path + lines removed) for D/E/F.
+
+**Small-PR exception:** PRs with ≤150 non-test/non-lockfile LOC changed may send the full pre-filtered diff to all dimensions instead of per-dimension routing.
 
 | Dim | Input | Exclude |
 |-----|-------|---------|
-| A, B, C | Full diff | Lockfiles, generated code (`dist/`, `generated/`), whitespace-only hunks |
-| D | Test files + impl files they test + file list | Lockfiles, docs, unrelated source |
+| A1, A2 | Full pre-filtered diff | (pre-filters only — no further exclusion for security dims) |
+| B, C | Full pre-filtered diff | (pre-filters only) |
+| D | Test files + impl files they test + file list | Docs, unrelated source |
 | E | Package manifests + lockfiles + build config only | All source code, tests, docs |
-| F | Docs, CHANGELOG, code-comment hunks, API signatures + file list | Test files, lockfiles, impl internals |
+| F | Docs, CHANGELOG, code-comment hunks, API signatures + file list | Test files, impl internals |
 
-Include full changed-file list for all dimensions regardless of diff filtering.
+**Staged routing (A1/A2/B/C, PRs exceeding small-PR threshold):** Instead of full diff to all four, send: (1) **Universal packet** — changed-file list + `git diff --stat` + compact diff (`-U0`, changed lines only). (2) **Dimension-expanded hunks** (`-U3` or project default) for focus files — A1: routes/auth/DB/exec/CI; A2: config/crypto/sessions/uploads; B: network/retry/logging/jobs; C: loops/queries/concurrency/hot-paths. (3) **Mandatory expansion** — sub-agents MUST use available tools to fetch additional context before concluding "No findings" when routed input is insufficient (also documented in each A1/A2/B/C dimension file).
 2. **On failure:** Retry once. If still failing, mark ❌ and declare degraded mode. **Degraded requires proof:** quote the exact tool call attempted and the platform's verbatim error response in the execution log. No quoted attempt → REJECTED.
 
 **Execution logging (REQUIRED):** Record each sub-agent's assigned dimension, status, and the exact tool call used to spawn it (e.g., `task(agent_type="general-purpose", name="dim-a")`) in the Phase 2 Execution Log. Include the tool-returned identifier if the platform provides one; if not, log `N/A` with the platform limitation. Fabricated dispatch evidence → REJECTED.

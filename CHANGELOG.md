@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] - 2026-06-15
+
+### Added
+- **Prompt caching protocol** (SENTINEL.md §Phase 2): Expanded from 1-line guidance to structured cross-dimension prefix sharing protocol — shared prefix (system position) with diff/context, variable suffix (user position) with dimension checklist, priming dispatch pattern for ~78% input cost reduction across dimension calls.
+- **Deterministic pre-filters** (SENTINEL.md §Input filtering): Exclude deletion-only hunks, whitespace-only hunks, generated code, and lockfiles (except Dim E) before any LLM invocation — zero-cost token reduction.
+- **Small-PR exception** (SENTINEL.md §Input filtering): PRs ≤150 non-test LOC may send full pre-filtered diff to all dimensions instead of per-dimension routing.
+- **Staged routing** (SENTINEL.md §Input filtering): Two-tier input for A1/A2/B/C — universal compact diff (`-U0`) + dimension-expanded hunks (`-U3`) for focus files — 50-80% diff token reduction on large PRs.
+- **Mandatory expansion rule** (dim-a1, dim-a2, dim-b, dim-c): Context acquisition section requiring sub-agents to use tools to fetch additional context before concluding "No findings" when routed input is insufficient.
+
+### Changed
+- **Input filtering** upgraded from RECOMMENDED to **REQUIRED** — ensures consistent token savings across all implementations.
+- **Routing table** now splits A into separate A1/A2 rows (consistent with dimension table and selective dispatch).
+
+### Metrics
+- SENTINEL.md: 170/170 non-blank lines (was 164/170)
+- dim-a1, dim-a2, dim-b, dim-c: +3 lines each (Context acquisition section)
+
 ## [0.13.1] - 2026-05-25
 
 ### Changed
