@@ -77,7 +77,7 @@ Verify each check using diff + commit history + test/coverage output. Unverifiab
 **Speculative execution (RECOMMENDED):** Phase 1 and Phase 2 MAY start concurrently. If Phase 1 fails, report REJECTED with Phase 1 evidence. If the failure is solely from suspected pre-existing flakes, include Phase 2 findings labeled `⚠️ speculative (SHA: <reviewed-sha>)` so re-review can reuse them when the diff is unchanged; otherwise discard Phase 2 results.
 
 ### Phase 1.5 — Quick scan (REQUIRED fast-path evaluation)
-The orchestrator MUST evaluate fast-path eligibility for every PR that passes Phase 1. A single **fast-model** agent scans the full diff for 🔴 blockers only (secrets, injection sinks, auth bypass, gaming tests, data loss, breaking changes). If no 🔴 found AND all skip criteria below are met → verdict is **APPROVED** at `Review depth: Tier 1 (fast-path)`. Skipping this evaluation when criteria are met (proceeding directly to Phase 2) is a protocol violation.
+The orchestrator MUST evaluate fast-path eligibility for every PR that passes Phase 1. A single **fast-model** agent scans the full diff for 🔴 blockers only (secrets, injection sinks, auth bypass, gaming tests, data loss, breaking changes). If no 🔴 found AND all skip criteria below are met → verdict is **APPROVED** at `Review depth: Tier 1 (fast-path)`, `Mode: standard (fast-path)` (Phase 2 not required). Skipping this evaluation when criteria are met (proceeding directly to Phase 2) is a protocol violation.
 
 **Tier 2 skip criteria (ALL must be true):**
 - Quick scan found zero 🔴
@@ -88,7 +88,7 @@ The orchestrator MUST evaluate fast-path eligibility for every PR that passes Ph
 
 **Any criterion unmet → proceed to Phase 2 (Tier 2, full review).** Quick scan cannot produce CONDITIONAL — only APPROVED or escalate.
 
-**Fast-path checklist (REQUIRED in report):** Before dispatching Phase 2, record: (1) quick scan 🔴 count, (2) non-test LOC changed vs 150 threshold, (3) security paths touched (Y/N), (4) new dependencies (Y/N), (5) all commit types qualify (Y/N). Eligible → APPROVED at Tier 1. Ineligible → Phase 2. Missing checklist → protocol violation.
+**Fast-path checklist (REQUIRED in report):** Before dispatching Phase 2, record: (1) quick scan 🔴 count, (2) non-test LOC changed vs 150 threshold, (3) security paths touched (Y/N), (4) new dependencies (Y/N), (5) all commit types qualify (Y/N). Eligible → APPROVED at Tier 1, Mode: standard (fast-path). Ineligible → Phase 2. Missing checklist → protocol violation.
 
 **Audit sampling (RECOMMENDED):** 10% of fast-path-approved PRs get retroactive Tier 2 review (async, post-merge). Track miss rate; if >5%, tighten skip criteria.
 
@@ -132,7 +132,7 @@ A sub-agent is a **separately-invoked tool call** (e.g., `task`, `dispatch`) exe
 
 **Dispatch verification (REQUIRED):** After Phase 2, verify the Execution Log contains one row for each dimension A–F: dispatched rows must have distinct tool-returned identifiers (when the platform provides them); skipped rows must state an allowed `N/A` reason (exempt, auto-skip, or degraded with proof). Missing rows, duplicate provided identifiers, or unjustified skips → REJECTED with "dispatch not verified."
 
-**Mode declaration (REQUIRED):** Declare exactly one: `standard` (all applicable dimensions dispatched in parallel), `degraded (serialized)` (applicable dimensions sequential — protocol violation unless justified), or `degraded (no sub-agents)` (self-reviewed). "Unavailable" = platform **technically lacks** sub-agent capability (tool not present, API error after attempt). Cost, latency, or diff size are NOT valid reasons. Degraded modes require explicit user approval before merge. Omitting Mode is a violation.
+**Mode declaration (REQUIRED):** Declare exactly one: `standard` (all applicable dimensions dispatched in parallel), `standard (fast-path)` (Tier 1 approval — Phase 2 legitimately not required), `degraded (serialized)` (applicable dimensions sequential — protocol violation unless justified), or `degraded (no sub-agents)` (self-reviewed). "Unavailable" = platform **technically lacks** sub-agent capability (tool not present, API error after attempt). Cost, latency, or diff size are NOT valid reasons. Degraded modes require explicit user approval before merge. Omitting Mode is a violation.
 
 **Selective dispatch (REQUIRED):** Fully-exempt PRs (per Phase 1 §Exemptions — ALL commits and changed files must qualify, not just the PR title) → dispatch applicable dimensions only, log others as `N/A (exempt)`: `docs`→F; `style`→D,F; `test`→A1,A2,D,F; `chore`/`build`/`ci`→A1,A2,E,F; `perf`→A1,A2,C,D,F; `refactor`→all. Dispatching exempted dimensions is a protocol violation — log as `N/A (exempt)` without spawning a sub-agent. Mixed PRs (any non-exempt commit) → full dispatch. If a dispatched sub-agent identifies cross-cutting risk, escalate to full dispatch.
 
@@ -181,7 +181,7 @@ Report ID: {{unique-id}}
 Reviewed SHA: {{sha}}
 Sentinel ruleset: v1
 Reviewed at: {{timestamp}}
-Mode: standard | degraded (serialized) | degraded (no sub-agents)
+Mode: standard | standard (fast-path) | degraded (serialized) | degraded (no sub-agents)
 Review depth: Tier 1 (fast-path) | Tier 2 (full)
 Status: APPROVED | CONDITIONAL | REJECTED
 Required action: MERGE | FILE_ISSUES_AND_MERGE | FIX_AND_REINVOKE

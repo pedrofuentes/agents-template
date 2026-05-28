@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.14.1] - 2026-05-28
+
+### Fixed
+- **Fast-path mode ambiguity** (SENTINEL.md §Mode declaration + §Phase 1.5): Added `standard (fast-path)` as a legitimate Mode value. Previously, Tier 1 fast-path approvals (which legitimately skip Phase 2) had no matching Mode — agents misclassified them as `degraded (no sub-agents)`. Now the protocol distinguishes "Phase 2 not required" from "couldn't spawn sub-agents."
+- Updated AGENTS.md §Pre-Merge Checklist to include `standard (fast-path)` in Mode options.
+
+### Metrics
+- SENTINEL.md: 170/170 non-blank lines (unchanged — all edits modify existing lines)
+
 ## [0.14.0] - 2026-06-15
 
 ### Added
