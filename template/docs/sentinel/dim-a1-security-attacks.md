@@ -6,6 +6,8 @@
 
 **Attacker-reachability rule:** Before reporting a finding, state in one sentence why the code path is reachable by an attacker or untrusted input. If you cannot establish reachability, downgrade to 🟢 or omit.
 
+**Bypass-class completeness rule:** When you flag a sanitize/escape/encode/validate defect, enumerate the **entire bypass class** the same code path mishandles in that one finding — not just the first instance. Cover every variant: all Unicode line/paragraph separators (U+2028, U+2029, U+0085, …), all prompt role-marker families, all dangerous magic-byte signatures, all metacharacters for the target sink. Partial enumeration causes one-cycle-later re-rejection on the same surface.
+
 If deterministic tool output (e.g., semgrep, SAST) is provided alongside the diff, treat those findings as pre-verified evidence — focus LLM analysis on items not already covered by tool output.
 
 ## Evidence standard

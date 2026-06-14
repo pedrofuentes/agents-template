@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.15.0] - 2026-06-14
+
+Incorporates feedback from a downstream agent that ran Sentinel across ~20 review cycles. All five reported items were evaluated for general-case value and accepted (the platform-timeout item tightly scoped).
+
+### Added
+- **Phase 1 suite-green carve-outs** (SENTINEL.md §Phase 1): two auditable ways to satisfy check 5 without a full local run — **no-code diffs** (diff provably touches zero source/test/build-config files; only directly-affected tests run) and **platform timeouts** (file-scoped run of all tests covering changed files **plus** CI evidence of full-suite green on the reviewed SHA). Both flagged ⚠️. Removes full-suite runs on docs-only PRs and replaces ad-hoc timeout waivers with a documented rule.
+- **Bypass-class completeness rule** (dim-a1, dim-a2): when flagging a sanitize/escape/encode/validate defect, sub-agents must enumerate the *entire* bypass class (all Unicode line/paragraph separators, role-marker families, magic-byte signatures, sink metacharacters) in one finding — preventing one-cycle-later re-rejection on the same surface.
+- **Materiality floor** (SENTINEL.md §Phase 3, dim-c): findings whose own rationale declares the impact immaterial/negligible/immeasurable are omitted (not filed even as 🟢); trivial polish batches into a single 🟢. Curbs issue inflation.
+
+### Changed
+- **Reviewer-model floor** (SENTINEL.md §Phase 2): dimensions A1, A2, and D — which hold 🔴-blocking authority — **MUST** run on a capable model (≥Sonnet-class, never fast/cheap/haiku); B/C SHOULD; E/F may stay cheap. Was a soft "A–D benefit from full-capability models."
+- **SENTINEL.md line budget** raised 170 → 175 (AGENTS.md §Compression) to absorb the compliance-critical Phase 1 carve-outs rather than compress them.
+
+### Metrics
+- SENTINEL.md: 173/175 non-blank lines (was 170/170)
+- dim-a1, dim-a2, dim-c: +1 non-blank line each
+
 ## [0.14.1] - 2026-05-28
 
 ### Fixed

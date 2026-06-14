@@ -6,6 +6,8 @@
 
 **Context note:** If the diff alone is insufficient to determine performance impact (e.g., unknown call frequency, unclear data volume), flag as 🟢 with a note requesting profiling evidence rather than escalating to 🟡/🔴 without proof.
 
+**Materiality floor:** Do not report micro-optimizations whose impact is immeasurable at the realistic call cadence (e.g., redundant casts, collapsing a few regex passes on a CLI-cadence path). If you cannot state a measurable or clearly-reasoned impact, omit the finding rather than filing it as 🟢.
+
 If deterministic tool output (e.g., static analysis, profiler) is provided alongside the diff, treat those findings as pre-verified evidence — focus LLM analysis on items not already covered by tool output.
 
 ## Evidence standard
