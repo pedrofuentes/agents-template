@@ -25,8 +25,7 @@
 agents-template/
 ├── AGENTS.md                          ← THIS FILE (repo-specific rules)
 ├── README.md                          ← For humans browsing GitHub
-├── CHANGELOG.md                       ← Version history (semver)
-├── MIGRATION-GUIDE.md                 ← Template evolution history (v1→v4)
+├── CHANGELOG.md                       ← Version history (semver) + evolution history
 ├── LICENSE                            ← MIT
 ├── docs/                              ← GitHub Pages website
 │   └── index.html                     ← Landing page (self-contained)
@@ -119,7 +118,6 @@ agents-template/
 |----------|-------------|
 | [`README.md`](./README.md) | Editing user-facing documentation |
 | [`CHANGELOG.md`](./CHANGELOG.md) | Releasing a new version |
-| [`MIGRATION-GUIDE.md`](./MIGRATION-GUIDE.md) | Understanding template evolution |
 | [`template/AGENTS.md`](./template/AGENTS.md) | Editing the template itself |
 | [`template/docs/SENTINEL.md`](./template/docs/SENTINEL.md) | Editing Sentinel specification |
 | [`docs/index.html`](./docs/index.html) | Editing the website / landing page |

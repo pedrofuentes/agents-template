@@ -127,9 +127,9 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 5 cycl
 
 ## How It Was Built
 
-This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1). See [`MIGRATION-GUIDE.md`](./MIGRATION-GUIDE.md) for the full evolution history.
+This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1) and continuous live testing. See [`CHANGELOG.md`](./CHANGELOG.md) for the full evolution history.
 
-Current version: **v0.16.0**. See [CHANGELOG.md](./CHANGELOG.md) for version history.
+Current version: **v0.16.0**.
 
 ## Battle-Tested
 
