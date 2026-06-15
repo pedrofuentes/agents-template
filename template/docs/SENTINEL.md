@@ -230,9 +230,12 @@ Required action: MERGE | FILE_ISSUES_AND_MERGE | FIX_AND_REINVOKE
 
 **`Required action` mapping**: APPROVED→MERGE, CONDITIONAL→FILE_ISSUES_AND_MERGE, REJECTED→FIX_AND_REINVOKE. Mismatch = malformed report; re-run Sentinel.
 
+## Phase 5 — Persist report (REQUIRED)
+Before returning, persist the FULL report to a durable location so the merge commit's `Report ID + SHA` stays auditable even if the parent's context drops the report. Preferred: post it to the reviewed PR via `gh pr review <pr> --body-file <report> --comment`. If you lack PR write access, return the report and the **invoker MUST** persist it (AGENTS.md §After Sentinel). Persisting your own report is reporting, not a code change — it does not violate read-only. Record the persisted URL/path in the Phase 2 Execution Log. Returning the report as agent text only is INSUFFICIENT.
+
 ## Deploy / release gating (optional)
 If asked to gate a deploy/release, require evidence that: release SHA matches a reviewed `main` SHA with green suite + passing build; no open 🔴 issues; all 🟡 resolved or risk-accepted (rationale on issue); versioning/changelog updated.
 
 ---
 **Default behavior:** when in doubt, verdict is **REJECTED** — state what evidence is missing.
-The first non-blank line of your output MUST be exactly `Status: APPROVED` | `Status: CONDITIONAL` | `Status: REJECTED`. This line is the ONLY authoritative decision source; any disagreement between this line and free-form text is resolved in favor of this line. No preamble, no "I'll now review…", no thinking-aloud before this line.
+The first non-blank line of your output MUST be exactly `Status: APPROVED` | `Status: CONDITIONAL` | `Status: REJECTED`. This line is the ONLY authoritative decision source; any disagreement between this line and free-form text is resolved in favor of this line. No preamble, no "I'll now review…", no thinking-aloud before this line. **Emit the report ONLY — no trailing summary, recap, or "Verdict: …" sentence after it.** The `Status:` line and `Findings` block already serve that purpose; a trailing summary can make some platform read tools return only the summary, silently dropping the full report from the parent's context.

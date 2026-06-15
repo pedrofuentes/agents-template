@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.16.0] - 2026-06-14
+
+Resolves issues #5 and #6 from the open-issue triage — both grounded in a downstream case (Council PR #147) where a Sentinel sub-agent's trailing summary caused the platform's read tool to return only that summary, silently dropping the full report.
+
+### Added
+- **Phase 5 — Persist report** (SENTINEL.md): Sentinel MUST persist the full report to a durable location (preferred: `gh pr review --body-file` on the reviewed PR; fallback: the invoker persists it) before returning, and record the URL/path in the Execution Log. Returning the report as agent text only is now explicitly INSUFFICIENT. Keeps the merge commit's `Report ID + SHA` auditable even when the parent's context drops the report. Read-only is preserved (persisting one's own report is reporting, not a code change).
+- **Report-capture verification** (AGENTS.md §How to Invoke): step 4 now verifies the *captured* output is the full report (not just a `Status:` line or one-sentence summary) and re-invokes with an emit-only instruction if truncated. Step 2 now passes the PR number/URL so Sentinel can persist.
+- **Parent persistence fallback** (AGENTS.md §After Sentinel): explicit "Persist the report" duty when Sentinel could not.
+
+### Changed
+- **Emit-only rule** (SENTINEL.md §Output): the final-output directive now forbids any trailing summary/recap/"Verdict: …" sentence after the report (preamble was already forbidden) — a trailing summary is the documented trigger for lossy capture.
+- **SENTINEL.md line budget** raised 175 → 178 (AGENTS.md §Compression) to absorb Phase 5.
+
+### Metrics
+- SENTINEL.md: 175/178 non-blank lines (was 173/175)
+- AGENTS.md: 134/135 non-blank lines post-setup (was 132/135)
+
 ## [0.15.0] - 2026-06-14
 
 Incorporates feedback from a downstream agent that ran Sentinel across ~20 review cycles. All five reported items were evaluated for general-case value and accepted (the platform-timeout item tightly scoped).
