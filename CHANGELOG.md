@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.17.0] - 2026-06-17
+
+Incorporates feedback from a downstream agent that ran Sentinel across a 20-task CLI run. Three reported items evaluated for general-case value: two accepted (a real fast-path miss and a concrete doc contradiction), one rejected (a flaky-handling change that would weaken the gate). The accepted fast-path fix was trimmed to two load-bearing edits; two redundant tweaks were dropped after re-evaluation.
+
+### Added
+- **Terminal/ANSI/OSC escape injection** (dim-a1 §Injection): named as an injection sink — untrusted content written to stdout/stderr/TTY without stripping control characters (output spoofing, cursor/title/clipboard manipulation, hidden-command injection in some terminals). Closes a CLI blind spot: the prior list enumerated only web sinks, so a Phase 1.5 fast-path APPROVE missed untrusted content rendered to a terminal.
+- **Fast-path escalation for terminal/UI output** (SENTINEL.md §Phase 1.5): the Tier-2 skip-criteria security-path list is now non-exhaustive and project-aware — project-defined sensitive surfaces (AGENTS.md §NEVER) and modules rendering untrusted input to a terminal/UI disqualify the fast-path and escalate to full review. Ensures the dim-a1 check actually runs on CLI-shaped diffs whose paths don't match `auth/ crypto/ middleware/ migrations/`.
+
+### Fixed
+- **Report-template contradiction** (SENTINEL.md §Output): the report template led with `## Sentinel Review Report`, contradicting the mandate that the first non-blank line MUST be exactly `Status: …` (the v0.16.0 anti-truncation rule). The template now leads with `Status:`; the duplicate Status line was removed from the metadata block.
+
+### Rejected (logged for traceability)
+- **Flaky auto-file + skip baseline**: auto-filing a `flaky` label so newly-observed flakes skip the merge-base baseline run would let a real regression masquerade as a flake. The merge-base run is the deliberate cost of *establishing* a flake — unchanged.
+- **Quick-scan inline hint / platform-timeout SHA tweak**: dropped as redundant — covered by the two accepted edits, and by Phase 0 + invariant 3 (SHA binding) respectively.
+
+### Metrics
+- SENTINEL.md: 175/178 non-blank lines (unchanged)
+- AGENTS.md: 134/135 non-blank lines post-setup (unchanged)
+
 ## [0.16.0] - 2026-06-14
 
 Resolves issues #5 and #6 from the open-issue triage — both grounded in a downstream case (Council PR #147) where a Sentinel sub-agent's trailing summary caused the platform's read tool to return only that summary, silently dropping the full report.
