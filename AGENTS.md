@@ -68,7 +68,7 @@ agents-template/
 - Create GitHub Release with release notes from CHANGELOG
 
 ### Syncing to Downstream Projects
-- Changes to `template/AGENTS.md` may need syncing to downstream projects (gitnotate, Arbol, Council)
+- Changes to `template/AGENTS.md` may need syncing to downstream projects (gitnotate, Arbol, Council, stream-deck-ical, stream-deck-github-utilities, stream-deck-cloudflare-utilities)
 - The README update prompt helps users pull changes while preserving their customizations
 
 ### Testing Changes
