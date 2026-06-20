@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.18.0] - 2026-06-19
+
+Incorporates feedback from a downstream coordinator that ran 7 Sentinel reviews (1 CONDITIONAL, 6 APPROVED, 0 REJECTED, 0 bad merges) on a dependency-heavy workstream. Net: high correctness and calibration; the gap was proportionality/throughput on trivial dependency PRs. Four items were evaluated via a 3-model panel (GPT-5.5, Gemini 3.1 Pro, Claude Opus 4.8) — two accepted, one deferred, one rejected. The accepted throughput fix was scoped to preserve the supply-chain gate: Dim E still runs on every lockfile diff.
+
+### Added
+- **Dim-E-only selective-dispatch lane** (SENTINEL.md §Phase 2 Selective dispatch): dependency-surface-only PRs (every changed file is a package manifest, lockfile, or package-manager config, and none is a Dockerfile/CI/build/source/test/docs file) dispatch **Dim E only**, logging A1/A2/B/C/D/F as `N/A (no reviewable surface)`. Cuts the dependency-PR fan-out from 4 sub-agents to 1 while keeping Dim E mandatory — never skipped on a lockfile diff, where dependency-confusion, `resolved`-URL swaps, integrity-hash changes, and `postinstall` injection hide. Resolves the "fast-path is dead for dependency work" friction without a true Tier-0 bypass.
+
+### Changed
+- **Merge-base novelty cap in all 7 dimension prompts** (`dim-a1`…`dim-f` §Scope): a pre-existing issue the diff neither introduces nor newly reaches is now explicitly **capped at 🟢 (never 🔴/🟡)**, aligning the sub-agents with the orchestrator's existing "🟢 max" scope rule (SENTINEL.md Phase 2). Stops sub-agents emitting blocking findings on unchanged pre-existing code that the orchestrator then has to down-scope (observed twice downstream). In-place reword; no line-budget impact.
+
+### Deferred (logged for traceability)
+- **Review-depth budget proportional to LOC/surface** ([#11](https://github.com/pedrofuentes/agents-template/issues/11), `sentinel:deferred`): the 44-min wall-time on an all-green Dependabot subset is a platform-parallelization symptom with no observed gate failure. Mitigated by the Dim-E-only lane; revisit if dependency-PR latency persists. A LOC/latency depth budget that skips fan-out is NOT adopted — it would skip Dim E (supply-chain regression) and open a loophole against the rule that "cost, latency, or diff size are NOT valid reasons" to reduce review.
+
+### Rejected (logged for traceability)
+- **Tier-0 lane that skips the multi-agent fan-out for lockfile/metadata diffs**: would skip Dim E — the only dimension that inspects lockfiles — directly reversing v0.17.0's tightening. The safe subset (narrowed dispatch, Dim E retained) shipped instead (see Added).
+- **Reconcile the "never-selected" `standard (fast-path)` checklist mode** (AGENTS.md Pre-Merge Checklist): not a defect. Dependency PRs *correctly* decline the fast-path (Phase 1.5 "No new dependencies added"); the mode stays valid for source-only `fix`/`docs`/`refactor` diffs. Spending the scarce AGENTS.md line to document rarity adds noise for zero behavioral gain.
+
+### Metrics
+- SENTINEL.md: 176/178 non-blank lines (+1: Dim-E-only lane)
+- AGENTS.md: 134/135 non-blank lines post-setup (unchanged)
+- Dimension prompts: +0 lines (in-place reword)
+
 ## [0.17.0] - 2026-06-17
 
 Incorporates feedback from a downstream agent that ran Sentinel across a 20-task CLI run. Three reported items evaluated for general-case value: two accepted (a real fast-path miss and a concrete doc contradiction), one rejected (a flaky-handling change that would weaken the gate). The accepted fast-path fix was trimmed to two load-bearing edits; two redundant tweaks were dropped after re-evaluation.
