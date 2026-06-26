@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.19.0] - 2026-06-26
+
+Incorporates feedback from a downstream agent that ran ~24 Sentinel reviews (2 genuine 🔴 blocks of broken PRs, including a stale-overlay bug surfaced via a coverage gap; 0 bad merges). Net: the depth is the asset — keep it. The gaps were **severity reproducibility across fresh-agent reviewers** and **non-behavioral noise** (CHANGELOG-driven CONDITIONALs). Triaged for general-case value: ~half the feedback was already handled in v0.18.0; the consistency + determinism wins were taken; the routing changes that would weaken the security/supply-chain gate were declined.
+
+### Added
+- **Severity rubric companion** (`docs/sentinel/SEVERITY-RUBRIC.md`, referenced from SENTINEL.md §Phase 3): a version-pinned orchestrator calibration reference — an ordered decision procedure plus **golden worked-examples** drawn from the real reviewed cases (jitter-on-`Retry-After` → 🔴, stale retry-overlay → 🔴, mocked-out new data layer hiding a bug → 🔴, missing CHANGELOG → 🟢, unreachable defensive guard → 🟢, non-discriminating test → 🟡). Makes the same finding class yield the same severity regardless of which agent orchestrates. Lives in a companion file (compliance-critical content, per AGENTS.md §Compression) so SENTINEL.md stays at 176 lines.
+
+### Changed
+- **CHANGELOG severity is now deterministic** (SENTINEL.md §Phase 3 + `dim-f-documentation.md`): a missing CHANGELOG is **always 🟢 — never 🟡/CONDITIONAL**. Closes the "user-impact requirement" loophole that contradicted AGENTS.md (`CHANGELOG = Update`) and produced repeated APPROVED→CONDITIONAL churn for a non-behavioral convention.
+- **CHANGELOG implementer nudge** (template AGENTS.md §Associated Documentation): the CHANGELOG row is marked `(TDD-exempt; include in the PR)` so it is rarely even a finding. 0 net lines.
+- **Report-persistence clarified** (SENTINEL.md §Phase 5): durable PR-comment remains the default; a committed `.sentinel/reports/<id>.md` fallback MUST land on a persisted branch — **never inside a throwaway/ephemeral verification worktree**. Isolated checks use a repo-relative scratch path (`.worktrees/sentinel-<id>`), treated as scratch not storage. Resolves the observed non-deterministic-worktree and report-lost-in-deleted-worktree friction without hardcoding any platform's temp-dir policy.
+
+### Deferred (logged for traceability)
+- **Presentational-surface-only dispatch lane** ([#14](https://github.com/pedrofuentes/agents-template/issues/14), `sentinel:deferred`): a diff-aware skip of A1/A2 on pure CSS/copy diffs. A blanket content-based security skip reverses the v0.17.0 escalation hardening and the Dim-E "never skip" principle; `style`/`docs` commits already skip A1/A2 via selective dispatch, so the real fix is upstream commit-type accuracy. Revisit only with a Dim-E-tight positive surface definition. Wall-time half already tracked as #11.
+
+### Rejected (logged for traceability)
+- **Content-based A1/A2 security-dim skip as a general rule**: reverses v0.17.0's non-exhaustive, project-aware security-path escalation and the Dim-E "never skip on a lockfile diff" principle. The safe, narrow analog is deferred (#14), not adopted blanket.
+- **Upstream mutation-testing / coverage-diff gate at PR creation**: would impose test tooling on every adopter; Pre-Push Verification already offers optional gitleaks/semgrep. Advisory to individual projects, not a template change.
+- **Dropping the report "Agent ID" column**: already handled — SENTINEL.md §Phase 2 explicitly permits `N/A` + platform-limitation note, and the column is already `Agent ID / Ref`. No change needed.
+
+### Metrics
+- SENTINEL.md: 176/178 non-blank lines (unchanged — all in-place rewords)
+- AGENTS.md: 133/135 non-blank lines post-setup (unchanged)
+- Dimension prompts: `dim-f` reword (+0 lines)
+- New companion file: `docs/sentinel/SEVERITY-RUBRIC.md`
+
 ## [0.18.0] - 2026-06-19
 
 Incorporates feedback from a downstream coordinator that ran 7 Sentinel reviews (1 CONDITIONAL, 6 APPROVED, 0 REJECTED, 0 bad merges) on a dependency-heavy workstream. Net: high correctness and calibration; the gap was proportionality/throughput on trivial dependency PRs. Four items were evaluated via a 3-model panel (GPT-5.5, Gemini 3.1 Pro, Claude Opus 4.8) — two accepted, one deferred, one rejected. The accepted throughput fix was scoped to preserve the supply-chain gate: Dim E still runs on every lockfile diff.
