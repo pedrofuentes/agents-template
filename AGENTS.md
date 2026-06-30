@@ -42,7 +42,8 @@ agents-template/
             ├── dim-a1-security-attacks.md, dim-a2-security-defenses.md
             ├── dim-b-resilience.md, dim-c-performance.md
             ├── dim-d-testing.md, dim-e-dependencies.md, dim-f-documentation.md
-            └── SEVERITY-RUBRIC.md         ← Phase 3 severity calibration (golden examples)
+            ├── SEVERITY-RUBRIC.md         ← Phase 3 severity calibration (golden examples)
+            └── BACKLOG-HYGIENE.md         ← Opt-in issue-backlog lifecycle (flag, never auto-close)
 ```
 
 ## Rules for Working on This Repo

@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.20.0] - 2026-06-29
+
+Adds opt-in **issue-backlog hygiene** after a downstream adopter (Council) accreted **700+ open `sentinel:*` issues** (~half 🟡 important, ~half 🟢 minor) — many no longer applicable. A 5-expert sub-agent panel (Sentinel architect, downstream DevEx, SRE/lifecycle, app-security, YAGNI-minimalist; across Claude Opus 4.8, GPT-5.5, Gemini 3.1 Pro) reached a **unanimous PARTIAL verdict**: the accretion is **structural** — Sentinel files issues and never revisits them, so every adopter trends toward this state — but Sentinel must **never auto-close** anything, because *"stale ≠ resolved."* The agreed principle: **Sentinel emits self-verifying signals; the human keeps closure authority.** Shipped within budget (in-place rewords + one opt-in companion doc); no gate weakening.
+
+### Added
+- **Backlog-hygiene companion** (`docs/sentinel/BACKLOG-HYGIENE.md`, opt-in; pointer from AGENTS.md §After Sentinel): defines the **validity anchor** (every filed `sentinel:*` issue carries `file:line` + the quoted evidence snippet + reviewed SHA + dimension, plus a `sentinel:security` tag for A1/A2 or security-path findings), a four-label vocabulary, and an opt-in **re-validation sweep that flags but never closes** — *asymmetric closure authority* (security issues are never auto-closeable; non-security may be proposed for closure only on **positive** resolution evidence, never on age/absence/line-drift), *migration-aware* (match the sink, not the line number), *default-on-doubt = keep open*, with an auditable comment trail. Includes an optional, SHA-pinned, **flag-only** example GitHub Action (documentation-only — adopters opt in).
+- **Validity anchor + inflow discipline at filing** (template AGENTS.md §After Sentinel): filing now records the anchor so a later pass can cheaply re-check a finding; 🟢 minors file as **one digest issue per review** (a standalone 🟢 only on recurrence) to throttle inflow — the lever that most directly addresses the ~half of Council's backlog that is `sentinel:minor`.
+
+### Changed
+- **De-dup hardened to compare exploitability** (SENTINEL.md Phase 3 + `sentinel/SEVERITY-RUBRIC.md`): a new finding **more severe or newly reachable** than a matched open `sentinel:*` issue is **no longer marked Known** — it escalates at the higher severity. Closes a "laundering channel" whereby a worse new manifestation could be silently downgraded to Known. In-place reword; SENTINEL.md unchanged at 176/178.
+
+### Deferred / Rejected (logged for traceability)
+- **Rejected — Sentinel auto-closing stale issues** (any age/line-based reaping; any closure of `sentinel:security` findings): reverses the "do not weaken the gate" constraint and the unanimous panel guardrail that *stale ≠ resolved*. The safe analog — a flag-only sweep where humans close — shipped instead.
+- **Deferred — narrow objective auto-close** (deleted-file / exact-duplicate only): plausible but kept human/opt-in for now; revisit only if the flag-only sweep proves too conservative in practice downstream.
+
+### Metrics
+- SENTINEL.md: 176/178 non-blank lines (unchanged — Phase 3 de-dup reworded in place)
+- AGENTS.md: 134/135 non-blank lines post-setup (+1: Issue hygiene pointer)
+- New companion file: `docs/sentinel/BACKLOG-HYGIENE.md`
+- `SEVERITY-RUBRIC.md`: de-dup reworded (+1 line); dimension prompts unchanged
+
 ## [0.19.0] - 2026-06-26
 
 Incorporates feedback from a downstream agent that ran ~24 Sentinel reviews (2 genuine 🔴 blocks of broken PRs, including a stale-overlay bug surfaced via a coverage gap; 0 bad merges). Net: the depth is the asset — keep it. The gaps were **severity reproducibility across fresh-agent reviewers** and **non-behavioral noise** (CHANGELOG-driven CONDITIONALs). Triaged for general-case value: ~half the feedback was already handled in v0.18.0; the consistency + determinism wins were taken; the routing changes that would weaken the security/supply-chain gate were declined.
