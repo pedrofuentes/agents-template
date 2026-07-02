@@ -122,7 +122,7 @@ If yes, configure via GitHub CLI or instruct user to set up manually:
 2. Delete `SETUP.md` (no longer needed)
 3. Run: `grep -rn '{{' --include='*.md' .` to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
-4. Commit: `chore: migrate to agents-template v0.20.1`
+4. Commit: `chore: migrate to agents-template v0.20.2`
 5. The `.agent-backup/` can be deleted after the user confirms everything works
 
 ---
@@ -177,7 +177,7 @@ Present each question one at a time. Do not guess — ask:
 - "What AI agent attribution should be used in commits?" → `{{AI_AGENT_NAME}}` and `{{AI_AGENT_EMAIL}}`
 - "Any project-specific coding patterns to enforce?" → `{{Name your specific patterns}}`
 - "Any project-specific forbidden actions?" → `{{Add project-specific forbidden actions}}`
-- "Which Sentinel invocation method? (A=sub-agent, B=CI, C=manual)" → update docs/SENTINEL.md
+- "Which Sentinel invocation method? (A=sub-agent, B=CI, C=manual)" → if B, set up CI to invoke Sentinel with docs/SENTINEL.md as system prompt and gate merges on its Status: line
 
 #### Step 4: Update the code style example
 Replace the TypeScript example in the Code Style section with a real example from THIS project's codebase that demonstrates the project's actual patterns (good example + bad example).
@@ -210,9 +210,9 @@ Or instruct the user to configure manually in GitHub → Settings → Branches �
 3. Run: `grep -rn '{{' --include='*.md' .` (or PowerShell equivalent) to verify no placeholders remain
    - **Note**: `docs/SENTINEL.md` contains `{{branch}}`, `{{unique-id}}`, `{{commit-sha}}`, etc. inside the Sentinel Report Format code block — these are **runtime placeholders** filled when generating actual reports, NOT configuration placeholders. Ignore them.
 4. If any remain, fill them in or ask the user
-5. Commit: `chore: configure AGENTS.md (agents-template v0.20.1)`
+5. Commit: `chore: configure AGENTS.md (agents-template v0.20.2)`
 <!-- SETUP:END -->
-<!-- agents-template v0.20.1 -->
+<!-- agents-template v0.20.2 -->
 
 <role>You write tests before code, work in isolated worktree branches, and never merge without Sentinel review. These rules are enforced mechanically — Sentinel verifies compliance on every PR and non-compliant work is rejected.</role>
 
