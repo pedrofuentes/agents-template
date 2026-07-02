@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.20.1] - 2026-07-01
+
+Documentation-hygiene release. A full repo audit found the manual release checks (root AGENTS.md §Versioning / §Testing Changes) had leaked drift across several surfaces. All fixes are pointer/typo corrections — no template behavior changes.
+
+### Fixed
+- **Stale root version marker** (root AGENTS.md line 1): read `v0.12.2` through 8 subsequent releases. Bumped, and §Versioning now enumerates every version surface (README badge + "Current version" line, root marker, `template/AGENTS.md` ×3, `docs/index.html` hero + footer, git tag) so the checklist itself can't under-specify again.
+- **Contradictory compression budget** (root AGENTS.md §ASK FIRST): said ≤130 non-blank lines post-setup while §Compression says ≤135 (and the template sits at exactly 135). Aligned to ≤135.
+- **Dangling cross-references to a removed section**: README §Invoking Sentinel pointed to "docs/SENTINEL.md for GitHub Actions integration" and SETUP.md §After Customization to "docs/SENTINEL.md §Infrastructure Enforcement" — that section no longer exists. README now carries a Method A/B/C legend (the "Which Sentinel Method?" table used those labels without defining them anywhere); SETUP.md describes Method B inline and points at the real §Deploy / release gating section.
+- **Post-adoption dangling pointer** (SETUP.md §After Customization): "see README.md" — README.md is not copied downstream, so in an adopting project it pointed at the adopter's own README. Replaced with self-contained text (the setup block asks the method question in Step 3).
+- **Runtime-placeholder trap** (SETUP.md §Verification): "when no results are returned … you're done" contradicted SENTINEL.md's intentional runtime placeholders (`{{branch}}`, `{{sha}}`, …) — a setup agent following the checklist literally could "fix" them. Added the explicit exception list, mirroring the note the setup block already carries in Step 7 / M8.
+- **Website advertised a removed feature** (docs/index.html): fixability classification (🔧/🧠/👤) no longer exists in the spec; also removed unverifiable timing claims (~30s / 2–5 min).
+- **CHANGELOG date typo**: `[0.14.0]` was dated 2026-06-15, after 0.14.1/0.15.0/0.16.0. Corrected to 2026-05-26 (the `v0.14.0` git tag date), restoring monotonic ordering.
+- **README `template/docs/sentinel/` description** omitted `SEVERITY-RUBRIC.md` and `BACKLOG-HYGIENE.md`.
+- `.gitignore`: added `.impeccable/` (local tool cache containing absolute paths; previously ignored only by a global gitignore).
+
+### Metrics
+- template/AGENTS.md: 135/135 non-blank lines post-setup (unchanged — version-string swaps only)
+- SENTINEL.md: 176/178 non-blank lines (untouched)
+- SETUP.md: +4 non-blank lines (unbudgeted; runtime-placeholder exception + Method B text)
+
 ## [0.20.0] - 2026-06-29
 
 Adds opt-in **issue-backlog hygiene** after a downstream adopter (Council) accreted **700+ open `sentinel:*` issues** (~half 🟡 important, ~half 🟢 minor) — many no longer applicable. A 5-expert sub-agent panel (Sentinel architect, downstream DevEx, SRE/lifecycle, app-security, YAGNI-minimalist; across Claude Opus 4.8, GPT-5.5, Gemini 3.1 Pro) reached a **unanimous PARTIAL verdict**: the accretion is **structural** — Sentinel files issues and never revisits them, so every adopter trends toward this state — but Sentinel must **never auto-close** anything, because *"stale ≠ resolved."* The agreed principle: **Sentinel emits self-verifying signals; the human keeps closure authority.** Shipped within budget (in-place rewords + one opt-in companion doc); no gate weakening.
@@ -134,7 +154,7 @@ Incorporates feedback from a downstream agent that ran Sentinel across ~20 revie
 ### Metrics
 - SENTINEL.md: 170/170 non-blank lines (unchanged — all edits modify existing lines)
 
-## [0.14.0] - 2026-06-15
+## [0.14.0] - 2026-05-26
 
 ### Added
 - **Prompt caching protocol** (SENTINEL.md §Phase 2): Expanded from 1-line guidance to structured cross-dimension prefix sharing protocol — shared prefix (system position) with diff/context, variable suffix (user position) with dimension checklist, priming dispatch pattern for ~78% input cost reduction across dimension calls.

@@ -30,3 +30,6 @@ Thumbs.db
 
 # Agent backups
 .agent-backup/
+
+# Local tool caches
+.impeccable/

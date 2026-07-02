@@ -1,6 +1,6 @@
 # agents-template
 
-![Version](https://img.shields.io/badge/version-0.20.0-blue)
+![Version](https://img.shields.io/badge/version-0.20.1-blue)
 
 > A battle-tested template for configuring autonomous AI coding agents with quality gates, TDD enforcement, and the Sentinel review system.
 
@@ -17,7 +17,7 @@ The `template/` directory contains everything you copy into your project:
 | `template/DECISIONS.md` | Architecture decision records |
 | `template/CHANGELOG.md` | User-facing changes log |
 | `template/docs/SENTINEL.md` | Quality gate — 7 parallel review sub-agents, tiered review, invocation |
-| `template/docs/sentinel/` | Dimension-specific sub-agent prompts (A1, A2, B–F) — no customization needed |
+| `template/docs/sentinel/` | Dimension prompts (A1, A2, B–F) + SEVERITY-RUBRIC.md + BACKLOG-HYGIENE.md — no customization needed |
 | `template/docs/ARCHITECTURE.md` | Project structure template |
 | `template/docs/TESTING-STRATEGY.md` | Test strategy details |
 | `template/docs/DEVELOPMENT-WORKFLOW.md` | Git worktrees, branching, PR process |
@@ -61,7 +61,7 @@ Then give the agent the appropriate prompt above (without the "Fetch..." part).
 ### Fallback (no sub-agent support)
 > **Read `docs/SENTINEL.md` and act as the Sentinel — run every check against the current PR diff. Note: self-review is lower trust than a separate sub-agent.**
 
-*CI enforcement (recommended for teams): See `docs/SENTINEL.md` for GitHub Actions integration.*
+*Methods: **A** = separate sub-agent (prompts above) · **B** = CI-invoked (your pipeline runs `docs/SENTINEL.md` as the reviewer and gates merge on its `Status:` line) · **C** = manual fallback prompt.*
 
 ## Which Sentinel Method?
 
@@ -129,7 +129,7 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 5 cycl
 
 This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1) and continuous live testing. See [`CHANGELOG.md`](./CHANGELOG.md) for the full evolution history.
 
-Current version: **v0.20.0**.
+Current version: **v0.20.1**.
 
 ## Battle-Tested
 

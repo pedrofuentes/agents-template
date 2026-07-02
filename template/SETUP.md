@@ -64,9 +64,11 @@ grep -rn '{{' --include='*.md' . | grep -v 'SETUP.md'
 
 When no results are returned (except SETUP.md itself), you're done.
 
+**Exception:** `docs/SENTINEL.md` intentionally retains runtime placeholders in its report format (`{{branch}}`, `{{sha}}`, `{{unique-id}}`, `{{timestamp}}`, `{{X}}`, `{{N}}`, `{{call}}`, `{{variable}}`, `{{id or N/A}}`) — these are filled when Sentinel generates reports, NOT during setup. Leave them intact. Its setup placeholders (`{{COVERAGE_THRESHOLD}}`, `{{PACKAGE_MANAGER}}`) must still be filled.
+
 ## After Customization
-1. Choose your Sentinel invocation method (see README.md)
-2. Set up infrastructure enforcement if using CI (see docs/SENTINEL.md §Infrastructure Enforcement)
+1. Choose your Sentinel invocation method (A=sub-agent, B=CI, C=manual — the setup block asks this in Step 3)
+2. If using CI (Method B), have your pipeline invoke Sentinel with `docs/SENTINEL.md` as its system prompt and gate merges on its `Status:` line (see docs/SENTINEL.md §Deploy / release gating for release gates)
 3. Delete this file (SETUP.md) — it's only needed during initial setup
 
 **Note:** The `docs/sentinel/` directory contains dimension-specific sub-agent prompts (A1, A2, B–F). These files require no customization — they are project-type-agnostic and work as-is. Copy them alongside `docs/SENTINEL.md`.

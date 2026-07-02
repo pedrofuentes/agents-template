@@ -1,4 +1,4 @@
-<!-- agents-template v0.12.2 -->
+<!-- agents-template v0.20.1 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -66,7 +66,7 @@ agents-template/
 ### Versioning
 - Follow semver: MAJOR.MINOR.PATCH
 - Update `CHANGELOG.md` for every release
-- Update version in: README.md badge, `template/AGENTS.md` comment marker, git tag
+- Update version in: README.md badge + "Current version" line, this file's line-1 marker, `template/AGENTS.md` marker + commit-message examples (3 occurrences), `docs/index.html` hero badge + footer, git tag
 - Create GitHub Release with release notes from CHANGELOG
 
 ### Syncing to Downstream Projects
@@ -105,7 +105,7 @@ agents-template/
 
 ### ⚠️ ASK FIRST
 - Adding new files to `template/` (increases adoption complexity)
-- Adding content that increases `template/AGENTS.md` beyond the compression target (≤130 non-blank lines post-setup)
+- Adding content that increases `template/AGENTS.md` beyond the compression target (≤135 non-blank lines post-setup)
 - Changing the setup block logic (migration/new project paths)
 
 ### 🚫 NEVER
