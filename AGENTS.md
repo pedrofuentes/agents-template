@@ -30,7 +30,10 @@ agents-template/
 ├── docs/                              ← GitHub Pages website
 │   └── index.html                     ← Landing page (self-contained)
 ├── .github/workflows/
-│   └── deploy-pages.yml               ← Auto-deploys docs/ to GitHub Pages
+│   ├── deploy-pages.yml               ← Auto-deploys docs/ to GitHub Pages
+│   └── validate.yml                   ← Runs scripts/validate.sh on every PR / push to main
+├── scripts/
+│   └── validate.sh                    ← Automated repo checks (version sync, budgets, cross-refs, …)
 └── template/                          ← What users copy into their projects
     ├── AGENTS.md                      ← THE TEMPLATE (with setup block + placeholders)
     ├── SETUP.md                       ← Placeholder inventory (deleted after setup)
@@ -78,6 +81,7 @@ agents-template/
 - Verify: setup block works (new project + migration paths), placeholders are complete, cross-references valid
 - Run `grep -rn '{{' template/ --include='*.md'` to audit all placeholders
 - Verify the Structure tree above matches the actual file layout when adding/removing files
+- CI runs `scripts/validate.sh` (version sync, placeholder audit, line budgets, setup-block markers, cross-refs, structure tree, severity levels) — keep the script in sync when these rules change
 
 ### Evaluating Downstream Agent Feedback
 - Feedback from agents using Sentinel in downstream projects is **advisory, not prescriptive**
