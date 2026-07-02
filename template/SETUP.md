@@ -46,7 +46,7 @@
 | `{{Name your specific patterns}}` | e.g., "named exports only" | AGENTS.md |
 | `{{Add project-specific forbidden actions}}` | e.g., "Use jQuery" | AGENTS.md |
 | `{{your mocking example}}` | A code example | TESTING-STRATEGY.md |
-| `{{Add detailed setup instructions here}}` | IDE, extensions, env vars setup | DEVELOPMENT-WORKFLOW.md |
+| `{{Add detailed setup instructions here — IDEs, extensions, environment variables, etc.}}` | IDE, extensions, env vars setup | DEVELOPMENT-WORKFLOW.md |
 | Architecture placeholders | Project structure, decisions, modules | ARCHITECTURE.md |
 | Roadmap placeholders | Phases, milestones | ROADMAP.md |
 
