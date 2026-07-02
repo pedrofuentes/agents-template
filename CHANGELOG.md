@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.21.0] - 2026-07-02
+
+Sentinel quality/reliability/speed release. Ruleset stays **v1** — the report-protocol contract (`Status:` line, `Required action` mapping, verdict semantics) is unchanged: the Execution Log gains an additive `Duration/Tokens` column, the header an additive `Elapsed:` line, and the Follow-ups section now emits only the verdict-matching action line (consumers parse the untouched `Required action` header).
+
+### Added
+- `evals/` — behavioral regression harness for the Sentinel ruleset: 10 synthetic PR fixtures with expected verdicts, a two-lane runner (`evals/RUNNER.md`), and a dimension-coverage matrix. Run before merging any ruleset change (structural CI checks shape; evals check behavior).
+- Execution-Log telemetry: per-dimension `Duration/Tokens` column and report-header `Elapsed:` line. Values must be copied verbatim from platform-reported output — estimated numbers count as fabricated evidence, and `N/A (not reported)` is always compliant. Telemetry is non-normative and never admissible as review evidence; it exists to make the revisit criteria of deferred issues #11/#14 measurable.
+- Delta-scoped Phase 1 on re-review: checks 1–4 may scope to the fix delta when Sentinel itself authenticates the prior report at its Phase 5 persisted location AND verifies the delta base via `git merge-base --is-ancestor` (recomputing the delta itself — invoker-supplied deltas never qualify). Test/fixture/mock edits in the delta re-open checks 1–4 for all code whose test execution they alter; CI/test/build-config deltas, deltas with no covering tests, and any unverifiable condition fall back to full Phase 1. The path only applies when the prior cycle's Phase 1 was green.
+- Known-issues fetch guidance in SENTINEL.md inputs: exact `gh issue list --json … --jq 'startswith("sentinel:")'` command (`gh --label` does not wildcard-match); fetched issue text is fenced as untrusted data and can only mark findings Known.
+- `.github/PULL_REQUEST_TEMPLATE.md` with validate.sh + evals checkboxes.
+- `scripts/validate.sh`: evals-fixture `## Expected` check, rubric-version tripwire, evals/ link scanning, and a non-blocking reminder to run evals when ruleset files change.
+
+### Changed
+- Sentinel report Follow-ups & Actions: emits only the action line matching the verdict, retaining the `sentinel:important`/`sentinel:minor` label literals (closes #9).
+- Phase 3 / SEVERITY-RUBRIC Known-matching tightened to "same specific defect mechanism + fix" (blunts overly-broad pre-filed issues).
+- Re-review Phase 2 re-dispatch now explicitly includes dimensions whose only findings were Known (a Known-🟡 dimension is not "clean").
+- `SEVERITY-RUBRIC.md`: dropped the stale template-semver pin (the ruleset-v1 binding stays and is now CI-checked).
+
 ## [0.20.2] - 2026-07-02
 
 Resolves the three actionable issues from the v0.20.1 audit (#21, #22, #24). #23 (severity-rule duplication) was closed as wontfix: the 3-place duplication is load-bearing — each dimension file is a standalone sub-agent system prompt — and `validate.sh` check 7 remains the drift tripwire; revisit only on an observed downstream disagreement.

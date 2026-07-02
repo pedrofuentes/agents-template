@@ -70,7 +70,7 @@ while IFS=: read -r src target; do
   case "$target" in http*|\#*|mailto*) continue ;; esac
   t="${target%%#*}"
   [ -e "$(dirname "$src")/$t" ] || { fail "xref: $src links to '$target' which does not exist"; ok=0; }
-done < <(grep -rnoE '\]\([^)]+\)' README.md AGENTS.md template/ --include='*.md' \
+done < <(grep -rnoE '\]\([^)]+\)' README.md AGENTS.md template/ evals/ --include='*.md' \
          | sed -E 's/^([^:]+):[0-9]+:\]\(([^)]+)\)/\1:\2/')
 # 5b. "<file>.md §Heading" references: target exists and heading words appear.
 while IFS=: read -r src ref; do
@@ -78,11 +78,12 @@ while IFS=: read -r src ref; do
   t="$(dirname "$src")/$file"
   [ -e "$t" ] || t="template/$file"
   [ -e "$t" ] || t="template/docs/$file"
+  [ -e "$t" ] || t="$file"
   if [ ! -e "$t" ]; then fail "xref: $src references '$file' which does not exist"; ok=0; continue; fi
   for w in $(echo "$sect" | grep -oE '[A-Za-z-]+' | head -2); do
     grep -qi "$w" "$t" || { fail "xref: $src references '$file §$sect' — '$w' not found in $t"; ok=0; }
   done
-done < <(grep -rnoE '[A-Za-z0-9._/-]+\.md §[^),`."]+' README.md AGENTS.md template/ --include='*.md' \
+done < <(grep -rnoE '[A-Za-z0-9._/-]+\.md §[^),`."]+' README.md AGENTS.md template/ evals/ --include='*.md' \
          | sed -E 's/^([^:]+):[0-9]+:/\1:/')
 [ "$ok" -eq 1 ] && pass "xref: all relative links and §-references resolve"
 
@@ -107,6 +108,45 @@ for f in template/docs/SENTINEL.md template/docs/sentinel/SEVERITY-RUBRIC.md tem
   done
 done
 [ "$ok" -eq 1 ] && pass "severity: all three levels present in SENTINEL.md, SEVERITY-RUBRIC.md, and every dim-*.md"
+
+# ── 8. Evals fixtures (evals/fixtures/*.md must have an Expected section with a Status line) ──
+ok=1
+found=0
+while IFS= read -r f; do
+  found=1
+  sec=$(awk '/^## Expected$/{f=1} f&&/^## /&&!/^## Expected$/{f=0} f' "$f")
+  if [ -z "$sec" ]; then
+    fail "evals: $f missing a '## Expected' section"; ok=0
+  elif ! echo "$sec" | grep -qE 'Status: (APPROVED|CONDITIONAL|REJECTED)'; then
+    fail "evals: $f Expected section has no Status: APPROVED/CONDITIONAL/REJECTED line"; ok=0
+  fi
+done < <(find evals/fixtures -maxdepth 1 -name '*.md' 2>/dev/null)
+if [ "$found" -eq 0 ]; then
+  fail "evals: evals/fixtures/ does not exist or contains no *.md fixtures"
+else
+  [ "$ok" -eq 1 ] && pass "evals: all fixtures have an Expected section with a Status line"
+fi
+
+# ── 9. Rubric version pin (SENTINEL.md ruleset vN must match SEVERITY-RUBRIC.md Rubric vN) ──
+sentinel_v=$(sed -n '1p' template/docs/SENTINEL.md | grep -oE '\(v[0-9]+' | grep -oE '[0-9]+')
+rubric_v=$(grep -oE 'Rubric \*\*v[0-9]+\*\*' template/docs/sentinel/SEVERITY-RUBRIC.md | head -1 | grep -oE '[0-9]+')
+if [ -z "$sentinel_v" ] || [ -z "$rubric_v" ]; then
+  fail "rubric-version: could not extract a version from SENTINEL.md line 1 and/or SEVERITY-RUBRIC.md"
+elif [ "$sentinel_v" != "$rubric_v" ]; then
+  fail "rubric-version: SENTINEL.md ruleset is v${sentinel_v} but SEVERITY-RUBRIC.md Rubric is v${rubric_v}"
+else
+  pass "rubric-version: SENTINEL.md ruleset and SEVERITY-RUBRIC.md pinned at v${sentinel_v}"
+fi
+
+# ── Non-blocking reminder: ruleset files changed → run behavioral evals ─────
+# Best-effort only; never affects exit code. Union of committed branch delta
+# (vs. origin/main) and uncommitted working-tree delta (vs. HEAD) — either
+# side may be unavailable (no remote, bare checkout) without failing this.
+changed=$( { git diff --name-only origin/main...HEAD 2>/dev/null; git diff --name-only HEAD 2>/dev/null; } | sort -u )
+if echo "$changed" | grep -qE '^template/docs/SENTINEL\.md$|^template/docs/sentinel/'; then
+  echo
+  echo "NOTE: ruleset files changed — run the behavioral evals in evals/RUNNER.md (baseline + post-edit)."
+fi
 
 echo
 if [ "$FAIL" -eq 0 ]; then echo "All checks passed."; else echo "Some checks FAILED."; exit 1; fi
