@@ -5,9 +5,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semant
 
 ## [0.20.1] - 2026-07-01
 
-Documentation-hygiene release. A full repo audit found the manual release checks (root AGENTS.md §Versioning / §Testing Changes) had leaked drift across several surfaces. All fixes are pointer/typo corrections — no template behavior changes.
+Documentation-hygiene release. A full repo audit found the manual release checks (root AGENTS.md §Versioning / §Testing Changes) had leaked drift across several surfaces. All fixes are pointer/typo corrections — no template behavior changes. The same checks are now automated in CI so this class of drift can't recur.
+
+### Added
+- **Repo validation CI** (`scripts/validate.sh` + `.github/workflows/validate.yml`): automates the checks root AGENTS.md already prescribed manually — version sync across all surfaces, setup-placeholder inventory audit (with runtime-placeholder allowlist), the ≤135/≤178 line budgets, setup-block marker integrity, relative-link and `§`-reference validity, Structure-tree ↔ file-layout agreement, and a severity-level tripwire guarding the deliberate 3-place duplication (SENTINEL.md / SEVERITY-RUBRIC.md / dim files). Pure bash, no dependencies; repo infrastructure only — nothing added to `template/`. On its first run it caught a live drift (see Fixed).
 
 ### Fixed
+- **SETUP.md placeholder-inventory mismatch** (caught by the new `validate.sh`): the inventory listed `{{Add detailed setup instructions here}}` while DEVELOPMENT-WORKFLOW.md uses the longer `{{Add detailed setup instructions here — IDEs, extensions, environment variables, etc.}}`; aligned to the actual token.
 - **Stale root version marker** (root AGENTS.md line 1): read `v0.12.2` through 8 subsequent releases. Bumped, and §Versioning now enumerates every version surface (README badge + "Current version" line, root marker, `template/AGENTS.md` ×3, `docs/index.html` hero + footer, git tag) so the checklist itself can't under-specify again.
 - **Contradictory compression budget** (root AGENTS.md §ASK FIRST): said ≤130 non-blank lines post-setup while §Compression says ≤135 (and the template sits at exactly 135). Aligned to ≤135.
 - **Dangling cross-references to a removed section**: README §Invoking Sentinel pointed to "docs/SENTINEL.md for GitHub Actions integration" and SETUP.md §After Customization to "docs/SENTINEL.md §Infrastructure Enforcement" — that section no longer exists. README now carries a Method A/B/C legend (the "Which Sentinel Method?" table used those labels without defining them anywhere); SETUP.md describes Method B inline and points at the real §Deploy / release gating section.
