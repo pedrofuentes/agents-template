@@ -1,4 +1,4 @@
-<!-- agents-template v0.20.1 -->
+<!-- agents-template v0.20.2 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -26,6 +26,7 @@ agents-template/
 ├── AGENTS.md                          ← THIS FILE (repo-specific rules)
 ├── README.md                          ← For humans browsing GitHub
 ├── CHANGELOG.md                       ← Version history (semver) + evolution history
+├── SYNC.md                            ← Downstream sync manifest (repos + last-synced versions)
 ├── LICENSE                            ← MIT
 ├── docs/                              ← GitHub Pages website
 │   └── index.html                     ← Landing page (self-contained)
@@ -71,9 +72,10 @@ agents-template/
 - Update `CHANGELOG.md` for every release
 - Update version in: README.md badge + "Current version" line, this file's line-1 marker, `template/AGENTS.md` marker + commit-message examples (3 occurrences), `docs/index.html` hero badge + footer, git tag
 - Create GitHub Release with release notes from CHANGELOG
+- SENTINEL.md's ruleset version ("v1") is the report-protocol contract (Status line, report format, verdict semantics) — independent of template semver; bump it only on breaking report-format changes
 
 ### Syncing to Downstream Projects
-- Changes to `template/AGENTS.md` may need syncing to downstream projects (gitnotate, Arbol, Council, stream-deck-ical, stream-deck-github-utilities, stream-deck-cloudflare-utilities, obsidian-subtitles-md, github-dashboard, kawsay)
+- Changes to `template/AGENTS.md` may need syncing to downstream projects — the sync list and each repo's last-synced version live in [`SYNC.md`](./SYNC.md); update its row when syncing a downstream
 - The README update prompt helps users pull changes while preserving their customizations
 
 ### Testing Changes

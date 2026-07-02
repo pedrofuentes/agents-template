@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.20.2] - 2026-07-02
+
+Resolves the three actionable issues from the v0.20.1 audit (#21, #22, #24). #23 (severity-rule duplication) was closed as wontfix: the 3-place duplication is load-bearing — each dimension file is a standalone sub-agent system prompt — and `validate.sh` check 7 remains the drift tripwire; revisit only on an observed downstream disagreement.
+
+### Added
+- **Downstream sync manifest** (`SYNC.md`, closes #21): tracked table of all adopter repos with each one's last-synced template version (read from their root `AGENTS.md` marker) and check date. Replaces the prose repo list in root AGENTS.md §Syncing; enables a one-prompt "audit all downstreams" flow. All 9 downstreams verified at v0.20.0 as of 2026-07-02.
+
+### Changed
+- **Ruleset version clarified** (SENTINEL.md title + root AGENTS.md §Versioning, closes #22): "(v1)" is the report-protocol contract (Status line, report format, verdict semantics), independent of template semver; it bumps only on breaking report-format changes. In-place title reword — SENTINEL.md unchanged at 176/178.
+- **Setup Step 3 pointer fixed** (template AGENTS.md setup block, closes #24): the invocation-method answer pointed to "→ update docs/SENTINEL.md", which has no such field. Now actionable: if B (CI), set up the pipeline to invoke Sentinel with docs/SENTINEL.md as system prompt and gate merges on its `Status:` line. Inside the setup block — post-setup line count unaffected.
+
+### Metrics
+- template/AGENTS.md: 135/135 non-blank lines post-setup (unchanged — setup-block reword + version swaps only)
+- SENTINEL.md: 176/178 non-blank lines (unchanged — in-place title reword)
+- New root file: `SYNC.md` (repo infrastructure, not part of `template/`)
+
 ## [0.20.1] - 2026-07-01
 
 Documentation-hygiene release. A full repo audit found the manual release checks (root AGENTS.md §Versioning / §Testing Changes) had leaked drift across several surfaces. All fixes are pointer/typo corrections — no template behavior changes. The same checks are now automated in CI so this class of drift can't recur.
