@@ -1,4 +1,4 @@
-<!-- agents-template v0.20.2 -->
+<!-- agents-template v0.21.0 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -35,6 +35,10 @@ agents-template/
 │   └── validate.yml                   ← Runs scripts/validate.sh on every PR / push to main
 ├── scripts/
 │   └── validate.sh                    ← Automated repo checks (version sync, budgets, cross-refs, …)
+├── evals/                             ← Behavioral regression tests for the Sentinel ruleset
+│   ├── README.md                      ← Coverage matrix + scoring rules
+│   ├── RUNNER.md                      ← Runner prompt (dim-level + end-to-end lanes)
+│   └── fixtures/                      ← Synthetic PR diffs + expected verdicts (10 fixtures)
 └── template/                          ← What users copy into their projects
     ├── AGENTS.md                      ← THE TEMPLATE (with setup block + placeholders)
     ├── SETUP.md                       ← Placeholder inventory (deleted after setup)
@@ -84,6 +88,7 @@ agents-template/
 - Run `grep -rn '{{' template/ --include='*.md'` to audit all placeholders
 - Verify the Structure tree above matches the actual file layout when adding/removing files
 - CI runs `scripts/validate.sh` (version sync, placeholder audit, line budgets, setup-block markers, cross-refs, structure tree, severity levels) — keep the script in sync when these rules change
+- Ruleset changes (`SENTINEL.md`, `sentinel/dim-*.md`, `SEVERITY-RUBRIC.md`) → also run the behavioral evals in [`evals/RUNNER.md`](./evals/RUNNER.md) (baseline before the edit, re-run after)
 
 ### Evaluating Downstream Agent Feedback
 - Feedback from agents using Sentinel in downstream projects is **advisory, not prescriptive**
