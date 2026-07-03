@@ -6,12 +6,12 @@ Projects that adopted this template. "Last synced" is the `<!-- agents-template 
 
 | Repo | URL | Last synced | Checked |
 |------|-----|-------------|---------|
-| gitnotate | https://github.com/pedrofuentes/gitnotate | v0.20.0 | 2026-07-02 |
-| Arbol | https://github.com/pedrofuentes/arbol | v0.20.0 | 2026-07-02 |
-| Council | https://github.com/pedrofuentes/Council | v0.20.0 | 2026-07-02 |
-| stream-deck-ical | https://github.com/pedrofuentes/stream-deck-ical | v0.20.0 | 2026-07-02 |
-| stream-deck-github-utilities | https://github.com/pedrofuentes/stream-deck-github-utilities | v0.20.0 | 2026-07-02 |
-| stream-deck-cloudflare-utilities | https://github.com/pedrofuentes/stream-deck-cloudflare-utilities | v0.20.0 | 2026-07-02 |
-| obsidian-subtitles-md | https://github.com/pedrofuentes/obsidian-subtitles-md | v0.20.0 | 2026-07-02 |
-| github-dashboard | https://github.com/pedrofuentes/github-dashboard | v0.20.0 | 2026-07-02 |
-| kawsay | https://github.com/pedrofuentes/kawsay | v0.20.0 | 2026-07-02 |
+| gitnotate | https://github.com/pedrofuentes/gitnotate | v0.21.0 | 2026-07-02 |
+| Arbol | https://github.com/pedrofuentes/arbol | v0.21.0 | 2026-07-02 |
+| Council | https://github.com/pedrofuentes/Council | v0.21.0 | 2026-07-02 |
+| stream-deck-ical | https://github.com/pedrofuentes/stream-deck-ical | v0.21.0 | 2026-07-02 |
+| stream-deck-github-utilities | https://github.com/pedrofuentes/stream-deck-github-utilities | v0.21.0 | 2026-07-02 |
+| stream-deck-cloudflare-utilities | https://github.com/pedrofuentes/stream-deck-cloudflare-utilities | v0.21.0 | 2026-07-02 |
+| obsidian-subtitles-md | https://github.com/pedrofuentes/obsidian-subtitles-md | v0.21.0 | 2026-07-02 |
+| github-dashboard | https://github.com/pedrofuentes/github-dashboard | v0.21.0 | 2026-07-02 |
+| kawsay | https://github.com/pedrofuentes/kawsay | v0.21.0 | 2026-07-02 |
