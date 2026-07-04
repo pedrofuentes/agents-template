@@ -24,7 +24,7 @@ new file mode 100644
 index 0000000..3c3c3c3
 --- /dev/null
 +++ b/src/jobs/syncAvatars.ts
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,19 @@
 +import { fetch } from "undici";
 +import { db } from "../db";
 +
@@ -36,6 +36,7 @@ index 0000000..3c3c3c3
 +  for (const avatar of stale) {
 +    try {
 +      const res = await fetch(avatar.cdnUrl);
++      if (!res.ok) throw new Error(`CDN returned ${res.status}`);
 +      const buf = await res.arrayBuffer();
 +      await db.avatars.updateCache(avatar.userId, buf);
 +    } catch (err) {
@@ -61,3 +62,7 @@ Must-find:
   Matches the 🟡 golden row (not 🔴 — no request-path exhaustion, no
   cascading outage; bounded and self-healing).
 - Zero 🔴 findings expected.
+
+The `if (!res.ok) throw ...` guard on the fetch response is deliberate — it
+forecloses the CDN-error-pages-cached-as-avatar-bytes defect so the only
+intended finding in this fixture is the missing timeout.
