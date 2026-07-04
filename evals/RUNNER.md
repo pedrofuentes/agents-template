@@ -12,6 +12,11 @@ whose complete instructions are:
    edit, the dimension file(s) that cite the rubric + the rubric itself).
 2. The fixture's `## PR context` + `## Input` blocks, unmodified.
 
+Additionally, when a fixture's Expected block cites a SEVERITY-RUBRIC golden
+row (see its "Tests:" header), include SEVERITY-RUBRIC.md in the sub-agent's
+instructions even for a dim-only edit — the expected severity is defined
+there.
+
 Compare the sub-agent's returned findings to the fixture's `## Expected`
 block using the scoring rules in `README.md`. Run only fixtures whose
 dimensions are touched by the edit under test — do not run the full set for

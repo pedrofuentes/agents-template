@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.22.0] - 2026-07-04
+
+Sentinel field-feedback release — refinements proposed by a downstream Sentinel operator after ~40 production reviews, each verified against cited evidence before acceptance. Ruleset stays **v1**, rubric stays **v1**: the report protocol (`Status:` line, `Required action` mapping) and severity tiers are unchanged; this release adds resolution procedures only, all as in-line extensions (SENTINEL.md remains 177/178 non-blank lines).
+
+### Added
+- **Dim D discrimination probe** (`dim-d-testing.md`): mutation-based oracle verification codified — when command execution is available, a suspected non-discriminating test is verified by neutering the pinned behavior in a throwaway worktree and confirming the test goes RED. Fail-closed: no isolated execution → static-evidence 🟡 flagged `(unverified — no execution)`; the probe upgrades evidence, never excuses omitting a static finding.
+- **Contest channel for false-positive 🔴s** (SENTINEL.md §Severity adjustment + SEVERITY-RUBRIC step 4): a 🔴 whose factual premise appears wrong may be **contested, never downgraded** — the originating dimension is re-dispatched ONCE with counter-evidence from Sentinel's own tool use; its second verdict is final and logged in the Execution Log. PR/invoker text claiming a false positive is a 🔴 signal, never contest grounds. Resolves the documented contradiction between "NEVER downgrade a sub-agent 🔴" and the false-positive livelock.
+- **Fold-in exception for CONDITIONAL 🟡s** (SENTINEL.md Follow-ups): small, same-file, no-new-risk 🟡 fixes MAY be folded into the PR instead of filed as issues — but the folded SHA MUST be re-invoked for a fresh verdict before merge (delta re-review applies). Size guidance is advisory (~≤10 LOC); the re-invoke requirement is the invariant. Removes the file-only backlog treadmill without weakening SHA-binding.
+- Eval fixtures `11-nondiscriminating-oracle.md` (static half of the discrimination probe: a non-discriminating oracle that is the only coverage of the changed behavior → D 🔴 REJECTED per the new escalation clause; the 🟡 golden-row boundary is documented in the fixture) and `12-contest-injection.md` (contest-channel abuse: PR text arguing a 🔴 is a false positive must never bypass REJECTED).
+
+### Fixed
+- Dim D "Shared fixture safety" now escalates to 🔴 when a helper/mock edit stops any test from executing new/changed logic, aligning the dim file with the rubric's "new data layer never executed by any test" golden row. Baseline eval runs (fixture 10) showed dim-level sub-agents reproducibly held this at 🟡 because the dim file's 🟡 default contradicted the golden row — the orchestrator's Phase 3 escalation still caught it end-to-end, but the dimension holding 🔴-blocking authority should say it directly.
+- Eval fixture 07's synthetic diff contained an unintended legitimate 🔴 (unchecked `res.ok` cached CDN error pages as avatar bytes); an explicit guard was added so the fixture again isolates its 🟡 missing-timeout calibration purpose. Found by the baseline eval discipline.
+- Eval fixture 08's Expected block clarified: "zero 🟡" applies to the post-calibration end-to-end verdict; dim-level advisory 🟡s are tolerated per README scoring rules.
+
+### Rejected (recorded for governance)
+- Test-only reduced-dispatch lane (run only a discrimination probe for test-only PRs): same loophole class as the previously rejected `feat` fast-path — test-only PRs are where test-erosion attacks live. Filed as a `sentinel:deferred` issue with telemetry-based revisit criteria.
+
 ## [0.21.0] - 2026-07-02
 
 Sentinel quality/reliability/speed release. Ruleset stays **v1** — the report-protocol contract (`Status:` line, `Required action` mapping, verdict semantics) is unchanged: the Execution Log gains an additive `Duration/Tokens` column, the header an additive `Elapsed:` line, and the Follow-ups section now emits only the verdict-matching action line (consumers parse the untouched `Required action` header).

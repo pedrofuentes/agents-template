@@ -54,4 +54,8 @@ index ccccccc..ddddddd 100644
 - Must-find (if raised at all): **at most a 🟢** for the missing CHANGELOG
   entry — per the rubric's golden row, this is **never 🟡** ("Non-behavioral
   convention; no trigger→mechanism→consequence").
-- Zero 🔴/🟡 findings expected overall.
+- Zero 🔴 findings. "Zero 🟡" applies to the post-calibration end-to-end
+  verdict (Status: APPROVED): at dim level, an advisory docs-🟡 from Dim F is
+  tolerated per README scoring rules (a fixture fails only on a missing
+  must-find or an unexpected 🔴) — the orchestrator's Phase 3 rubric
+  exclusion recalibrates it to 🟢.
