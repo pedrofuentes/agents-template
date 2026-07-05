@@ -15,3 +15,6 @@ Projects that adopted this template. "Last synced" is the `<!-- agents-template 
 | obsidian-subtitles-md | https://github.com/pedrofuentes/obsidian-subtitles-md | v0.22.0 | 2026-07-04 |
 | github-dashboard | https://github.com/pedrofuentes/github-dashboard | v0.22.0 | 2026-07-04 |
 | kawsay | https://github.com/pedrofuentes/kawsay | v0.22.0 | 2026-07-04 |
+| TuJugada¹ | https://github.com/pedrofuentes/TuJugada | v0.22.0 | 2026-07-04 |
+
+¹ Partial adoption (Sentinel ruleset only, wired to its orchestration reviewer): the version marker lives in `orchestration/sentinel/SENTINEL.md`, not in the root `AGENTS.md`.
