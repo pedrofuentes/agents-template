@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.23.0] - 2026-07-05
+
+Backlog-hygiene core-requirement release. The **validity anchor is now mandatory** on every filed 🟡/🟢 Sentinel issue (previously documented only as opt-in backlog hygiene). Ruleset stays **v1**, rubric stays **v1** — the report protocol (`Status:` line, `Required action` mapping, verdict semantics, severity tiers) is unchanged; this adds a filing requirement only. SENTINEL.md stays 178/178 non-blank (no budget change).
+
+### Added
+- **Mandatory validity anchor** (`SENTINEL.md` §Follow-ups & Actions): every filed 🟡/🟢 issue body MUST carry the anchor — a human+machine anchor line (`**Anchor:** file:line @ <short SHA> · dim X` plus the `<!-- sentinel-anchor … -->` marker) and the finding's quoted ≤3-line evidence in a fenced block — with a `sentinel:security` label for dim-A1/A2 or security-path findings. The evidence snippet and reviewed SHA already exist in the report, so the anchor is free at filing time; it lets any issue be cheaply re-checked against HEAD as code moves, so backlogs stay trustworthy instead of rotting monotonically (one adopter reached ~800 unverifiable issues).
+
+### Changed
+- `sentinel/BACKLOG-HYGIENE.md` §1 reframed from opt-in to **required by SENTINEL.md §Follow-ups** for the anchor itself; §2–§5 (labels, sweep, example Action) remain opt-in exactly as before. No safety rule weakened: automation flags but never reaps, `sentinel:security` is never auto-closeable, stale ≠ resolved, and closure still needs positive resolution evidence plus a human.
+- `template/AGENTS.md` §After Sentinel "Issue hygiene" line aligned with the mandatory anchor — it now names the `<!-- sentinel-anchor … -->` marker and states the anchor is required.
+
 ## [0.22.0] - 2026-07-04
 
 Sentinel field-feedback release — refinements proposed by a downstream Sentinel operator after ~40 production reviews, each verified against cited evidence before acceptance. Ruleset stays **v1**, rubric stays **v1**: the report protocol (`Status:` line, `Required action` mapping) and severity tiers are unchanged; this release adds resolution procedures only, all as in-line extensions (SENTINEL.md remains 177/178 non-blank lines).
