@@ -1,6 +1,6 @@
 # agents-template
 
-![Version](https://img.shields.io/badge/version-0.23.0-blue)
+![Version](https://img.shields.io/badge/version-0.23.1-blue)
 
 > A battle-tested template for configuring autonomous AI coding agents with quality gates, TDD enforcement, and the Sentinel review system.
 
@@ -36,7 +36,7 @@ Give your AI agent one of these prompts — it handles everything:
 
 ### Update (already using agents-template, upgrading to latest version)
 
-> **Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare ALL files and directories in `template/` with my current versions. Add any new files or directories that don't exist locally (e.g., `docs/sentinel/`). Remove any local files that no longer exist in the latest template. Update existing files while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Show me a summary of what will be added, changed, and removed before applying. Ask me to confirm.**
+> **Fetch the latest agents-template from https://github.com/pedrofuentes/agents-template — compare ALL files and directories in `template/` with my current versions. Add any new files or directories that don't exist locally (e.g., `docs/sentinel/`). Remove any local files that no longer exist in the latest template. Update existing files while preserving my project-specific configuration (filled-in placeholders, custom rules, code examples). Show me a summary of what will be added, changed, and removed before applying. Ask me to confirm. After applying, format and lint the added/changed files to my project's conventions (Prettier / ESLint / ruff / etc.) — the vendored content's meaning stays the same — then run my lint and tests locally and confirm CI is green before opening the PR (newly added files like the opt-in backlog-hygiene workflow often need formatting to pass `prettier --check`).**
 
 ### Manual Setup (fallback)
 
@@ -116,6 +116,7 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 5 cycl
 
 - **TDD defense in depth** — Layer 1 (STOP checkpoint verbs) + Layer 2 (Sentinel verification)
 - **Sentinel quality gate** — 7 parallel review sub-agents with tiered fast-path, anti-prompt-injection, and dispatch-proof enforcement
+- **Backlog hygiene** — every Sentinel issue carries a re-checkable validity anchor (`file:line @ SHA`); an opt-in weekly sweep flags stale findings but never auto-closes
 - **Quality ratchet** — continuous improvement loop until Sentinel approves
 - **Separation of concerns** — the coder ≠ the reviewer, always
 - **Autonomous workflow** — Plan → Approve → Execute → Sentinel → Merge
@@ -129,7 +130,7 @@ The agent autonomously fixes 🔴 findings and re-invokes Sentinel (up to 5 cycl
 
 This template was refined through **24+ expert AI reviews across 9 models** (Claude Opus 4.7, Opus 4.6, Opus 4.5, Sonnet 4.6, Sonnet 4, Haiku 4.5, GPT-5.4, GPT-5.2, GPT-5.1) and continuous live testing. See [`CHANGELOG.md`](./CHANGELOG.md) for the full evolution history.
 
-Current version: **v0.23.0**.
+Current version: **v0.23.1**.
 
 ## Battle-Tested
 

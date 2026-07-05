@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.23.1] - 2026-07-05
+
+Documentation & rollout-ergonomics release (no ruleset change — stays **v1**). Adds sync-time formatting guidance after a downstream sync surfaced a lint failure: the verbatim opt-in backlog-hygiene workflow YAML failed an adopter's `prettier --check .`.
+
+### Changed
+- **Update prompt** (`README.md` + `docs/index.html`): after applying a sync, the agent now formats/lints the added/changed files to the project's conventions (Prettier / ESLint / ruff) and verifies CI is green before opening the PR — preventing lint failures on newly added files like the opt-in workflow.
+- **`template/docs/sentinel/BACKLOG-HYGIENE.md` §5**: the example workflow carries a copy-in note to format it to the adopter's repo style (keeping the pinned action SHA + logic intact); tidied the example's comment spacing toward Prettier defaults.
+
+### Added
+- Docs surface **backlog hygiene** as a first-class feature (`README.md` §Key Features bullet + website Core Features card): every Sentinel issue carries a re-checkable validity anchor; an opt-in weekly sweep flags stale findings but never auto-closes.
+
 ## [0.23.0] - 2026-07-05
 
 Backlog-hygiene core-requirement release. The **validity anchor is now mandatory** on every filed 🟡/🟢 Sentinel issue (previously documented only as opt-in backlog hygiene). Ruleset stays **v1**, rubric stays **v1** — the report protocol (`Status:` line, `Required action` mapping, verdict semantics, severity tiers) is unchanged; this adds a filing requirement only. SENTINEL.md stays 178/178 non-blank (no budget change).
