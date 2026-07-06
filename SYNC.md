@@ -6,15 +6,17 @@ Projects that adopted this template. "Last synced" is the `<!-- agents-template 
 
 | Repo | URL | Last synced | Checked |
 |------|-----|-------------|---------|
-| gitnotate | https://github.com/pedrofuentes/gitnotate | v0.23.1 | 2026-07-05 |
-| Arbol | https://github.com/pedrofuentes/arbol | v0.23.1 | 2026-07-05 |
-| Council | https://github.com/pedrofuentes/Council | v0.23.1 | 2026-07-05 |
-| stream-deck-ical | https://github.com/pedrofuentes/stream-deck-ical | v0.23.1 | 2026-07-05 |
-| stream-deck-github-utilities | https://github.com/pedrofuentes/stream-deck-github-utilities | v0.23.1 | 2026-07-05 |
-| stream-deck-cloudflare-utilities | https://github.com/pedrofuentes/stream-deck-cloudflare-utilities | v0.23.1 | 2026-07-05 |
-| obsidian-subtitles-md | https://github.com/pedrofuentes/obsidian-subtitles-md | v0.23.1 | 2026-07-05 |
-| github-dashboard | https://github.com/pedrofuentes/github-dashboard | v0.23.1 | 2026-07-05 |
-| kawsay | https://github.com/pedrofuentes/kawsay | v0.23.1 | 2026-07-05 |
+| gitnotate | https://github.com/pedrofuentes/gitnotate | v0.24.0 | 2026-07-05 |
+| Arbol | https://github.com/pedrofuentes/arbol | v0.24.0 | 2026-07-05 |
+| Council | https://github.com/pedrofuentes/Council | v0.24.0 | 2026-07-05 |
+| stream-deck-ical | https://github.com/pedrofuentes/stream-deck-ical | v0.24.0 | 2026-07-05 |
+| stream-deck-github-utilities | https://github.com/pedrofuentes/stream-deck-github-utilities | v0.24.0 | 2026-07-05 |
+| stream-deck-cloudflare-utilities | https://github.com/pedrofuentes/stream-deck-cloudflare-utilities | v0.24.0 | 2026-07-05 |
+| obsidian-subtitles-md | https://github.com/pedrofuentes/obsidian-subtitles-md | v0.24.0 | 2026-07-05 |
+| github-dashboard² | https://github.com/pedrofuentes/github-dashboard | v0.23.1 | 2026-07-05 |
+| kawsay² | https://github.com/pedrofuentes/kawsay | v0.23.1 | 2026-07-05 |
 | TuJugada¹ | https://github.com/pedrofuentes/TuJugada | v0.22.0 | 2026-07-04 |
 
 ¹ Partial adoption (Sentinel ruleset only, wired to its orchestration reviewer): the version marker lives in `orchestration/sentinel/SENTINEL.md`, not in the root `AGENTS.md`.
+
+² v0.24.0 sync PR is **open but harness-guarded** — it merges only after cofounder @pedrofuentes applies the `decision:approved` label (github-dashboard [#728](https://github.com/pedrofuentes/github-dashboard/pull/728), kawsay [#412](https://github.com/pedrofuentes/kawsay/pull/412)). The row flips to v0.24.0 once merged; the agent never self-applies the label.
