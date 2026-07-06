@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Follows [Semantic Versioning](https://semver.org/).
 
+## [0.24.0] - 2026-07-05
+
+Sentinel field-feedback release #2 — proposals from two downstream Sentinel operators (~25 reviews in one session; 6 PRs incl. a rejection cycle), each verified against the cited contract text before acceptance; several claims were corrected rather than adopted (per AGENTS.md §Evaluating Downstream Agent Feedback). Ruleset stays **v1**, rubric stays **v1** — the report protocol (`Status:` line, `Required action` mapping, verdict semantics, severity tiers) is unchanged. SENTINEL.md budget raised 178 → **180** non-blank lines (180/180 used; §Compression's raise-don't-compress rule).
+
+### Added
+- **Differential probe rule** (`dim-a1-security-attacks.md`, `dim-a2-security-defenses.md`): when the diff adds/modifies a hand-rolled parser, tokenizer, matcher, or sanitizer/escaper/validator on an untrusted-input path and command execution is available, probe it empirically on **first review** — run it against a reference implementation or a generated adversarial corpus in a throwaway worktree and flag any divergence where the hand-rolled code is more permissive (bounded: hundreds of cases; class coverage, not exhaustiveness). Fail-closed like the Dim D discrimination probe: no execution → static bypass-class finding stands, flagged `(unverified — no execution)`. Field evidence: an SVG-detector bypass took 3 review cycles under static enumeration alone; the operator's cycle-2 differential fuzz caught what enumeration kept missing.
+- **Phase 0 binding persistence** (SENTINEL.md §Phase 0, RECOMMENDED): when PR write access exists, Sentinel posts the review binding (Report ID + reviewed SHA + timestamp + ruleset version + `<!-- sentinel-phase0 … -->` marker) as a PR comment at review start — a died/timed-out session becomes detectable and the binding survives mid-review context loss. Never a verdict. Field evidence: two independent operators lost a full review's work to a dead session / mid-review compaction because the verdict and persistence land only at Phase 5.
+- **Invoker no-verdict rule** (template AGENTS.md §How to Invoke): zero output or no `Status:` line = **NO VERDICT** — never infer a verdict from partial output or a Phase-0 binding comment; re-invoke fresh once, then escalate. Previously unspecified; a downstream harness had to invent its own retry behavior.
+- **Rebase re-verdict lane** (SENTINEL.md §Phase 0 re-review): the sole exception to "rebase → Phase 1 in full". Sentinel — never the invoker — recomputes both sides' diffs-vs-their-own-merge-bases and compares `git patch-id --stable`; patch-identical → reuse prior Phase 2 findings + re-run check 5 + quick scan and issue a **fresh SHA-bound verdict**; differing hunks → fix-delta re-review; unverifiable → full review. Codified deliberately tighter than the operator's request (they merged twice on a stale verdict with a "transparency comment" — the lane scopes down the work, never the verdict), because an undefined exception incentivizes quiet deviation on busy repos.
+- **Report ID canonical format** (SENTINEL.md report header): `SR-<YYYYMMDD>-PR<n>-<short SHA>` (branch slug when no PR number) — merge-commit audit trails are grepped by Report ID; observed drift across ~25 reports motivated pinning it.
+- Eval fixtures: `13-rebase-smuggle.md` (rebase-lane abuse: invoker-supplied "mechanical rebase delta" hiding an auth-bypass hunk must never be trusted → REJECTED) and `14-handrolled-sanitizer.md` (A2 static half of the differential probe: bypassable regex-blocklist sanitizer → 🔴 with class-level enumeration, `(unverified — no execution)`; also closes the evals' A2 coverage gap per the same-PR fixture rule).
+
+### Changed
+- SENTINEL.md Phase 2 dispatch: `mode: "background"` now explicitly "where supported" — platforms running sub-agents synchronously are compliant (dispatch `name` as the ref, duration `N/A (not reported)`), ending a recurring false "gap" note on synchronous platforms. The N/A-is-compliant rule already existed in Execution logging; this aligns the dispatch instruction with it.
+
+### Rejected (with reasoning, per §Evaluating Downstream Agent Feedback)
+- **Second machine-parseable verdict marker**: the first-line `Status:` is already defined as the only authoritative decision source; a second marker would create the two-format drift the operator feared. Downstream harnesses should parse `Status:`.
+- **`sentinel:sync-check` GH_TOKEN setup note**: that check is downstream harness tooling, not part of this template; the template's own opt-in workflow already sets `GH_TOKEN`.
+- **🟡-volume rubric tightening**: deferred at the operator's own suggestion — filed as a `sentinel:deferred` issue to re-check once backlog-hygiene sweep data shows how many 🟡s survive first re-validation.
+
 ## [0.23.1] - 2026-07-05
 
 Documentation & rollout-ergonomics release (no ruleset change — stays **v1**). Adds sync-time formatting guidance after a downstream sync surfaced a lint failure: the verbatim opt-in backlog-hygiene workflow YAML failed an adopter's `prettier --check .`.
