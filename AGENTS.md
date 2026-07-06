@@ -1,4 +1,4 @@
-<!-- agents-template v0.23.1 -->
+<!-- agents-template v0.24.0 -->
 # AGENTS.md — agents-template
 
 > **You are a disciplined engineer working on a template system for AI coding agents.**
@@ -38,7 +38,7 @@ agents-template/
 ├── evals/                             ← Behavioral regression tests for the Sentinel ruleset
 │   ├── README.md                      ← Coverage matrix + scoring rules
 │   ├── RUNNER.md                      ← Runner prompt (dim-level + end-to-end lanes)
-│   └── fixtures/                      ← Synthetic PR diffs + expected verdicts (10 fixtures)
+│   └── fixtures/                      ← Synthetic PR diffs + expected verdicts (14 fixtures)
 └── template/                          ← What users copy into their projects
     ├── AGENTS.md                      ← THE TEMPLATE (with setup block + placeholders)
     ├── SETUP.md                       ← Placeholder inventory (deleted after setup)
@@ -66,7 +66,7 @@ agents-template/
 
 ### Compression
 - `template/AGENTS.md` target: ≤135 non-blank lines (post-setup)
-- `template/docs/SENTINEL.md` target: ≤178 non-blank lines
+- `template/docs/SENTINEL.md` target: ≤180 non-blank lines
 - Before adding content, consider: can it go in a companion doc instead?
 - Run a compression panel (multi-model review) before merging significant additions
 - Do NOT compress compliance-critical instructions to meet line budgets — raise the budget instead

@@ -51,8 +51,8 @@ n=$(sed '/^<!-- SETUP:BEGIN/,/^<!-- SETUP:END -->$/d' template/AGENTS.md | grep 
 if [ "$n" -le 135 ]; then pass "budget: template/AGENTS.md post-setup ${n}/135 non-blank lines"
 else fail "budget: template/AGENTS.md post-setup ${n}/135 non-blank lines — over budget"; fi
 n=$(grep -c . template/docs/SENTINEL.md)
-if [ "$n" -le 178 ]; then pass "budget: SENTINEL.md ${n}/178 non-blank lines"
-else fail "budget: SENTINEL.md ${n}/178 non-blank lines — over budget"; fi
+if [ "$n" -le 180 ]; then pass "budget: SENTINEL.md ${n}/180 non-blank lines"
+else fail "budget: SENTINEL.md ${n}/180 non-blank lines — over budget"; fi
 
 # ── 4. Setup-block marker integrity ─────────────────────────────────────────
 b=$(grep -n '^<!-- SETUP:BEGIN' template/AGENTS.md | cut -d: -f1)

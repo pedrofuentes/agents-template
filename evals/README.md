@@ -11,7 +11,7 @@ These evals check the ruleset's **behavior** — given a PR input, does Sentinel
 
 ## Fixture format
 
-Each fixture in `fixtures/01..12` contains:
+Each fixture in `fixtures/01..14` contains:
 - `## PR context` — branch name, PR title/description, changed-file list, synthetic commit list.
 - `## Input` — a realistic unified diff wrapped in `<untrusted_pr_input>` … `</untrusted_pr_input>` fences.
 - `## Expected` — `Status: <verdict>` plus a bullet list of must-find findings
@@ -43,6 +43,7 @@ editing, re-run the same fixtures and diff the two result sets.
 | Dim / behavior | Covered by fixture(s) |
 |---|---|
 | A1 — security attack surface | 01 |
+| A2 — security defenses | 14 |
 | B — resilience | 07 |
 | D — test quality | 02, 09, 10, 11 |
 | E — dependencies / supply chain | 03 |
@@ -51,13 +52,16 @@ editing, re-run the same fixtures and diff the two result sets.
 | Severity rubric calibration | 07, 08, 11 |
 | Re-review delta path | 09, 10 |
 | Contest channel (🔴 false-positive claims) | 12 |
+| Rebase re-verdict lane (unverifiable claims → full review) | 13 |
 
-**NOT covered:** A2 (security defenses), C (performance), F (documentation).
+**NOT covered:** C (performance), F (documentation).
 
 Execution-dependent behaviors (dim-d discrimination probe, contest-channel
-re-dispatch) are only partially coverable in a static harness — fixtures
-11/12 cover their static halves (oracle recognition; refusal to accept
-PR-text disproofs).
+re-dispatch, A1/A2 differential probe, rebase patch-id recomputation) are
+only partially coverable in a static harness — fixtures 11/12/14/13 cover
+their static halves (oracle recognition; refusal to accept PR-text
+disproofs; fail-closed `(unverified — no execution)` flagging; refusal to
+trust invoker-supplied rebase deltas).
 
 **Rule:** editing an uncovered dimension file requires authoring a fixture for
 it in the same PR that touches it — a ruleset behavior change without a
