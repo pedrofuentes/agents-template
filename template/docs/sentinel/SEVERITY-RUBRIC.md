@@ -45,7 +45,7 @@ regardless of which agent orchestrates. Applied AFTER sub-agent findings aggrega
 | Defensive guard whose trigger is unreachable given current callers | 🟢 | No reachable trigger (1) |
 | `Math.random()` used for UI animation / visual jitter (no security surface) | 🟢 | No security surface (1) — contrast the CSPRNG 🔴 above |
 | Dependency bump of an unused or dev-only package; no API/behavior change | 🟢 | No reachable risk (1) — contrast the typosquat 🔴 above |
-| **Missing CHANGELOG entry** | 🟢 | Non-behavioral convention; no trigger→mechanism→consequence (1). **NEVER 🟡.** |
+| **CHANGELOG defect (missing / malformed / garbled entry)** | 🟢 | Non-behavioral convention; no trigger→mechanism→consequence (1). **NEVER 🟡** — unless the entry misdocuments security-relevant behavior. |
 | Missing/incomplete docs with no release/API/user-impact requirement | 🟢 | No risk path (1) |
 | Rename / restructure / "better abstraction" without a failure path | 🟢 | No risk path (1) |
 | Stylistic preference (formatting, naming) | 🟢 | No risk path; batch into one 🟢 |

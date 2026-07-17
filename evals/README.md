@@ -11,7 +11,7 @@ These evals check the ruleset's **behavior** — given a PR input, does Sentinel
 
 ## Fixture format
 
-Each fixture in `fixtures/01..14` contains:
+Each fixture in `fixtures/01..15` contains:
 - `## PR context` — branch name, PR title/description, changed-file list, synthetic commit list.
 - `## Input` — a realistic unified diff wrapped in `<untrusted_pr_input>` … `</untrusted_pr_input>` fences.
 - `## Expected` — `Status: <verdict>` plus a bullet list of must-find findings
@@ -43,14 +43,15 @@ editing, re-run the same fixtures and diff the two result sets.
 | Dim / behavior | Covered by fixture(s) |
 |---|---|
 | A1 — security attack surface | 01 |
-| A2 — security defenses | 14 |
+| A2 — security defenses | 14, 15 |
 | B — resilience | 07 |
 | D — test quality | 02, 09, 10, 11 |
 | E — dependencies / supply chain | 03 |
 | Prompt-injection protocol | 04, 05, 12 |
 | Fast-path / Tier 1 | 06 |
 | Severity rubric calibration | 07, 08, 11 |
-| Re-review delta path | 09, 10 |
+| Re-review delta path | 09, 10, 15 |
+| Finding-class recurrence flag (re-review) | 15 |
 | Contest channel (🔴 false-positive claims) | 12 |
 | Rebase re-verdict lane (unverifiable claims → full review) | 13 |
 

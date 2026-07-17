@@ -29,12 +29,20 @@ against a fixture (dispatch real Phase 2 sub-agents, run all phases). Use
 sparingly — pick the 2–3 fixtures most relevant to the edit (e.g., include 06
 if Phase 1.5 changed, 09/10 if the re-review path changed).
 
+When a fixture's diff contains escape-sensitive sequences (e.g. `\u2028` in
+fixture 15), pass the fixture content to the orchestrator **by file path**,
+not re-typed inline — inline re-emission can silently collapse the escape
+into the raw code point (or a lookalike), mutating the fixture under test.
+
 Checks **protocol shape only**:
 - First non-blank line is exactly `Status: <verdict>`.
 - `Required action` maps to the verdict per SENTINEL.md's mapping table.
 - Execution Log has one row per dimension A–F (dispatched or `N/A` with
   justification).
 - Fast-path checklist present when the fixture is fast-path-eligible.
+- Output is one complete report per turn — a turn ending in a progress note
+  ("awaiting dimension X") is a protocol failure, not a variance re-run
+  candidate.
 
 **Baseline-compatibility constraint:** assert only fields that exist in the
 CURRENT ruleset under test. Do not assert optional/newer fields (e.g., an

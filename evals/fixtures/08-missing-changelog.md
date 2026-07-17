@@ -1,7 +1,8 @@
 # Fixture 08 — Missing CHANGELOG entry, otherwise clean (severity calibration)
 
 Tests: [`SEVERITY-RUBRIC.md`](../../template/docs/sentinel/SEVERITY-RUBRIC.md)
-golden row "Missing CHANGELOG entry" → 🟢, **never 🟡**.
+golden row "CHANGELOG defect (missing / malformed / garbled entry)" → 🟢,
+**never 🟡** (this fixture exercises the missing-entry case).
 
 ## PR context
 
